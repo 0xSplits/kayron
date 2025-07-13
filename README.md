@@ -50,7 +50,9 @@ type Interface interface {
 Kayron is a change management controller implementing the [operator pattern], in
 this particular case without the involvement of [Kubernetes]. The main goroutine
 for the operator's reconciliation loop is the operator worker handler in
-`pkg/worker/handler/operator/`.
+`pkg/worker/handler/operator/`. Secondary worker handlers are executed within
+their own isolated failure domain, feeding into the primary business logic of
+the operator using concurrency safe cache channels.
 
 Operators try to continuously drive the current state of a system towards the
 desired state of a system. In our case, the current state is represented by the
@@ -64,10 +66,13 @@ upon detection.
 
 For instance, if a new Release were to be created in the
 [Specta](https://github.com/0xSplits/specta) repository, then Kayron will
-generate all CloudFormation templates and reconcile them against AWS, which will
-then result in a stack update, because the Specta version changed in the
-generated templates. Kayron may also keep the deployment status up to date in
-Github.
+generate all CloudFormation templates anew using the changed resource details in
+the underlying cache channels, and reconcile the resulting CloudFormation
+templates against AWS, if the specified policies permit the proposed update.
+This process will then eventually result in a stack update in CloudFormation, so
+that Kayron may also keep the respective deployment status up to date in Github.
+
+![Operator Design](.github/assets/Operator-Design.svg)
 
 ### Usage
 
