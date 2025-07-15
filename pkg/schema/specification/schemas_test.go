@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/0xSplits/kayron/pkg/schema/specification/infrastructure"
 	"github.com/0xSplits/kayron/pkg/schema/specification/service"
 	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy"
 	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy/webhook"
@@ -28,7 +29,7 @@ func Test_Schemas_Verify_false(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "kayron",
-							GitHub: "kayron",
+							Github: "kayron",
 						},
 					},
 				},
@@ -38,14 +39,40 @@ func Test_Schemas_Verify_false(t *testing.T) {
 			},
 			mat: IsSchemaEmpty,
 		},
-		// Case 002, one service, more than one strategy
+		// Case 002, one service, no docker repository
+		{
+			sch: Schemas{
+				{
+					Service: service.Services{
+						{
+							Github: "kayron",
+						},
+					},
+				},
+			},
+			mat: service.IsServiceDockerEmpty,
+		},
+		// Case 003, one service, no github repository
 		{
 			sch: Schemas{
 				{
 					Service: service.Services{
 						{
 							Docker: "kayron",
-							GitHub: "kayron",
+						},
+					},
+				},
+			},
+			mat: service.IsServiceGithubEmpty,
+		},
+		// Case 004, one service, more than one strategy
+		{
+			sch: Schemas{
+				{
+					Service: service.Services{
+						{
+							Docker: "kayron",
+							Github: "kayron",
 							Deploy: deploy.Deploy{
 								Branch:  "feature",
 								Release: "v1.8.2",
@@ -56,14 +83,14 @@ func Test_Schemas_Verify_false(t *testing.T) {
 			},
 			mat: deploy.IsDeploymentStrategy,
 		},
-		// Case 003, many services, more than one strategy
+		// Case 005, many services, more than one strategy
 		{
 			sch: Schemas{
 				{
 					Service: service.Services{
 						{
 							Docker: "kayron",
-							GitHub: "kayron",
+							Github: "kayron",
 							Deploy: deploy.Deploy{
 								Release: "v1.8.2",
 							},
@@ -74,7 +101,7 @@ func Test_Schemas_Verify_false(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "specta",
-							GitHub: "specta",
+							Github: "specta",
 							Deploy: deploy.Deploy{
 								Suspend: true,
 								Webhook: webhook.Webhooks{
@@ -88,7 +115,7 @@ func Test_Schemas_Verify_false(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "server",
-							GitHub: "server",
+							Github: "server",
 							Deploy: deploy.Deploy{
 								Branch: "feature",
 							},
@@ -98,11 +125,60 @@ func Test_Schemas_Verify_false(t *testing.T) {
 			},
 			mat: deploy.IsDeploymentStrategy,
 		},
+		// Case 006, duplicated infrastructure shorthands
+		{
+			sch: Schemas{
+				{
+					Infrastructure: infrastructure.Infrastructure{
+						Shorthand: "prod",
+					},
+					Service: service.Services{
+						{
+							Docker: "kayron",
+							Github: "kayron",
+							Deploy: deploy.Deploy{
+								Release: "v1.8.2",
+							},
+						},
+					},
+				},
+				{
+					Infrastructure: infrastructure.Infrastructure{
+						Shorthand: "staging",
+					},
+					Service: service.Services{
+						{
+							Docker: "specta",
+							Github: "specta",
+							Deploy: deploy.Deploy{
+								Suspend: true,
+							},
+						},
+					},
+				},
+				{
+					Infrastructure: infrastructure.Infrastructure{
+						Shorthand: "prod",
+					},
+					Service: service.Services{
+						{
+							Docker: "server",
+							Github: "server",
+							Deploy: deploy.Deploy{
+								Branch: "feature",
+							},
+						},
+					},
+				},
+			},
+			mat: IsInfrastructureShorthand,
+		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			err := tc.sch.Verify()
+			fmt.Printf("%#v\n", err)
 			if !tc.mat(err) {
 				t.Fatal("expected", true, "got", err)
 			}
@@ -124,7 +200,7 @@ func Test_Schemas_Verify_true(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "kayron",
-							GitHub: "kayron",
+							Github: "kayron",
 							Deploy: deploy.Deploy{
 								Branch: "feature",
 							},
@@ -141,7 +217,7 @@ func Test_Schemas_Verify_true(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "specta",
-							GitHub: "specta",
+							Github: "specta",
 							Deploy: deploy.Deploy{
 								Release: "v1.8.2",
 							},
@@ -158,7 +234,7 @@ func Test_Schemas_Verify_true(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "kayron",
-							GitHub: "kayron",
+							Github: "kayron",
 						},
 					},
 				},
@@ -166,7 +242,7 @@ func Test_Schemas_Verify_true(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "splits",
-							GitHub: "server",
+							Github: "server",
 							Deploy: deploy.Deploy{
 								Webhook: webhook.Webhooks{
 									"POST:https://foo.bar",
@@ -179,7 +255,7 @@ func Test_Schemas_Verify_true(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "specta",
-							GitHub: "specta",
+							Github: "specta",
 						},
 					},
 				},

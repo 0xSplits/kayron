@@ -8,31 +8,37 @@ import (
 )
 
 type Service struct {
-	Docker docker.Docker `json:"docker,omitempty" yaml:"docker,omitempty"`
-	GitHub github.Github `json:"github,omitempty" yaml:"github,omitempty"`
-	Deploy deploy.Deploy `json:"deploy,omitempty" yaml:"deploy,omitempty"`
+	Docker docker.Docker `yaml:"docker,omitempty"`
+	Github github.Github `yaml:"github,omitempty"`
+	Deploy deploy.Deploy `yaml:"deploy,omitempty"`
 }
 
 func (s Service) Empty() bool {
-	return s.Deploy.Empty() && s.GitHub.Empty() && s.Deploy.Empty()
+	return s.Deploy.Empty() && s.Github.Empty() && s.Deploy.Empty()
 }
 
 func (s Service) Verify() error {
-	{
+	if s.Docker.Empty() {
+		return tracer.Mask(serviceDockerEmptyError)
+	} else {
 		err := s.Docker.Verify()
 		if err != nil {
 			return tracer.Mask(err)
 		}
 	}
 
-	{
-		err := s.GitHub.Verify()
+	if s.Github.Empty() {
+		return tracer.Mask(serviceGithubEmptyError)
+	} else {
+		err := s.Github.Verify()
 		if err != nil {
 			return tracer.Mask(err)
 		}
 	}
 
-	{
+	if s.Deploy.Empty() {
+		// the default deployment strategy is to rollout the latest release
+	} else {
 		err := s.Deploy.Verify()
 		if err != nil {
 			return tracer.Mask(err)

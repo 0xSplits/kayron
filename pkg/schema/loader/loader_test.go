@@ -41,7 +41,7 @@ func Test_Loader(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "kayron",
-							GitHub: "kayron",
+							Github: "kayron",
 							Deploy: deploy.Deploy{
 								Release: "v1.8.2",
 							},
@@ -56,7 +56,7 @@ func Test_Loader(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "specta",
-							GitHub: "specta",
+							Github: "specta",
 							Deploy: deploy.Deploy{
 								Suspend: true,
 							},
@@ -71,7 +71,7 @@ func Test_Loader(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "splits",
-							GitHub: "server",
+							Github: "server",
 						},
 					},
 				},
@@ -83,7 +83,7 @@ func Test_Loader(t *testing.T) {
 					Service: service.Services{
 						{
 							Docker: "server",
-							GitHub: "server",
+							Github: "server",
 							Deploy: deploy.Deploy{
 								Branch: "feature",
 							},

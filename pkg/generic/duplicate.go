@@ -2,19 +2,19 @@ package generic
 
 // Duplicate returns a list of the duplicated items within the given list.
 func Duplicate[T comparable](lis []T) []T {
-	see := map[T]struct{}{}
+	all := map[T]struct{}{}
 	tmp := map[T]struct{}{}
 
 	for _, x := range lis {
 		{
-			_, exi := see[x]
+			_, exi := all[x]
 			if exi {
 				tmp[x] = struct{}{}
 			}
 		}
 
 		{
-			see[x] = struct{}{}
+			all[x] = struct{}{}
 		}
 	}
 

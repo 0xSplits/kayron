@@ -24,9 +24,9 @@ func (d Deploy) Empty() bool {
 func (d Deploy) Verify() error {
 	// Reject deployment configurations that define more than one strategy.
 	{
-		lis := colDep(d.Branch.Empty(), d.Release.Empty(), d.Suspend.Empty(), d.Webhook.Empty())
+		lis := enabled(d.Branch, d.Release, d.Suspend, d.Webhook)
 		if len(lis) > 1 {
-			return tracer.Maskf(deploymentStrategyError, "%d", len(lis))
+			return tracer.Maskf(deploymentStrategyError, "%v", lis)
 		}
 	}
 
@@ -61,12 +61,13 @@ func (d Deploy) Verify() error {
 	return nil
 }
 
-func colDep(b ...bool) []bool {
-	var lis []bool
+// enabled returns a list of the names of the enabled deployment strategies.
+func enabled(v ...Interface) []string {
+	var lis []string
 
-	for _, x := range b {
-		if !x {
-			lis = append(lis, x)
+	for _, x := range v {
+		if !x.Empty() {
+			lis = append(lis, name(x))
 		}
 	}
 
