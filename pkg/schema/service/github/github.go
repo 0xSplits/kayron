@@ -7,5 +7,6 @@ func (g Github) Empty() bool {
 }
 
 func (g Github) Verify() error {
+	// TODO
 	return nil
 }

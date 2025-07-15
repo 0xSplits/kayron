@@ -19,3 +19,12 @@ type Infrastructure struct {
 	// reasons.
 	Shorthand string `yaml:"shorthand,omitempty"`
 }
+
+func (i Infrastructure) Empty() bool {
+	return !i.Overwrite && i.Shorthand == ""
+}
+
+func (i Infrastructure) Verify() error {
+	// TODO
+	return nil
+}

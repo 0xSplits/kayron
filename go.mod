@@ -23,6 +23,8 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.37.0
 )
 
+require golang.org/x/text v0.25.0 // indirect
+
 require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.70 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.32 // indirect
@@ -48,6 +50,7 @@ require (
 	github.com/prometheus/common v0.65.0 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/puzpuzpuz/xsync/v4 v4.1.0
+	github.com/spf13/afero v1.14.0
 	github.com/spf13/pflag v1.0.6 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.37.0 // indirect

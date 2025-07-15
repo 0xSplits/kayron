@@ -7,5 +7,6 @@ func (d Docker) Empty() bool {
 }
 
 func (d Docker) Verify() error {
+	// TODO
 	return nil
 }

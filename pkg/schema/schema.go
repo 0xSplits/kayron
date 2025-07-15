@@ -1,21 +1,37 @@
 // Package schema defines the in-memory representation of Kayron’s
-// change-management YAML and carries the field-level tags expected by
-// goccy/go-yaml.
+// change-management definitions.
 package schema
 
 import (
 	"github.com/0xSplits/kayron/pkg/schema/infrastructure"
-	service "github.com/0xSplits/kayron/pkg/schema/service"
-	yaml "github.com/goccy/go-yaml"
+	"github.com/0xSplits/kayron/pkg/schema/service"
+	"github.com/xh3b4sd/tracer"
 )
-
-var _ = yaml.Marshal // TODO
 
 // Schema is the root of our deployment configuration.
 type Schema struct {
 	Infrastructure infrastructure.Infrastructure `yaml:"infrastructure,omitempty"`
-	Service        []service.Service             `yaml:"service,omitempty"`
+	Service        service.Services              `yaml:"service,omitempty"`
 }
 
-// TODO validate unique values across multiple environments, e.g. must not use
-// prod twice as env shorthand
+func (s Schema) Empty() bool {
+	return s.Infrastructure.Empty() && s.Service.Empty()
+}
+
+func (s Schema) Verify() error {
+	{
+		err := s.Infrastructure.Verify()
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	{
+		err := s.Service.Verify()
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	return nil
+}

@@ -1,11 +1,12 @@
 package webhook
 
-type Webhook []string
+type Webhook string
 
 func (w Webhook) Empty() bool {
-	return len(w) == 0
+	return w == ""
 }
 
 func (w Webhook) Verify() error {
+	// TODO
 	return nil
 }
