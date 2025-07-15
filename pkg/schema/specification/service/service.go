@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy"
-	"github.com/0xSplits/kayron/pkg/schema/service/docker"
-	"github.com/0xSplits/kayron/pkg/schema/service/github"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/docker"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/github"
 	"github.com/xh3b4sd/tracer"
 )
 

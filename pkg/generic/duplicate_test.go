@@ -2,18 +2,19 @@ package generic
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 )
 
 func Test_Generic_Duplicate_string(t *testing.T) {
 	testCases := []struct {
 		lis []string
-		dup bool
+		dup []string
 	}{
 		// Case 000
 		{
 			lis: []string{},
-			dup: false,
+			dup: nil,
 		},
 		// Case 001
 		{
@@ -21,7 +22,7 @@ func Test_Generic_Duplicate_string(t *testing.T) {
 				"55",
 				"44",
 			},
-			dup: false,
+			dup: nil,
 		},
 		// Case 002
 		{
@@ -31,7 +32,9 @@ func Test_Generic_Duplicate_string(t *testing.T) {
 				"33",
 				"33",
 			},
-			dup: true,
+			dup: []string{
+				"33",
+			},
 		},
 		// Case 003
 		{
@@ -46,7 +49,11 @@ func Test_Generic_Duplicate_string(t *testing.T) {
 				"55",
 				"88",
 			},
-			dup: true,
+			dup: []string{
+				"33",
+				"55",
+				"88",
+			},
 		},
 		// Case 004
 		{
@@ -58,15 +65,19 @@ func Test_Generic_Duplicate_string(t *testing.T) {
 				"55",
 				"66",
 			},
-			dup: false,
+			dup: nil,
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			dup := Duplicate(tc.lis)
-			if dup != tc.dup {
-				t.Fatalf("expected %#v got %#v", tc.dup, dup)
+
+			slices.Sort(dup)
+			slices.Sort(tc.dup)
+
+			if !slices.Equal(dup, tc.dup) {
+				t.Fatal("expected", tc.dup, "got", dup)
 			}
 		})
 	}
@@ -75,12 +86,12 @@ func Test_Generic_Duplicate_string(t *testing.T) {
 func Test_Generic_Duplicate_int64(t *testing.T) {
 	testCases := []struct {
 		lis []int64
-		dup bool
+		dup []int64
 	}{
 		// Case 000
 		{
 			lis: []int64{},
-			dup: false,
+			dup: nil,
 		},
 		// Case 001
 		{
@@ -88,7 +99,7 @@ func Test_Generic_Duplicate_int64(t *testing.T) {
 				55,
 				44,
 			},
-			dup: false,
+			dup: nil,
 		},
 		// Case 002
 		{
@@ -98,7 +109,9 @@ func Test_Generic_Duplicate_int64(t *testing.T) {
 				33,
 				33,
 			},
-			dup: true,
+			dup: []int64{
+				33,
+			},
 		},
 		// Case 003
 		{
@@ -113,7 +126,11 @@ func Test_Generic_Duplicate_int64(t *testing.T) {
 				55,
 				88,
 			},
-			dup: true,
+			dup: []int64{
+				33,
+				55,
+				88,
+			},
 		},
 		// Case 004
 		{
@@ -125,15 +142,19 @@ func Test_Generic_Duplicate_int64(t *testing.T) {
 				55,
 				66,
 			},
-			dup: false,
+			dup: nil,
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			dup := Duplicate(tc.lis)
-			if dup != tc.dup {
-				t.Fatalf("expected %#v got %#v", tc.dup, dup)
+
+			slices.Sort(dup)
+			slices.Sort(tc.dup)
+
+			if !slices.Equal(dup, tc.dup) {
+				t.Fatal("expected", tc.dup, "got", dup)
 			}
 		})
 	}

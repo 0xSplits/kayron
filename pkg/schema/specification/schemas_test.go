@@ -1,12 +1,12 @@
-package schema
+package specification
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/0xSplits/kayron/pkg/schema/service"
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy"
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy/webhook"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy/webhook"
 )
 
 // Test_Schemas_Verify_false ensures that invalid schemas can be rejected
@@ -17,6 +17,28 @@ func Test_Schemas_Verify_false(t *testing.T) {
 		mat func(error) bool
 	}{
 		// Case 000, one service, more than one strategy
+		{
+			sch: Schemas{},
+			mat: IsSchemaEmpty,
+		},
+		// Case 001, one service, more than one strategy
+		{
+			sch: Schemas{
+				{
+					Service: service.Services{
+						{
+							Docker: "kayron",
+							GitHub: "kayron",
+						},
+					},
+				},
+				{
+					Service: service.Services{},
+				},
+			},
+			mat: IsSchemaEmpty,
+		},
+		// Case 002, one service, more than one strategy
 		{
 			sch: Schemas{
 				{
@@ -34,7 +56,7 @@ func Test_Schemas_Verify_false(t *testing.T) {
 			},
 			mat: deploy.IsDeploymentStrategy,
 		},
-		// Case 001, many services, more than one strategy
+		// Case 003, many services, more than one strategy
 		{
 			sch: Schemas{
 				{
@@ -82,7 +104,7 @@ func Test_Schemas_Verify_false(t *testing.T) {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			err := tc.sch.Verify()
 			if !tc.mat(err) {
-				t.Fatal("expected", true, "got", false)
+				t.Fatal("expected", true, "got", err)
 			}
 		})
 	}

@@ -1,10 +1,10 @@
 package deploy
 
 import (
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy/branch"
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy/release"
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy/suspend"
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy/webhook"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy/branch"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy/release"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy/suspend"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy/webhook"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -23,9 +23,11 @@ func (d Deploy) Empty() bool {
 
 func (d Deploy) Verify() error {
 	// Reject deployment configurations that define more than one strategy.
-	lis := colOpt(d.Branch.Empty(), d.Release.Empty(), d.Suspend.Empty(), d.Webhook.Empty())
-	if len(lis) > 1 {
-		return tracer.Maskf(deploymentStrategyError, "%d", len(lis))
+	{
+		lis := colDep(d.Branch.Empty(), d.Release.Empty(), d.Suspend.Empty(), d.Webhook.Empty())
+		if len(lis) > 1 {
+			return tracer.Maskf(deploymentStrategyError, "%d", len(lis))
+		}
 	}
 
 	if !d.Branch.Empty() {
@@ -59,7 +61,7 @@ func (d Deploy) Verify() error {
 	return nil
 }
 
-func colOpt(b ...bool) []bool {
+func colDep(b ...bool) []bool {
 	var lis []bool
 
 	for _, x := range b {

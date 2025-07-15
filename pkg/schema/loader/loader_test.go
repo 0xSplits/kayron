@@ -6,12 +6,12 @@ import (
 	"io/fs"
 	"path/filepath"
 	"reflect"
-	"strconv"
 	"testing"
 
-	"github.com/0xSplits/kayron/pkg/schema"
-	"github.com/0xSplits/kayron/pkg/schema/service"
-	"github.com/0xSplits/kayron/pkg/schema/service/deploy"
+	"github.com/0xSplits/kayron/pkg/schema/specification"
+	"github.com/0xSplits/kayron/pkg/schema/specification/labels"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service"
+	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy"
 	"github.com/spf13/afero"
 )
 
@@ -20,7 +20,7 @@ import (
 func Test_Loader(t *testing.T) {
 	testCases := []struct {
 		roo string
-		sch schema.Schemas
+		sch specification.Schemas
 		err error
 	}{
 		// Case 000, no config
@@ -32,8 +32,12 @@ func Test_Loader(t *testing.T) {
 		// Case 001, correct folder
 		{
 			roo: "./environment",
-			sch: schema.Schemas{
+			sch: specification.Schemas{
 				{
+					Labels: labels.Labels{
+						Environment: "production",
+						Testing:     false,
+					},
 					Service: service.Services{
 						{
 							Docker: "kayron",
@@ -45,6 +49,10 @@ func Test_Loader(t *testing.T) {
 					},
 				},
 				{
+					Labels: labels.Labels{
+						Environment: "staging",
+						Testing:     false,
+					},
 					Service: service.Services{
 						{
 							Docker: "specta",
@@ -56,6 +64,22 @@ func Test_Loader(t *testing.T) {
 					},
 				},
 				{
+					Labels: labels.Labels{
+						Environment: "foobar",
+						Testing:     true,
+					},
+					Service: service.Services{
+						{
+							Docker: "splits",
+							GitHub: "server",
+						},
+					},
+				},
+				{
+					Labels: labels.Labels{
+						Environment: "testing",
+						Testing:     true,
+					},
 					Service: service.Services{
 						{
 							Docker: "server",
@@ -78,7 +102,7 @@ func Test_Loader(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			var err error
 
 			var fil afero.Fs
@@ -88,10 +112,10 @@ func Test_Loader(t *testing.T) {
 
 			var roo string
 			{
-				roo = filepath.Join(".testdata", fmt.Sprintf("case.%03d", i), tc.roo)
+				roo = filepath.Join("testdata", fmt.Sprintf("case.%03d", i), tc.roo)
 			}
 
-			var sch schema.Schemas
+			var sch specification.Schemas
 			{
 				sch, err = Loader(fil, roo)
 				if !errors.Is(err, tc.err) {

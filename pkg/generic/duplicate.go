@@ -1,14 +1,15 @@
 package generic
 
-// Duplicate expresses whether the given list contains duplicated items.
-func Duplicate[T comparable](lis []T) bool {
+// Duplicate returns a list of the duplicated items within the given list.
+func Duplicate[T comparable](lis []T) []T {
 	see := map[T]struct{}{}
+	tmp := map[T]struct{}{}
 
 	for _, x := range lis {
 		{
 			_, exi := see[x]
 			if exi {
-				return true
+				tmp[x] = struct{}{}
 			}
 		}
 
@@ -17,5 +18,10 @@ func Duplicate[T comparable](lis []T) bool {
 		}
 	}
 
-	return false
+	var dup []T
+	for k := range tmp {
+		dup = append(dup, k)
+	}
+
+	return dup
 }
