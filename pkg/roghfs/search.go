@@ -20,21 +20,21 @@ func (r *Roghfs) search(pat string) ([]byte, error) {
 		}
 	}
 
-	var rc io.ReadCloser
+	var rea io.ReadCloser
 	{
-		rc, _, err = r.git.Repositories.DownloadContents(context.Background(), r.org, r.rep, pat, opt)
+		rea, _, err = r.git.Repositories.DownloadContents(context.Background(), r.org, r.rep, pat, opt)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}
 	}
 
 	{
-		defer rc.Close()
+		defer rea.Close()
 	}
 
 	var byt []byte
 	{
-		byt, err = io.ReadAll(rc)
+		byt, err = io.ReadAll(rea)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}

@@ -40,7 +40,6 @@ func (r *Roghfs) tree() error {
 	//
 	//     https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28#get-a-tree
 	//
-
 	var tre *github.Tree
 	{
 		tre, _, err = r.git.Git.GetTree(context.Background(), r.org, r.rep, r.ref, true)
