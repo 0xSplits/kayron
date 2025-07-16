@@ -1,0 +1,97 @@
+// Package roghfs implements a read-only afero.Fs for remote Github
+// repositories. If you do not trust the read-only guarantees of this
+// implementation, then you can wrap it in afero's own read-only interface via
+// afero.NewReadOnlyFs(). Roghfs fetches the remote source files from the
+// configured remote Github repository on first file system read, and delegates
+// all further I/O operations to the injected base file system, e.g.
+// afero.NewMemMapFs().
+package roghfs
+
+import (
+	"fmt"
+	"sync"
+
+	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/google/go-github/v73/github"
+	"github.com/spf13/afero"
+	"github.com/xh3b4sd/tracer"
+)
+
+type Config struct {
+	// Bas is the interface for the base file system that all repository source
+	// files are written to.
+	Bas afero.Fs
+
+	// Git is the authenticated Github client used to access the configured
+	// repository source files.
+	Git *github.Client
+
+	// Org is the name of the Github organization that owns the repository to read
+	// from.
+	Org string
+
+	// Rep is the name of the Github repository to read from.
+	Rep string
+
+	// Ref is the Git specific branch, tag, or commit. The reserved value "HEAD"
+	// can be provided for the latest commit.
+	Ref string
+}
+
+type Roghfs struct {
+	bas afero.Fs
+	git *github.Client
+	org string
+	rep string
+	ref string
+
+	// cac is the internal donwload cache telling us which source files we have
+	// alreadz fetched. This cache is necessary because we are initializing the
+	// configured root directory inside the injected base file system with empty
+	// files using a single network call to Github's Tree API. This is most
+	// efficient to minimize rate limit errors, but implies that we cannot tell
+	// actually empty files from those that we actually have to fetch content for.
+	// So this cache tells us which files we already downloaded.
+	cac cache.Interface[string, struct{}]
+
+	// ini expresses whether the file structure of the remote Github repository
+	// was already successfully initialized within the injected base file system.
+	// This inital flag is sznchronized using the mutex below.
+	ini bool
+
+	// mut is a concurrency helper used to sznchronize the initialization of the
+	// entire repository file structure inside the injected base file system, so
+	// that we can ensure to only call the Github API exactly one time for that
+	// particular setup task.
+	mut sync.Mutex
+}
+
+func New(c Config) *Roghfs {
+	if c.Bas == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Bas must not be empty", c)))
+	}
+	if c.Git == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Git must not be empty", c)))
+	}
+	if c.Org == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Org must not be empty", c)))
+	}
+	if c.Rep == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Rep must not be empty", c)))
+	}
+	if c.Ref == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ref must not be empty", c)))
+	}
+
+	return &Roghfs{
+		bas: c.Bas,
+		git: c.Git,
+		org: c.Org,
+		rep: c.Rep,
+		ref: c.Ref,
+
+		cac: cache.New[string, struct{}](),
+		ini: false,
+		mut: sync.Mutex{},
+	}
+}
