@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.36.5
 	github.com/aws/aws-sdk-go-v2/config v1.29.17
 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.61.0
+	github.com/goccy/go-yaml v1.18.0
 	github.com/google/go-github/v73 v73.0.0
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
