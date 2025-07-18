@@ -16,7 +16,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/twitchtv/twirp v8.1.3+incompatible
 	github.com/xh3b4sd/logger v0.10.0
-	github.com/xh3b4sd/tracer v0.11.1
+	github.com/xh3b4sd/tracer v1.0.0
 	go.opentelemetry.io/otel v1.37.0
 	go.opentelemetry.io/otel/exporters/prometheus v0.59.0
 	go.opentelemetry.io/otel/metric v1.37.0
