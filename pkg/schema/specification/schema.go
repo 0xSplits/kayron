@@ -22,20 +22,20 @@ func (s Schema) Empty() bool {
 
 func (s Schema) Verify() error {
 	if s.Empty() {
-		return tracer.Mask(schemaEmptyError)
+		return tracer.Mask(schemaEmptyError, tracer.Context{Key: "file", Value: s.Labels.Source})
 	}
 
 	{
 		err := s.Infrastructure.Verify()
 		if err != nil {
-			return tracer.Mask(err)
+			return tracer.Mask(err, tracer.Context{Key: "file", Value: s.Labels.Source})
 		}
 	}
 
 	{
 		err := s.Service.Verify()
 		if err != nil {
-			return tracer.Mask(err)
+			return tracer.Mask(err, tracer.Context{Key: "file", Value: s.Labels.Source})
 		}
 	}
 

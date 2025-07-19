@@ -11,14 +11,23 @@ const (
 )
 
 func New() *cobra.Command {
+	var flg *flag
+	{
+		flg = &flag{}
+	}
+
 	var cmd *cobra.Command
 	{
 		cmd = &cobra.Command{
 			Use:   use,
 			Short: sho,
 			Long:  lon,
-			Run:   (&run{}).run,
+			RunE:  (&run{flag: flg}).runE,
 		}
+	}
+
+	{
+		flg.Init(cmd)
 	}
 
 	return cmd

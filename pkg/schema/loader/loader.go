@@ -13,22 +13,22 @@ import (
 // Loader walks the provided filesystem starting at the given root directory.
 // All .yaml files are inspected and their content is marshalled into Schema
 // types. An error is returned if walking, reading or unmarshalling fails.
-func Loader(fil afero.Fs, roo string) (specification.Schemas, error) {
+func Loader(sys afero.Fs, roo string) (specification.Schemas, error) {
 	var lis specification.Schemas
 
-	wal := func(pat string, inf fs.FileInfo, err error) error {
+	wal := func(pat string, fil fs.FileInfo, err error) error {
 		{
 			if err != nil {
 				return err
 			}
-			if inf.IsDir() {
+			if fil.IsDir() {
 				return nil
 			}
 		}
 
 		var ext string
 		{
-			ext = filepath.Ext(inf.Name())
+			ext = filepath.Ext(fil.Name())
 			if ext != ".yaml" {
 				return nil
 			}
@@ -36,7 +36,7 @@ func Loader(fil afero.Fs, roo string) (specification.Schemas, error) {
 
 		var byt []byte
 		{
-			byt, err = afero.ReadFile(fil, pat)
+			byt, err = afero.ReadFile(sys, pat)
 			if err != nil {
 				return err
 			}
@@ -51,7 +51,8 @@ func Loader(fil afero.Fs, roo string) (specification.Schemas, error) {
 		}
 
 		{
-			sch.Labels.Environment = strings.TrimSuffix(inf.Name(), ext)
+			sch.Labels.Environment = strings.TrimSuffix(fil.Name(), ext)
+			sch.Labels.Source = pat
 			sch.Labels.Testing = filepath.Base(filepath.Dir(pat)) == "testing"
 		}
 
@@ -62,7 +63,7 @@ func Loader(fil afero.Fs, roo string) (specification.Schemas, error) {
 		return nil
 	}
 
-	err := afero.Walk(fil, filepath.Clean(roo), wal)
+	err := afero.Walk(sys, filepath.Clean(roo), wal)
 	if err != nil {
 		return nil, err
 	}

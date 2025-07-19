@@ -1,0 +1,23 @@
+package lint
+
+import (
+	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/spf13/cobra"
+	"github.com/xh3b4sd/tracer"
+)
+
+type flag struct {
+	Pat string
+}
+
+func (f *flag) Init(cmd *cobra.Command) {
+	cmd.Flags().StringVar(&f.Pat, "path", ".", "the file path to load and validate")
+}
+
+func (f *flag) Validate() error {
+	if f.Pat == "" {
+		return tracer.Mask(runtime.ExecutionFailedError, tracer.Context{Key: "reason", Value: "--path must not be empty"})
+	}
+
+	return nil
+}

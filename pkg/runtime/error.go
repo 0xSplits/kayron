@@ -5,6 +5,5 @@ import (
 )
 
 var ExecutionFailedError = &tracer.Error{
-	Kind: "ExecutionFailedError",
-	Desc: "This internal error implies a severe malfunction of the system.",
+	Description: "This internal error implies a severe malfunction of the system.",
 }

@@ -7,8 +7,7 @@ import (
 )
 
 var serviceDockerEmptyError = &tracer.Error{
-	Kind: "serviceDockerEmptyError",
-	Desc: "The service configuration requires a docker repository to be provided.",
+	Description: "The service configuration requires a docker repository to be provided.",
 }
 
 func IsServiceDockerEmpty(err error) bool {
@@ -16,8 +15,7 @@ func IsServiceDockerEmpty(err error) bool {
 }
 
 var serviceGithubEmptyError = &tracer.Error{
-	Kind: "serviceGithubEmptyError",
-	Desc: "The service configuration requires a github repository to be provided.",
+	Description: "The service configuration requires a github repository to be provided.",
 }
 
 func IsServiceGithubEmpty(err error) bool {

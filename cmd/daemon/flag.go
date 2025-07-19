@@ -16,7 +16,7 @@ func (f *flag) Init(cmd *cobra.Command) {
 
 func (f *flag) Validate() error {
 	if f.Env == "" {
-		return tracer.Maskf(runtime.ExecutionFailedError, "--env must not be empty")
+		return tracer.Mask(runtime.ExecutionFailedError, tracer.Context{Key: "reason", Value: "--env must not be empty"})
 	}
 
 	return nil
