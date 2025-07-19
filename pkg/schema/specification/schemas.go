@@ -18,7 +18,7 @@ func (s Schemas) Verify() error {
 	{
 		lis := generic.Duplicate(s.colSho())
 		if len(lis) != 0 {
-			return tracer.Maskf(infrastructureShorthandError, "%v", lis)
+			return tracer.Mask(infrastructureShorthandError, tracer.Context{Key: "shorthand", Value: lis})
 		}
 	}
 

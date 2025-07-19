@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 
-	"github.com/0xSplits/kayron/pkg/worker"
-	"github.com/0xSplits/kayron/pkg/worker/handler"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator"
+	"github.com/0xSplits/workit/handler"
+	"github.com/0xSplits/workit/worker"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/xh3b4sd/tracer"
@@ -19,7 +19,7 @@ func (d *Daemon) Worker() *worker.Worker {
 	}
 
 	return worker.New(worker.Config{
-		Env: d.env,
+		Env: d.env.Environment,
 		Han: []handler.Interface{
 			operator.New(operator.Config{Aws: cfg, Env: d.env, Log: d.log, Met: d.met}),
 		},
