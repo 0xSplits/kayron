@@ -17,6 +17,7 @@ type Env struct {
 	LogLevel    string `split_words:"true" required:"true"`
 	RunServer   bool   `split_words:"true" required:"true"`
 	RunWorker   bool   `split_words:"true" required:"true"`
+	Source      string `split_words:"true" required:"true"`
 }
 
 func Load(pat string) Env {
