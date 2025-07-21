@@ -2,8 +2,8 @@ package daemon
 
 import (
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/recorder"
 	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/0xSplits/otelgo/recorder"
 	"github.com/xh3b4sd/logger"
 	"go.opentelemetry.io/otel/metric"
 	otelmetric "go.opentelemetry.io/otel/metric"
@@ -31,6 +31,7 @@ func New(c Config) *Daemon {
 	{
 		met = recorder.NewMeter(recorder.MeterConfig{
 			Env: c.Env.Environment,
+			Sco: "kayron",
 			Ver: runtime.Tag(),
 		})
 	}

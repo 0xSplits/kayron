@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
-	"reflect"
 	"testing"
 
 	"github.com/0xSplits/kayron/pkg/schema/specification"
 	"github.com/0xSplits/kayron/pkg/schema/specification/labels"
 	"github.com/0xSplits/kayron/pkg/schema/specification/service"
 	"github.com/0xSplits/kayron/pkg/schema/specification/service/deploy"
+	"github.com/google/go-cmp/cmp"
 	"github.com/spf13/afero"
 )
 
@@ -36,6 +36,7 @@ func Test_Loader(t *testing.T) {
 				{
 					Labels: labels.Labels{
 						Environment: "production",
+						Source:      "testdata/case.001/environment/production/production.yaml",
 						Testing:     false,
 					},
 					Service: service.Services{
@@ -51,6 +52,7 @@ func Test_Loader(t *testing.T) {
 				{
 					Labels: labels.Labels{
 						Environment: "staging",
+						Source:      "testdata/case.001/environment/staging/staging.yaml",
 						Testing:     false,
 					},
 					Service: service.Services{
@@ -66,6 +68,7 @@ func Test_Loader(t *testing.T) {
 				{
 					Labels: labels.Labels{
 						Environment: "foobar",
+						Source:      "testdata/case.001/environment/testing/foobar.yaml",
 						Testing:     true,
 					},
 					Service: service.Services{
@@ -78,6 +81,7 @@ func Test_Loader(t *testing.T) {
 				{
 					Labels: labels.Labels{
 						Environment: "testing",
+						Source:      "testdata/case.001/environment/testing/testing.yaml",
 						Testing:     true,
 					},
 					Service: service.Services{
@@ -123,8 +127,8 @@ func Test_Loader(t *testing.T) {
 				}
 			}
 
-			if !reflect.DeepEqual(sch, tc.sch) {
-				t.Fatalf("expected %#v got %#v", tc.sch, sch)
+			if dif := cmp.Diff(tc.sch, sch); dif != "" {
+				t.Fatalf("-expected +actual:\n%s", dif)
 			}
 		})
 	}

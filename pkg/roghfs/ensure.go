@@ -83,7 +83,7 @@ func (r *Roghfs) ensure(pat string) error {
 	{
 		exi := r.cac.Create(pat, struct{}{})
 		if exi {
-			return tracer.Maskf(fileAlreadyCachedError, "%s", pat)
+			return tracer.Mask(fileAlreadyCachedError, tracer.Context{Key: "path", Value: pat})
 		}
 	}
 

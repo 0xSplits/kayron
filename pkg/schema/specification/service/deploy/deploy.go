@@ -26,7 +26,7 @@ func (d Deploy) Verify() error {
 	{
 		lis := enabled(d.Branch, d.Release, d.Suspend, d.Webhook)
 		if len(lis) > 1 {
-			return tracer.Maskf(deploymentStrategyError, "%v", lis)
+			return tracer.Mask(deploymentStrategyError, tracer.Context{Key: "enabled", Value: lis})
 		}
 	}
 

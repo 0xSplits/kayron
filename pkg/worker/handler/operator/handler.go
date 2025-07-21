@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/recorder"
-	"github.com/0xSplits/kayron/pkg/registry"
+	"github.com/0xSplits/otelgo/recorder"
+	"github.com/0xSplits/otelgo/registry"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/google/go-github/v73/github"
@@ -64,7 +64,7 @@ func New(c Config) *Handler {
 	var reg registry.Interface
 	{
 		reg = registry.New(registry.Config{
-			Env: c.Env,
+			Env: c.Env.Environment,
 			Log: c.Log,
 
 			Cou: cou,

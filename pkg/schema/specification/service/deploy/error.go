@@ -7,8 +7,7 @@ import (
 )
 
 var deploymentStrategyError = &tracer.Error{
-	Kind: "deploymentStrategyError",
-	Desc: "The deployment configuration requires only one strategy to be provided.",
+	Description: "The deployment configuration requires only one strategy to be provided.",
 }
 
 func IsDeploymentStrategy(err error) bool {
