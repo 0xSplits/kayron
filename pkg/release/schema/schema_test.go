@@ -196,6 +196,7 @@ func Test_Schema_Verify_failure(t *testing.T) {
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			err := tc.sch.Verify()
+			fmt.Printf("%#v\n", err)
 			if !tc.mat(err) {
 				t.Fatal("expected", true, "got", err)
 			}

@@ -24,7 +24,10 @@ func (s Service) Empty() bool {
 func (s Service) Verify() error {
 	err := s.verify()
 	if err != nil {
-		return tracer.Mask(err, tracer.Context{Key: "file", Value: s.Labels.Source})
+		return tracer.Mask(err,
+			tracer.Context{Key: "index", Value: s.Labels.Block},
+			tracer.Context{Key: "file", Value: s.Labels.Source},
+		)
 	}
 
 	return nil

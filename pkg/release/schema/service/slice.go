@@ -22,7 +22,7 @@ func (s Slice) Verify() error {
 	for _, x := range s {
 		err := x.Verify()
 		if err != nil {
-			return tracer.Mask(err, tracer.Context{Key: "index", Value: x.Labels.Block})
+			return tracer.Mask(err)
 		}
 	}
 
