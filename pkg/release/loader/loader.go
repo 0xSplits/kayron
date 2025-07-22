@@ -54,6 +54,7 @@ func Loader(sys afero.Fs, roo string) (schema.Schema, error) {
 		}
 
 		for i := range lis {
+			lis[i].Labels.Block = i
 			lis[i].Labels.Source = pat
 		}
 
