@@ -18,7 +18,7 @@ type Service struct {
 }
 
 func (s Service) Empty() bool {
-	return s.Docker.Empty() && s.Github.Empty() && s.Deploy.Empty() && s.Labels.Empty()
+	return s.Docker.Empty() && s.Github.Empty() && s.Deploy.Empty() && s.Labels.Empty() && s.Provider.Empty()
 }
 
 func (s Service) Verify() error {
