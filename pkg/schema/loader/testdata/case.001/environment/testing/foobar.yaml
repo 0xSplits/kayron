@@ -1,3 +1,0 @@
-service:
-  - docker: "splits"
-    github: "server"

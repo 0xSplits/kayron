@@ -1,8 +1,8 @@
 package lint
 
 import (
-	"github.com/0xSplits/kayron/pkg/schema/loader"
-	"github.com/0xSplits/kayron/pkg/schema/specification"
+	"github.com/0xSplits/kayron/pkg/release/loader"
+	"github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/xh3b4sd/tracer"
@@ -20,7 +20,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 		sys = afero.NewReadOnlyFs(afero.NewOsFs())
 	}
 
-	var sch specification.Schemas
+	var sch schema.Schema
 	{
 		sch, err = loader.Loader(sys, r.flag.Pat)
 		if err != nil {
