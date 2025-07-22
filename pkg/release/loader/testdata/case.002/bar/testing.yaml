@@ -1,0 +1,4 @@
+- docker: "server"
+  github: "server"
+  deploy:
+    branch: "feature"
