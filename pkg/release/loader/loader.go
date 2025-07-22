@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/0xSplits/kayron/pkg/release/schema"
-	specification "github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	yaml "github.com/goccy/go-yaml"
 	"github.com/spf13/afero"
@@ -17,7 +16,7 @@ import (
 // inspected and their content is unmarshalled into slices of service.Service
 // types. An error is returned if walking, reading or unmarshalling fails.
 func Loader(sys afero.Fs, roo string) (schema.Schema, error) {
-	var sch specification.Schema
+	var sch schema.Schema
 
 	fnc := func(pat string, fil fs.FileInfo, err error) error {
 		{
