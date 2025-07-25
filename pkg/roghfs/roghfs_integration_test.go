@@ -27,7 +27,7 @@ func Test_Roghfs_Integration(t *testing.T) {
 		gfs = New(Config{
 			Bas: afero.NewMemMapFs(),
 			Git: github.NewClient(nil).WithAuthToken(musTok()),
-			Org: "0xSplits",
+			Own: "0xSplits",
 			Rep: "kayron",
 			Ref: "d2f2a18b998172039c6f2a325d4c83de20819e3e", // setup project structure for prototype (#1)
 		})

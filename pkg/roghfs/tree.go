@@ -42,7 +42,7 @@ func (r *Roghfs) tree() error {
 	//
 	var tre *github.Tree
 	{
-		tre, _, err = r.git.Git.GetTree(context.Background(), r.org, r.rep, r.ref, true)
+		tre, _, err = r.git.Git.GetTree(context.Background(), r.own, r.rep, r.ref, true)
 		if err != nil {
 			return tracer.Mask(err)
 		}
