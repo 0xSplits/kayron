@@ -9,7 +9,7 @@ import (
 var releaseNotFoundError = &tracer.Error{
 	Description: "This critical error indicates that neither a production branch nor a Github release exists for the production environment.",
 	Context: []tracer.Context{
-		{Key: "suggestions", Value: "create either a production branch or a Github release for the production environment"},
+		{Key: "suggestion", Value: "create either a production branch or a Github release for the production environment"},
 	},
 }
 

@@ -24,6 +24,16 @@ func (h *Handler) Ensure() error {
 		}
 	}
 
+	{
+		h.log.Log(
+			"level", "debug",
+			"message", "resolved ref for github repository",
+			"environment", h.env.Environment,
+			"repository", h.env.ReleaseSource,
+			"ref", ref,
+		)
+	}
+
 	// On every loop, create a new Read Only GitHub File System, to fetch the
 	// latest version of the releases repository. It is important to create a new
 	// base file system every time we want to refresh our view of the watched
