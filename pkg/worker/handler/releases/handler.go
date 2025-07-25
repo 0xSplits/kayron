@@ -1,3 +1,7 @@
+// Package releases implements the source worker handler that caches all
+// relevant release settings for further use across the operator's handler
+// chain. See e.g. https://github.com/0xSplits/releases for a reference remote
+// Github repository.
 package releases
 
 import (

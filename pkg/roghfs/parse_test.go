@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_Parse_failure(t *testing.T) {
+func Test_Roghfs_Parse_failure(t *testing.T) {
 	testCases := []struct {
 		str string
 		mat func(error) bool
@@ -77,7 +77,7 @@ func Test_Parse_failure(t *testing.T) {
 	}
 }
 
-func Test_Parse_success(t *testing.T) {
+func Test_Roghfs_Parse_success(t *testing.T) {
 	testCases := []struct {
 		str string
 		own string
