@@ -22,7 +22,7 @@ func (r *Roghfs) search(pat string) ([]byte, error) {
 
 	var rea io.ReadCloser
 	{
-		rea, _, err = r.git.Repositories.DownloadContents(context.Background(), r.org, r.rep, pat, opt)
+		rea, _, err = r.git.Repositories.DownloadContents(context.Background(), r.own, r.rep, pat, opt)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}

@@ -2,7 +2,7 @@
 # Do not edit. This file was generated via the "workflow" command line tool.
 # More information about the tool can be found at github.com/xh3b4sd/workflow.
 #
-#     workflow create releasego --linker-path pkg/runtime
+#     workflow create releasego
 #
 
 name: "go-release"

@@ -26,9 +26,9 @@ type Config struct {
 	// repository source files.
 	Git *github.Client
 
-	// Org is the name of the Github organization that owns the repository to read
+	// Own is the name of the Github organization that owns the repository to read
 	// from.
-	Org string
+	Own string
 
 	// Rep is the name of the Github repository to read from.
 	Rep string
@@ -41,7 +41,7 @@ type Config struct {
 type Roghfs struct {
 	bas afero.Fs
 	git *github.Client
-	org string
+	own string
 	rep string
 	ref string
 
@@ -73,8 +73,8 @@ func New(c Config) *Roghfs {
 	if c.Git == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Git must not be empty", c)))
 	}
-	if c.Org == "" {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Org must not be empty", c)))
+	if c.Own == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Own must not be empty", c)))
 	}
 	if c.Rep == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Rep must not be empty", c)))
@@ -86,7 +86,7 @@ func New(c Config) *Roghfs {
 	return &Roghfs{
 		bas: c.Bas,
 		git: c.Git,
-		org: c.Org,
+		own: c.Own,
 		rep: c.Rep,
 		ref: c.Ref,
 

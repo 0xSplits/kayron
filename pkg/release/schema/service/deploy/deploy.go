@@ -21,6 +21,26 @@ func (s Struct) Empty() bool {
 	return s.Branch.Empty() && s.Release.Empty() && s.Suspend.Empty() && s.Webhook.Empty()
 }
 
+func (s Struct) String() string {
+	if !s.Branch.Empty() {
+		return s.Branch.String()
+	}
+
+	if !s.Release.Empty() {
+		return s.Release.String()
+	}
+
+	if !s.Suspend.Empty() {
+		return s.Suspend.String()
+	}
+
+	if !s.Webhook.Empty() {
+		return s.Webhook.String()
+	}
+
+	return ""
+}
+
 func (s Struct) Verify() error {
 	// Reject deployment configurations that define more than one strategy.
 	{

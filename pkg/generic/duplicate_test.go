@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"slices"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func Test_Generic_Duplicate_string(t *testing.T) {
@@ -76,8 +78,8 @@ func Test_Generic_Duplicate_string(t *testing.T) {
 			slices.Sort(dup)
 			slices.Sort(tc.dup)
 
-			if !slices.Equal(dup, tc.dup) {
-				t.Fatal("expected", tc.dup, "got", dup)
+			if dif := cmp.Diff(tc.dup, dup); dif != "" {
+				t.Fatalf("-expected +actual:\n%s", dif)
 			}
 		})
 	}
@@ -153,8 +155,8 @@ func Test_Generic_Duplicate_int64(t *testing.T) {
 			slices.Sort(dup)
 			slices.Sort(tc.dup)
 
-			if !slices.Equal(dup, tc.dup) {
-				t.Fatal("expected", tc.dup, "got", dup)
+			if dif := cmp.Diff(tc.dup, dup); dif != "" {
+				t.Fatalf("-expected +actual:\n%s", dif)
 			}
 		})
 	}
