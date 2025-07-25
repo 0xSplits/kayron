@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/0xSplits/otelgo v0.1.0
-	github.com/0xSplits/workit v0.2.0
+	github.com/0xSplits/workit v0.3.0
 	github.com/aws/aws-sdk-go-v2 v1.36.6
 	github.com/aws/aws-sdk-go-v2/config v1.29.18
 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.61.1
