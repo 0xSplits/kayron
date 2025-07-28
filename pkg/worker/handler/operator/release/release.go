@@ -1,44 +1,50 @@
-// Package releases implements the source worker handler that caches all
-// relevant release settings for further use across the operator's handler
-// chain. See e.g. https://github.com/0xSplits/releases for a reference remote
-// Github repository.
-package releases
+// Package release implements the source business logic that caches all relevant
+// release settings for further use across the operator chain. See e.g.
+// https://github.com/0xSplits/releases for a reference remote Github
+// repository.
+package release
 
 import (
 	"fmt"
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
+	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/0xSplits/kayron/pkg/roghfs"
-	"github.com/0xSplits/kayron/pkg/worker/handler/releases/resolver"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release/resolver"
 	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
 
 type Config struct {
+	Art cache.Interface[int, artifact.Artifact]
 	Env envvar.Env
 	Log logger.Interface
-	Rel cache.Interface[int, service.Service]
+	Ser cache.Interface[int, service.Service]
 }
 
-type Handler struct {
+type Release struct {
+	art cache.Interface[int, artifact.Artifact]
 	env envvar.Env
 	git *github.Client
 	log logger.Interface
 	own string
 	rep string
-	rel cache.Interface[int, service.Service]
 	res resolver.Interface
+	ser cache.Interface[int, service.Service]
 }
 
-func New(c Config) *Handler {
+func New(c Config) *Release {
+	if c.Art == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
+	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}
-	if c.Rel == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Rel must not be empty", c)))
+	if c.Ser == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ser must not be empty", c)))
 	}
 
 	var err error
@@ -66,13 +72,14 @@ func New(c Config) *Handler {
 		})
 	}
 
-	return &Handler{
+	return &Release{
+		art: c.Art,
 		env: c.Env,
 		git: git,
 		log: c.Log,
 		own: own,
 		rep: rep,
-		rel: c.Rel,
 		res: res,
+		ser: c.Ser,
 	}
 }

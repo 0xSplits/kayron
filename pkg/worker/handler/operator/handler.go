@@ -3,12 +3,14 @@ package operator
 import (
 	"fmt"
 
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/otelgo/recorder"
+	"github.com/0xSplits/kayron/pkg/release/artifact"
+	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/reference"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release"
 	"github.com/0xSplits/otelgo/registry"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
-	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 	"go.opentelemetry.io/otel/metric"
@@ -26,11 +28,10 @@ type Config struct {
 }
 
 type Handler struct {
-	acf *cloudformation.Client
-	env envvar.Env
-	git *github.Client
 	log logger.Interface
+	ref *reference.Reference
 	reg registry.Interface
+	rel *release.Release
 }
 
 func New(c Config) *Handler {
@@ -44,40 +45,42 @@ func New(c Config) *Handler {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Met must not be empty", c)))
 	}
 
-	cou := map[string]recorder.Interface{}
-
-	gau := map[string]recorder.Interface{}
-
-	{
-		gau[Metric] = recorder.NewGauge(recorder.GaugeConfig{
-			Des: "the timestamp of a deployment event for the released service",
-			Lab: map[string][]string{
-				"service": {"kayron", "server", "specta"},
-			},
-			Met: c.Met,
-			Nam: Metric,
-		})
-	}
-
-	his := map[string]recorder.Interface{}
-
 	var reg registry.Interface
 	{
-		reg = registry.New(registry.Config{
-			Env: c.Env.Environment,
-			Log: c.Log,
+		reg = newRegistry(c.Env.Environment, c.Log, c.Met)
+	}
 
-			Cou: cou,
-			Gau: gau,
-			His: his,
-		})
+	// The cache implementations used here are the dumb pipes connecting our
+	// business logic across different boundary conditions by providing critical
+	// information required to make the entire operator chain work as expected.
+	// The operator's worker handler is executed iteratively all the time, but the
+	// real work may only be done if the cached information provided deeper down
+	// the stack is sufficient. E.g. an empty cache result may cause some business
+	// logic to be skipped temporarily. Note that the cache keys setup here are
+	// cross references to the respective cache values within the various cache
+	// implementations.
+
+	var art cache.Interface[int, artifact.Artifact]
+	{
+		art = cache.New[int, artifact.Artifact]()
+	}
+
+	var ser cache.Interface[int, service.Service]
+	{
+		ser = cache.New[int, service.Service]()
+	}
+
+	var ref *reference.Reference
+	var rel *release.Release
+	{
+		ref = reference.New(reference.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
+		rel = release.New(release.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 	}
 
 	return &Handler{
-		acf: cloudformation.NewFromConfig(c.Aws),
-		env: c.Env,
-		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
+		ref: ref,
 		reg: reg,
+		rel: rel,
 	}
 }

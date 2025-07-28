@@ -1,15 +1,16 @@
-package releases
+package release
 
 import (
+	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/0xSplits/kayron/pkg/roghfs"
-	"github.com/0xSplits/kayron/pkg/worker/handler/releases/resolver"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release/resolver"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )
 
-func (h *Handler) Ensure() error {
+func (r *Release) Ensure() error {
 	var err error
 
 	// Figure out which Git ref to look at when fetching release information. See
@@ -18,18 +19,18 @@ func (h *Handler) Ensure() error {
 
 	var ref string
 	{
-		ref, err = resolver.Search(h.res, h.env.Environment)
+		ref, err = resolver.Search(r.res, r.env.Environment)
 		if err != nil {
 			return tracer.Mask(err)
 		}
 	}
 
 	{
-		h.log.Log(
+		r.log.Log(
 			"level", "debug",
 			"message", "resolved ref for github repository",
-			"environment", h.env.Environment,
-			"repository", h.env.ReleaseSource,
+			"environment", r.env.Environment,
+			"repository", r.env.ReleaseSource,
 			"ref", ref,
 		)
 	}
@@ -44,9 +45,9 @@ func (h *Handler) Ensure() error {
 	{
 		gfs = roghfs.New(roghfs.Config{
 			Bas: afero.NewMemMapFs(),
-			Git: h.git,
-			Own: h.own,
-			Rep: h.rep,
+			Git: r.git,
+			Own: r.own,
+			Rep: r.rep,
 			Ref: ref,
 		})
 	}
@@ -71,24 +72,26 @@ func (h *Handler) Ensure() error {
 		}
 	}
 
-	// Cache all configured releases so that the cache key is the service index of
-	// our schema list. That way other worker handlers can iterate over all cached
-	// release settings like shown below. The first return value is the service
-	// definition containing the respective release information. And the second
-	// return value indicates whether the cache key exists, which should always be
-	// true if any service release was cached in the first place.
+	// Setup the artifact and release caches for all configured services so that
+	// the cache key is the service index across all caches. That way, the
+	// following business logic can iterate over all cached artifact and release
+	// settings like shown below. The first return value is the respective cache
+	// value, and the second return value indicates whether the cache key exists,
+	// which should always be true.
 	//
-	//     for i := range cache.Length() {
-	//       ser, exi := cache.Search(i)
+	//     for i := range r.art.Length() {
+	//       art, _ := r.art.Search(i)
+	//       ser, _ := r.ser.Search(i)
 	//     }
 	//
 
 	for i, x := range sch.Service {
 		{
-			h.rel.Create(i, x)
+			r.art.Create(i, artifact.Artifact{})
+			r.ser.Create(i, x)
 		}
 
-		h.log.Log(
+		r.log.Log(
 			"level", "debug",
 			"message", "cached service release",
 			"github", x.Github.String(),
