@@ -1,4 +1,4 @@
-package github
+package webhook
 
 type String string
 
