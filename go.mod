@@ -59,3 +59,5 @@ require (
 	golang.org/x/text v0.27.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
+
+replace github.com/xh3b4sd/choreo => ../../xh3b4sd/choreo/

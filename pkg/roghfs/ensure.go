@@ -21,11 +21,11 @@ func (r *Roghfs) ensure(pat string) error {
 	}
 
 	// Bootstrap the entire file system tree according to the configured remote
-	// Github repository, but only if we have not initialized before. This ensures
-	// that we traverse the entire repository tree only one time, while only
-	// making a single network call.
+	// Github repository, but only if we have not initialized it successfully
+	// before. This ensures that we traverse the entire repository tree only one
+	// time, while only making a single network call.
 	{
-		err = r.tree()
+		err = r.mut.Success(r.tree)
 		if err != nil {
 			return tracer.Mask(err)
 		}
