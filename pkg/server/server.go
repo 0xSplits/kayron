@@ -8,14 +8,11 @@ import (
 	"github.com/0xSplits/kayron/pkg/runtime"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/twitchtv/twirp"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
 
 type Config struct {
-	// Int are the Twirp specific interceptors wrapping the endpoint handlers.
-	Int []twirp.Interceptor
 	// Lis is the main HTTP listener bound to some configured host and port.
 	Lis net.Listener
 	// Log is the structured logger passed down the stack.
