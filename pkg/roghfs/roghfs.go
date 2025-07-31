@@ -9,11 +9,11 @@ package roghfs
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/google/go-github/v73/github"
 	"github.com/spf13/afero"
+	"github.com/xh3b4sd/choreo/success"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -54,16 +54,11 @@ type Roghfs struct {
 	// So this cache tells us which files we already downloaded.
 	cac cache.Interface[string, struct{}]
 
-	// ini expresses whether the file structure of the remote Github repository
-	// was already successfully initialized within the injected base file system.
-	// This inital flag is sznchronized using the mutex below.
-	ini bool
-
-	// mut is a concurrency helper used to sznchronize the initialization of the
+	// mut is a concurrency helper used to synchronize the initialization of the
 	// entire repository file structure inside the injected base file system, so
 	// that we can ensure to only call the Github API exactly one time for that
 	// particular setup task.
-	mut sync.Mutex
+	mut *success.Mutex
 }
 
 func New(c Config) *Roghfs {
@@ -91,7 +86,6 @@ func New(c Config) *Roghfs {
 		ref: c.Ref,
 
 		cac: cache.New[string, struct{}](),
-		ini: false,
-		mut: sync.Mutex{},
+		mut: success.New(success.Config{}),
 	}
 }

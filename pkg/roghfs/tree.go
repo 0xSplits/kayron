@@ -12,27 +12,6 @@ import (
 func (r *Roghfs) tree() error {
 	var err error
 
-	// Snynchronize calls to tree() exclusively so that we control the
-	// initialization path.
-	{
-		r.mut.Lock()
-	}
-
-	// If we already initialized, unlock and return early. The only performance
-	// cost for us is to lock and unlock on every file read, which, given the
-	// problem domain that we are solving for, should not be an issue.
-	if r.ini {
-		r.mut.Unlock()
-		return nil
-	}
-
-	// Defer the unlock if we are initializing. This code path is only executed
-	// once, so that the extra cost of defer() is not accumulating during normal
-	// use after initialization.
-	{
-		defer r.mut.Unlock()
-	}
-
 	// Get the tree structure of the configured remote Github repository
 	// recursively in a single network call. Note that this limit for the tree
 	// array is 100,000 entries with a maximum size of 7 MB when using the
@@ -74,12 +53,6 @@ func (r *Roghfs) tree() error {
 				return tracer.Mask(err)
 			}
 		}
-	}
-
-	// Signal the completeness of initialization internally, so that consecutive
-	// calls of tree() do not make network calls anymore.
-	{
-		r.ini = true
 	}
 
 	return nil
