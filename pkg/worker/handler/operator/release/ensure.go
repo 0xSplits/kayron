@@ -1,6 +1,8 @@
 package release
 
 import (
+	"fmt"
+
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/0xSplits/kayron/pkg/roghfs"
@@ -94,6 +96,7 @@ func (r *Release) Ensure() error {
 			"docker", x.Docker.String(),
 			"github", x.Github.String(),
 			"deploy", x.Deploy.String(),
+			"artifact", fmt.Sprintf("[%d]", i),
 		)
 	}
 

@@ -2,7 +2,6 @@ package reference
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
@@ -40,10 +39,27 @@ func (r *Reference) Ensure() error {
 			return tracer.Mask(err)
 		}
 
-		if ref != "" {
-			fmt.Printf("%#v %#v\n", artifact.ReferenceDesired(i), ref) // TODO emit proper logs
-			r.art.Update(artifact.ReferenceDesired(i), ref)
+		if ref == "" {
+			return nil
 		}
+
+		var key string
+		{
+			key = artifact.ReferenceDesired(i)
+		}
+
+		{
+			r.art.Update(key, ref)
+		}
+
+		r.log.Log(
+			"level", "debug",
+			"message", "cached desired state",
+			"docker", x.Docker.String(),
+			"github", x.Github.String(),
+			"artifact", key,
+			"desired", ref,
+		)
 
 		return nil
 	}

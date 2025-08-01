@@ -1,8 +1,6 @@
 package container
 
 import (
-	"fmt"
-
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/xh3b4sd/tracer"
@@ -46,10 +44,27 @@ func (c *Container) Ensure() error {
 			tag = curTag(ima, s.Docker.String())
 		}
 
-		if tag != "" {
-			fmt.Printf("%#v %#v\n", artifact.ReferenceCurrent(i), tag) // TODO emit proper logs
-			c.art.Update(artifact.ReferenceCurrent(i), tag)
+		if tag == "" {
+			continue
 		}
+
+		var key string
+		{
+			key = artifact.ReferenceCurrent(i)
+		}
+
+		{
+			c.art.Update(key, tag)
+		}
+
+		c.log.Log(
+			"level", "debug",
+			"message", "cached current state",
+			"docker", s.Docker.String(),
+			"github", s.Github.String(),
+			"artifact", key,
+			"current", tag,
+		)
 	}
 
 	return nil
