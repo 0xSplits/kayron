@@ -5,8 +5,8 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/container"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/reference"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release"
 	"github.com/0xSplits/otelgo/registry"
@@ -28,6 +28,7 @@ type Config struct {
 }
 
 type Handler struct {
+	con *container.Container
 	log logger.Interface
 	ref *reference.Reference
 	reg registry.Interface
@@ -60,9 +61,9 @@ func New(c Config) *Handler {
 	// cross references to the respective cache values within the various cache
 	// implementations.
 
-	var art cache.Interface[int, artifact.Artifact]
+	var art cache.Interface[string, string]
 	{
-		art = cache.New[int, artifact.Artifact]()
+		art = cache.New[string, string]()
 	}
 
 	var ser cache.Interface[int, service.Service]
@@ -70,14 +71,17 @@ func New(c Config) *Handler {
 		ser = cache.New[int, service.Service]()
 	}
 
+	var con *container.Container
 	var ref *reference.Reference
 	var rel *release.Release
 	{
+		con = container.New(container.Config{Aws: c.Aws, Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 		ref = reference.New(reference.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 		rel = release.New(release.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 	}
 
 	return &Handler{
+		con: con,
 		log: c.Log,
 		ref: ref,
 		reg: reg,
