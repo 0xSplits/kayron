@@ -23,6 +23,9 @@ type image struct {
 func (c *Container) image(tas []task) ([]image, error) {
 	var err error
 
+	// Setup an image slice equivalent to the amount of injected tasks, so that we
+	// can run the lookups below in parallel.
+
 	var ima []image
 	{
 		ima = make([]image, len(tas))
@@ -49,6 +52,9 @@ func (c *Container) image(tas []task) ([]image, error) {
 			if err != nil {
 				return tracer.Mask(err)
 			}
+
+			// Updating the image tag concurrently is safe because every callback is
+			// only responsible for their own execution index within the image slice.
 
 			ima[i] = image{
 				ser: t.ser,

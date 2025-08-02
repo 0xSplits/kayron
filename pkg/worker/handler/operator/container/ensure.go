@@ -1,13 +1,13 @@
 package container
 
 import (
-	"github.com/0xSplits/kayron/pkg/release/artifact"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (c *Container) Ensure() error {
 	var err error
+
+	// Fetch some details about the ECS services currently running in AWS.
 
 	var det []detail
 	{
@@ -17,6 +17,9 @@ func (c *Container) Ensure() error {
 		}
 	}
 
+	// Fetch the ECS tasks associated to the running ECS services so that we can
+	// inspect their container images.
+
 	var tas []task
 	{
 		tas, err = c.task(det)
@@ -24,6 +27,8 @@ func (c *Container) Ensure() error {
 			return tracer.Mask(err)
 		}
 	}
+
+	// Find the Docker image tags based on the given ECS tasks.
 
 	var ima []image
 	{
@@ -33,49 +38,12 @@ func (c *Container) Ensure() error {
 		}
 	}
 
-	for i := range c.ser.Length() {
-		var s service.Service
-		{
-			s, _ = c.ser.Search(i)
-		}
+	// Cache the current state of the configured service releases in terms of
+	// their currently deployed version.
 
-		var tag string
-		{
-			tag = curTag(ima, s.Docker.String())
-		}
-
-		if tag == "" {
-			continue
-		}
-
-		var key string
-		{
-			key = artifact.ReferenceCurrent(i)
-		}
-
-		{
-			c.art.Update(key, tag)
-		}
-
-		c.log.Log(
-			"level", "debug",
-			"message", "cached current state",
-			"docker", s.Docker.String(),
-			"github", s.Github.String(),
-			"artifact", key,
-			"current", tag,
-		)
+	{
+		c.cache(ima)
 	}
 
 	return nil
-}
-
-func curTag(ima []image, ser string) string {
-	for _, x := range ima {
-		if x.ser == ser {
-			return x.tag
-		}
-	}
-
-	return ""
 }
