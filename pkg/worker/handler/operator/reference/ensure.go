@@ -12,36 +12,54 @@ import (
 func (r *Reference) Ensure() error {
 	var err error
 
-	// Get the list of cached service releases and release artifacts, so that we
-	// can lookup the artifact references concurrently, if necessary.
+	// Get the list of cached service releases so that we can lookup their
+	// respective artifact references concurrently, if necessary.
 
-	var art []artifact.Artifact
 	var ser []service.Service
-	for i := range r.art.Length() {
-		var a artifact.Artifact
+	for i := range r.ser.Length() {
 		var s service.Service
 		{
-			a, _ = r.art.Search(i)
 			s, _ = r.ser.Search(i)
 		}
 
 		{
-			art = append(art, a)
 			ser = append(ser, s)
 		}
 	}
 
 	// Find the reference for every branch deployment strategy. The concurrently
 	// executed function below prevents network calls for every service that does
-	// not define a branch deployment strategy.
+	// not define a branch deployment strategy. Note that we can update the
+	// indexed cache keys concurrently, because we are only ever updating cache
+	// leafs, which is to say non-nested data structures.
 
 	fnc := func(i int, x service.Service) error {
-		var err error
-
-		art[i].Reference.Desired, err = r.desRef(x)
+		ref, err := r.desRef(x)
 		if err != nil {
 			return tracer.Mask(err)
 		}
+
+		if ref == "" {
+			return nil
+		}
+
+		var key string
+		{
+			key = artifact.ReferenceDesired(i)
+		}
+
+		{
+			r.art.Update(key, ref)
+		}
+
+		r.log.Log(
+			"level", "debug",
+			"message", "cached desired state",
+			"docker", x.Docker.String(),
+			"github", x.Github.String(),
+			"artifact", key,
+			"desired", ref,
+		)
 
 		return nil
 	}

@@ -1,7 +1,8 @@
 package release
 
 import (
-	"github.com/0xSplits/kayron/pkg/release/artifact"
+	"fmt"
+
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/0xSplits/kayron/pkg/roghfs"
@@ -72,30 +73,30 @@ func (r *Release) Ensure() error {
 		}
 	}
 
-	// Setup the artifact and release caches for all configured services so that
-	// the cache key is the service index across all caches. That way, the
+	// Create the release cache for all configured services so that the cache key
+	// aligns with its respective service index across all caches. That way, the
 	// following business logic can iterate over all cached artifact and release
 	// settings like shown below. The first return value is the respective cache
 	// value, and the second return value indicates whether the cache key exists,
-	// which should always be true.
+	// which should always be true on idiomatic iteration.
 	//
-	//     for i := range r.art.Length() {
-	//       art, _ := r.art.Search(i)
+	//     for i := range r.ser.Length() {
 	//       ser, _ := r.ser.Search(i)
 	//     }
 	//
 
 	for i, x := range sch.Service {
 		{
-			r.art.Create(i, artifact.Artifact{})
 			r.ser.Create(i, x)
 		}
 
 		r.log.Log(
 			"level", "debug",
 			"message", "cached service release",
+			"docker", x.Docker.String(),
 			"github", x.Github.String(),
 			"deploy", x.Deploy.String(),
+			"artifact", fmt.Sprintf("[%d]", i),
 		)
 	}
 

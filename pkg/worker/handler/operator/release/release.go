@@ -9,7 +9,6 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/0xSplits/kayron/pkg/roghfs"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release/resolver"
@@ -19,14 +18,14 @@ import (
 )
 
 type Config struct {
-	Art cache.Interface[int, artifact.Artifact]
+	Art cache.Interface[string, string]
 	Env envvar.Env
 	Log logger.Interface
 	Ser cache.Interface[int, service.Service]
 }
 
 type Release struct {
-	art cache.Interface[int, artifact.Artifact]
+	art cache.Interface[string, string]
 	env envvar.Env
 	git *github.Client
 	log logger.Interface
