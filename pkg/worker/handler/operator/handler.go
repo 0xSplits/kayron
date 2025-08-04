@@ -8,6 +8,8 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/cloudformation"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/container"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/infrastructure"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/policy"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/reference"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/registry"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release"
@@ -27,7 +29,9 @@ type Config struct {
 type Handler struct {
 	clo *cloudformation.CloudFormation
 	con *container.Container
+	inf *infrastructure.Infrastructure
 	log logger.Interface
+	pol *policy.Policy
 	ref *reference.Reference
 	reg *registry.Registry
 	rel *release.Release
@@ -66,12 +70,16 @@ func New(c Config) *Handler {
 
 	var clo *cloudformation.CloudFormation
 	var con *container.Container
+	var inf *infrastructure.Infrastructure
+	var pol *policy.Policy
 	var ref *reference.Reference
 	var rel *release.Release
 	var reg *registry.Registry
 	{
 		clo = cloudformation.New(cloudformation.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Met: c.Met, Ser: ser})
 		con = container.New(container.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Ser: ser})
+		inf = infrastructure.New(infrastructure.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
+		pol = policy.New(policy.Config{Art: art, Log: c.Log, Ser: ser})
 		ref = reference.New(reference.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 		rel = release.New(release.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 		reg = registry.New(registry.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Ser: ser})
@@ -80,7 +88,9 @@ func New(c Config) *Handler {
 	return &Handler{
 		clo: clo,
 		con: con,
+		inf: inf,
 		log: c.Log,
+		pol: pol,
 		ref: ref,
 		reg: reg,
 		rel: rel,
