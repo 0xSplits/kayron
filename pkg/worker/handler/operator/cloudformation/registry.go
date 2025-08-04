@@ -1,4 +1,4 @@
-package operator
+package cloudformation
 
 import (
 	"github.com/0xSplits/otelgo/recorder"

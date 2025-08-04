@@ -6,18 +6,15 @@ import (
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/cloudformation"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/container"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/reference"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/registry"
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release"
-	"github.com/0xSplits/otelgo/registry"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 	"go.opentelemetry.io/otel/metric"
-)
-
-const (
-	Metric = "deployment_event"
 )
 
 type Config struct {
@@ -28,10 +25,11 @@ type Config struct {
 }
 
 type Handler struct {
+	clo *cloudformation.CloudFormation
 	con *container.Container
 	log logger.Interface
 	ref *reference.Reference
-	reg registry.Interface
+	reg *registry.Registry
 	rel *release.Release
 }
 
@@ -44,11 +42,6 @@ func New(c Config) *Handler {
 	}
 	if c.Met == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Met must not be empty", c)))
-	}
-
-	var reg registry.Interface
-	{
-		reg = newRegistry(c.Env.Environment, c.Log, c.Met)
 	}
 
 	// The cache implementations used here are the dumb pipes connecting our
@@ -71,16 +64,21 @@ func New(c Config) *Handler {
 		ser = cache.New[int, service.Service]()
 	}
 
+	var clo *cloudformation.CloudFormation
 	var con *container.Container
 	var ref *reference.Reference
 	var rel *release.Release
+	var reg *registry.Registry
 	{
-		con = container.New(container.Config{Aws: c.Aws, Art: art, Env: c.Env, Log: c.Log, Ser: ser})
+		clo = cloudformation.New(cloudformation.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Met: c.Met, Ser: ser})
+		con = container.New(container.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Ser: ser})
 		ref = reference.New(reference.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 		rel = release.New(release.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
+		reg = registry.New(registry.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Ser: ser})
 	}
 
 	return &Handler{
+		clo: clo,
 		con: con,
 		log: c.Log,
 		ref: ref,
