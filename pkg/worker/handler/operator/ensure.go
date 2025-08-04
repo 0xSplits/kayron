@@ -29,10 +29,6 @@ func (h *Handler) Ensure() error {
 	//        branch deployment strategy. This populates the DESIRED state of the
 	//        artifact reference.
 	//
-	//     3. TODO fetch existing image tags from configured Docker registry
-	//
-	//     4. TODO fetch existing cloudformation templates from infrastructure repo
-	//
 
 	{
 		err = parallel.Func(h.con.Ensure, h.ref.Ensure)
@@ -41,12 +37,30 @@ func (h *Handler) Ensure() error {
 		}
 	}
 
-	// TODO
+	// Once the current and desired states of the runnable service releases are
+	// known, we can run the next steps in parallel too. Additionally, we only
+	// need to do real work in those following steps, if we recognize any state
+	// drift.
 	//
-	//     check for drift
-	//     apply update, if any
-	//     emit deployment event, if updated
+	//     1. Check whether those ECR image tags exist that are specified in the
+	//        desired state of any given service release.
 	//
+	//     2. TODO fetch existing cloudformation templates from infrastructure repo
+	//
+
+	{
+		err = parallel.Func(h.reg.Ensure /* , h.inf.Ensure */)
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	{
+		err = h.clo.Ensure() // TODO add business logic
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
 
 	return nil
 }
