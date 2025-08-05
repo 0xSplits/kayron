@@ -1,6 +1,6 @@
 // Package release implements the source business logic that caches all relevant
-// release settings for further use across the operator chain. See e.g.
-// https://github.com/0xSplits/releases for a reference remote Github
+// service release settings for further use across the operator chain. See e.g.
+// https://github.com/0xSplits/releases for a reference of the remote Github
 // repository.
 package release
 

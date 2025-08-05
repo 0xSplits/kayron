@@ -2,7 +2,9 @@ package resolver
 
 import (
 	"errors"
+	"net/http"
 
+	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -15,4 +17,16 @@ var releaseNotFoundError = &tracer.Error{
 
 func IsReleaseNotFound(err error) bool {
 	return errors.Is(err, releaseNotFoundError)
+}
+
+//
+//
+//
+
+func isNotFound(res *github.Response) bool {
+	if res == nil {
+		return false
+	}
+
+	return res.StatusCode == http.StatusNotFound || res.StatusCode == http.StatusUnprocessableEntity
 }
