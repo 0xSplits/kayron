@@ -8,9 +8,12 @@
 package roghfs
 
 import (
+	"encoding/hex"
 	"fmt"
+	"strings"
 
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/v73/github"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/choreo/success"
@@ -33,8 +36,10 @@ type Config struct {
 	// Rep is the name of the Github repository to read from.
 	Rep string
 
-	// Ref is the Git specific branch, tag, or commit. The reserved value "HEAD"
-	// can be provided for the latest commit.
+	// Ref is the Git specific release tag or commit sha, in order to guarantee
+	// consistent file system reads across time. Branch names are invalid, and the
+	// reserved value "HEAD" must not be provided either, because those transitive
+	// references may point to changing tree states eventually.
 	Ref string
 }
 
@@ -74,8 +79,8 @@ func New(c Config) *Roghfs {
 	if c.Rep == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Rep must not be empty", c)))
 	}
-	if c.Ref == "" {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ref must not be empty", c)))
+	if !valRef(c.Ref) {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ref must be sha or tag", c)))
 	}
 
 	return &Roghfs{
@@ -88,4 +93,26 @@ func New(c Config) *Roghfs {
 		cac: cache.New[string, struct{}](),
 		mut: success.New(success.Config{}),
 	}
+}
+
+func valRef(ref string) bool {
+	return musHex(ref) || musSem(ref)
+}
+
+func musHex(ref string) bool {
+	if len(ref) != 40 {
+		return false
+	}
+
+	_, err := hex.DecodeString(ref)
+	return err == nil
+}
+
+func musSem(ref string) bool {
+	if !strings.HasPrefix(ref, "v") {
+		return false
+	}
+
+	_, err := semver.NewVersion(ref)
+	return err == nil
 }

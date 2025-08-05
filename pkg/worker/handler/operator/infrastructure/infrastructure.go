@@ -1,8 +1,4 @@
-// Package release implements the source business logic that caches all relevant
-// service release settings for further use across the operator chain. See e.g.
-// https://github.com/0xSplits/releases for a reference of the remote Github
-// repository.
-package release
+package infrastructure
 
 import (
 	"fmt"
@@ -11,33 +7,43 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/0xSplits/kayron/pkg/roghfs"
-	"github.com/0xSplits/kayron/pkg/worker/handler/operator/release/resolver"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
 
+const (
+	Bucket     = "splits-cf-templates"
+	Directory  = "cloudformation"
+	Repository = "infrastructure"
+)
+
 type Config struct {
 	Art cache.Interface[string, string]
+	Aws aws.Config
 	Env envvar.Env
 	Log logger.Interface
 	Ser cache.Interface[int, service.Service]
 }
 
-type Release struct {
+type Infrastructure struct {
 	art cache.Interface[string, string]
-	env envvar.Env
+	as3 *s3.Client
+	env string
 	git *github.Client
 	log logger.Interface
 	own string
-	rep string
-	res resolver.Interface
 	ser cache.Interface[int, service.Service]
 }
 
-func New(c Config) *Release {
+func New(c Config) *Infrastructure {
 	if c.Art == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
+	}
+	if c.Aws.Region == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
 	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
@@ -48,37 +54,21 @@ func New(c Config) *Release {
 
 	var err error
 
-	var git *github.Client
-	{
-		git = github.NewClient(nil).WithAuthToken(c.Env.GithubToken)
-	}
-
 	var own string
-	var rep string
 	{
-		own, rep, err = roghfs.Parse(c.Env.ReleaseSource)
+		own, _, err = roghfs.Parse(c.Env.ReleaseSource)
 		if err != nil {
 			tracer.Panic(tracer.Mask(err))
 		}
 	}
 
-	var res resolver.Interface
-	{
-		res = resolver.New(resolver.Config{
-			Git: git,
-			Own: own,
-			Rep: rep,
-		})
-	}
-
-	return &Release{
+	return &Infrastructure{
 		art: c.Art,
-		env: c.Env,
-		git: git,
+		as3: s3.NewFromConfig(c.Aws),
+		env: c.Env.Environment,
+		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
 		own: own,
-		rep: rep,
-		res: res,
 		ser: c.Ser,
 	}
 }

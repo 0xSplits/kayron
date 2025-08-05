@@ -23,7 +23,7 @@ func (c *Container) cache(ima []image) {
 
 		var key string
 		{
-			key = artifact.ReferenceCurrent(i)
+			key = artifact.ContainerCurrent(i)
 		}
 
 		{

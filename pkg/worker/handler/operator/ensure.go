@@ -37,19 +37,38 @@ func (h *Handler) Ensure() error {
 		}
 	}
 
-	// Once the current and desired states of the runnable service releases are
-	// known, we can run the next steps in parallel too. Additionally, we only
-	// need to do real work in those following steps, if we recognize any state
-	// drift.
-	//
-	//     1. Check whether those ECR image tags exist that are specified in the
-	//        desired state of any given service release.
-	//
-	//     2. TODO fetch existing cloudformation templates from infrastructure repo
-	//
+	// Check whether those ECR image tags exist that are specified in the desired
+	// state of any given service release. We only need to do this for the service
+	// releases that have to get updated.
 
 	{
-		err = parallel.Func(h.reg.Ensure /* , h.inf.Ensure */)
+		err = h.reg.Ensure()
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	// Check whether we have any drift amongst our cached service releases. If we
+	// cannot detect any drift, then we do not have to do any more work during
+	// this particular reconciliation loop. Note that this policy implementation
+	// is a control flow primitive that should eventually be supported by our
+	// worker engine library.
+
+	{
+		err = h.pol.Ensure()
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	// Once the current and desired states of the runnable service releases are
+	// known to have drifted apart, we can fetch the current version of our
+	// cloudformation templates from the configured infrastructure repository. We
+	// only need to do this if there is at least one service release that has to
+	// get updated.
+
+	{
+		err = h.inf.Ensure()
 		if err != nil {
 			return tracer.Mask(err)
 		}

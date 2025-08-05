@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/0xSplits/kayron/pkg/worker/handler/operator"
+	"github.com/0xSplits/kayron/pkg/worker/handler/operator/policy"
 	"github.com/0xSplits/workit/handler"
 	"github.com/0xSplits/workit/worker"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -20,6 +21,7 @@ func (d *Daemon) Worker() *worker.Worker {
 
 	return worker.New(worker.Config{
 		Env: d.env.Environment,
+		Fil: policy.IsCancel,
 		Han: []handler.Interface{
 			operator.New(operator.Config{Aws: cfg, Env: d.env, Log: d.log, Met: d.met}),
 		},

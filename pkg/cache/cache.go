@@ -24,10 +24,18 @@ func (c *Cache[K, V]) Create(key K, val V) bool {
 	return exi
 }
 
-// Delete simply removes the given key from the typed cache. Delete uses a
-// write-lock via xsync.Map.Delete().
-func (c *Cache[K, V]) Delete(key K) {
-	c.cac.Delete(key)
+// Delete simply removes the given keys from the typed cache if at least one key
+// is explicitely provided. If the variadic argument remains empty, then Delete
+// purges all internal state from the underlying sync map. Delete uses a
+// write-lock via xsync.Map.Clear() or xsync.Map.Delete().
+func (c *Cache[K, V]) Delete(key ...K) {
+	for _, x := range key {
+		c.cac.Delete(x)
+	}
+
+	if len(key) == 0 {
+		c.cac.Clear()
+	}
 }
 
 // Exists returns whether the given key is already set. Exists uses

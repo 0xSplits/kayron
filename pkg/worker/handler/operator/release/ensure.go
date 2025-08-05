@@ -14,6 +14,17 @@ import (
 func (r *Release) Ensure() error {
 	var err error
 
+	// The release handler is the very first building block in our execution path.
+	// We get all chaches injected into this handler, and we have to make sure
+	// that every reconciliation loop starts with a blank slate. So before doing
+	// anything else, we have to purge all cache state by calling Delete without
+	// arguments.
+
+	{
+		r.art.Delete()
+		r.ser.Delete()
+	}
+
 	// Figure out which Git ref to look at when fetching release information. See
 	// the resolver documentation for the rules applied per environment. The
 	// current implementation supports multiple test environments.

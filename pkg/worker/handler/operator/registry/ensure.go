@@ -37,7 +37,7 @@ func (r *Registry) Ensure() error {
 		var cur string
 		var des string
 		{
-			cur, _ = r.art.Search(artifact.ReferenceCurrent(i))
+			cur, _ = r.art.Search(artifact.ContainerCurrent(i))
 			des, _ = r.art.Search(artifact.ReferenceDesired(i))
 		}
 
@@ -67,7 +67,7 @@ func (r *Registry) Ensure() error {
 		}
 
 		{
-			r.art.Update(artifact.ContainerExists(i), str)
+			r.art.Update(artifact.ContainerDesired(i), str)
 		}
 
 		r.log.Log(
@@ -103,6 +103,11 @@ func (r *Registry) imaExi(rep string, tag string) (bool, error) {
 			},
 		}
 	}
+
+	// Use the DescribeImages API to check whether any given image tag exists in
+	// ECR. If we get any error about the image repository or the image tag not
+	// existing, then we return false. All other errors need to be propagated back
+	// to the caller.
 
 	{
 		_, err = r.ecr.DescribeImages(context.Background(), inp)

@@ -4,40 +4,32 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-// Search determines the Git ref to use for the given environment. An empty ref
-// indicates to use the default branch, which is in line with the documented
-// behaviour of the official Github API.
+// Search determines the Git ref to use for the given environment. Search will
+// never return an empty ref, but instead resolve the SHA of the Git commit at
+// HEAD of the default branch.
 //
-//	production    use the "production" branch if it exists, otherwise fall back
-//	              to the latest release tag
+//	production    resolve the latest release tag
 //
-//	staging       always use the default branch of the underlying Github
-//	              repository by returning an empty ref
+//	staging       resolve the latest commit sha of the default branch
 //
-//	testing       use the test branch matching the test environment name if it
-//	              exists, otherwise fall back to the default branch
+//	testing       resolve the latest commit sha of the branch matching the test
+//	              environment, if such a branch exists, otherwise fall back to
+//	              the commit sha of the default branch
 func Search(res Interface, env string) (string, error) {
-	// Always use the default branch for the "staging" environment.
+	// Always use the commit sha of the default branch for the "staging"
+	// environment.
 
 	if env == "staging" {
-		return "", nil
-	}
-
-	// Use the existing branches for either the "production" or test environments,
-	// if those branches exist.
-
-	{
-		exi, err := res.Exists(env)
+		sha, err := res.Commit("HEAD")
 		if err != nil {
 			return "", tracer.Mask(err)
 		}
-		if exi {
-			return env, nil
-		}
+
+		return sha, nil
 	}
 
-	// If no "production" branch exists, then fall back to the Git tag of the
-	// latest Github release.
+	// Use the Git tag of the latest Github release for the "production"
+	// environment.
 
 	if env == "production" {
 		tag, err := res.Latest()
@@ -48,7 +40,29 @@ func Search(res Interface, env string) (string, error) {
 		return tag, nil
 	}
 
-	// Use the default branch if no branch exist for the given test environment.
+	// Use the commmit sha of any existing branch for any given test environment,
+	// if such a branch exists.
 
-	return "", nil
+	{
+		sha, err := res.Commit(env)
+		if err != nil {
+			return "", tracer.Mask(err)
+		}
+
+		if sha != "" {
+			return sha, nil
+		}
+	}
+
+	// Use the commit sha of the default branch if no branch exist for the given
+	// test environment.
+
+	{
+		sha, err := res.Commit("HEAD")
+		if err != nil {
+			return "", tracer.Mask(err)
+		}
+
+		return sha, nil
+	}
 }

@@ -9,26 +9,13 @@ import (
 
 // ensure guarantees that the given file or directory exists inside the injected
 // base file system. If the requested file path is not cached locally, then
-// ensure() fetches its raw bytes from GitHub. The first call of ensure() will
-// also setup the entire file and folder structure within the underlying base
-// file system.
+// ensure fetches its raw bytes from GitHub.
 func (r *Roghfs) ensure(pat string) error {
 	var err error
 
 	// Ensure a clean and standardized file path string.
 	{
 		pat = filepath.Clean(pat)
-	}
-
-	// Bootstrap the entire file system tree according to the configured remote
-	// Github repository, but only if we have not initialized it successfully
-	// before. This ensures that we traverse the entire repository tree only one
-	// time, while only making a single network call.
-	{
-		err = r.mut.Success(r.tree)
-		if err != nil {
-			return tracer.Mask(err)
-		}
 	}
 
 	// If we already fetched the content of the requested source file, then we
