@@ -51,7 +51,7 @@ func (p *Policy) Ensure() error {
 				"desired", des,
 			)
 
-			return tracer.Mask(Cancel)
+			return tracer.Mask(cancelError)
 		}
 
 		var ima bool
@@ -96,5 +96,5 @@ func (p *Policy) Ensure() error {
 		"reason", "no state drift",
 	)
 
-	return tracer.Mask(Cancel)
+	return tracer.Mask(cancelError)
 }

@@ -1,7 +1,5 @@
 github.com/0xSplits/otelgo v0.1.0 h1:hfYgFcBM6iRbuR8qv6yxhCgdKqOT67xyMhBuiaUax8U=
 github.com/0xSplits/otelgo v0.1.0/go.mod h1:Z0NXcx7F5hdaV1fQ1rgKt9vwQozcHt/IOUKN2EQtgPE=
-github.com/0xSplits/workit v0.3.0 h1:RkFHs4srXVWATXW5e49eun/jZuWIe7J2qkTo6YfB0QY=
-github.com/0xSplits/workit v0.3.0/go.mod h1:ZzT0XcFQCA2W1+gjhBsqWC+yci2bzBYJ8Yt07/zkJcQ=
 github.com/aws/aws-sdk-go-v2 v1.37.2 h1:xkW1iMYawzcmYFYEV0UCMxc8gSsjCGEhBXQkdQywVbo=
 github.com/aws/aws-sdk-go-v2 v1.37.2/go.mod h1:9Q0OoGQoboYIAJyslFyF1f5K1Ryddop8gqMhWx/n4Wg=
 github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.0 h1:6GMWV6CNpA/6fbFHnoAjrv4+LGfyTqZz2LtCHnspgDg=

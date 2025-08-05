@@ -6,10 +6,10 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-var Cancel = &tracer.Error{
+var cancelError = &tracer.Error{
 	Description: "This error is used as control flow signal to instruct the worker engine that the current reconciliation loop should not execute any further.",
 }
 
 func IsCancel(err error) bool {
-	return errors.Is(err, Cancel)
+	return errors.Is(err, cancelError)
 }

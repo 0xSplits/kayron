@@ -1,7 +1,6 @@
 package operator
 
 import (
-	"github.com/0xSplits/kayron/pkg/worker/handler/operator/policy"
 	"github.com/xh3b4sd/choreo/parallel"
 	"github.com/xh3b4sd/tracer"
 )
@@ -57,9 +56,7 @@ func (h *Handler) Ensure() error {
 
 	{
 		err = h.pol.Ensure()
-		if policy.IsCancel(err) {
-			return nil
-		} else if err != nil {
+		if err != nil {
 			return tracer.Mask(err)
 		}
 	}

@@ -72,3 +72,5 @@ require (
 	golang.org/x/text v0.27.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
+
+replace github.com/0xSplits/workit => ../workit/
