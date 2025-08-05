@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/fs"
 	"path/filepath"
 
@@ -31,8 +32,18 @@ func (i *Infrastructure) Ensure() error {
 		}
 
 		{
-			ref = artifact.ReferenceDesired(j)
+			ref, _ = i.art.Search(artifact.ReferenceDesired(j))
 		}
+	}
+
+	{
+		i.log.Log(
+			"level", "debug",
+			"message", "resolved ref for github repository",
+			"environment", i.env,
+			"repository", fmt.Sprintf("https://github.com/%s/%s", i.own, Repository),
+			"ref", ref,
+		)
 	}
 
 	// Setup the Github file system implementation so that we can walk the
@@ -81,6 +92,15 @@ func (i *Infrastructure) Ensure() error {
 			if err != nil {
 				return tracer.Mask(err)
 			}
+		}
+
+		{
+			i.log.Log(
+				"level", "debug",
+				"message", "uploading cloudformation template",
+				"bucket", Bucket,
+				"key", key,
+			)
 		}
 
 		var inp *s3.PutObjectInput

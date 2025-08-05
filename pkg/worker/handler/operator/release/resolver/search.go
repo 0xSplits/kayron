@@ -4,15 +4,15 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-// Search determines the Git ref to use for the given environment. An empty ref
-// indicates to use the default branch, which is in line with the documented
-// behaviour of the official Github API.
+// Search determines the Git ref to use for the given environment. Search will
+// never return an empty ref, but instead resolve the SHA of the Git commit at
+// HEAD of the default branch.
 //
 //	production    use the "production" branch if it exists, otherwise fall back
 //	              to the latest release tag
 //
 //	staging       always use the default branch of the underlying Github
-//	              repository by returning an empty ref
+//	              repository by resolving the full ref
 //
 //	testing       use the test branch matching the test environment name if it
 //	              exists, otherwise fall back to the default branch
@@ -20,7 +20,12 @@ func Search(res Interface, env string) (string, error) {
 	// Always use the default branch for the "staging" environment.
 
 	if env == "staging" {
-		return "", nil
+		sha, err := res.Commit()
+		if err != nil {
+			return "", tracer.Mask(err)
+		}
+
+		return sha, nil
 	}
 
 	// Use the existing branches for either the "production" or test environments,
@@ -31,6 +36,7 @@ func Search(res Interface, env string) (string, error) {
 		if err != nil {
 			return "", tracer.Mask(err)
 		}
+
 		if exi {
 			return env, nil
 		}
@@ -50,5 +56,12 @@ func Search(res Interface, env string) (string, error) {
 
 	// Use the default branch if no branch exist for the given test environment.
 
-	return "", nil
+	{
+		sha, err := res.Commit()
+		if err != nil {
+			return "", tracer.Mask(err)
+		}
+
+		return sha, nil
+	}
 }

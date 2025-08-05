@@ -42,6 +42,9 @@ func New(c Config) *Infrastructure {
 	if c.Art == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
 	}
+	if c.Aws.Region == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
+	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}

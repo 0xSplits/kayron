@@ -34,7 +34,7 @@ type Config struct {
 	Rep string
 
 	// Ref is the Git specific branch, tag, or commit. The reserved value "HEAD"
-	// can be provided for the latest commit.
+	// must not be provided.
 	Ref string
 }
 
@@ -76,6 +76,9 @@ func New(c Config) *Roghfs {
 	}
 	if c.Ref == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ref must not be empty", c)))
+	}
+	if c.Ref == "HEAD" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ref must not be HEAD", c)))
 	}
 
 	return &Roghfs{

@@ -78,7 +78,7 @@ func New(c Config) *Handler {
 	{
 		clo = cloudformation.New(cloudformation.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Met: c.Met, Ser: ser})
 		con = container.New(container.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Ser: ser})
-		inf = infrastructure.New(infrastructure.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
+		inf = infrastructure.New(infrastructure.Config{Art: art, Aws: c.Aws, Env: c.Env, Log: c.Log, Ser: ser})
 		pol = policy.New(policy.Config{Art: art, Log: c.Log, Ser: ser})
 		ref = reference.New(reference.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
 		rel = release.New(release.Config{Art: art, Env: c.Env, Log: c.Log, Ser: ser})
