@@ -1,3 +1,6 @@
+// Package registry verifies whether the desired service version is readily
+// available inside the configured container registry. Only existing container
+// images can actually be deployed.
 package registry
 
 import (

@@ -1,3 +1,6 @@
+// Package reference fetches the desired state of any service release source
+// code as Git reference. Those consistent release tags and commit shas define
+// the service versions intended to be deployed.
 package reference
 
 import (

@@ -1,3 +1,8 @@
+// Package infrastructure prepares the desired state of the CloudFormation
+// templates provided within the configured infrastructure repository. Those
+// templates are fetched from Github and uploaded to S3. See e.g.
+// https://github.com/0xSplits/infrastructure for a reference of the remote
+// Github repository.
 package infrastructure
 
 import (
@@ -15,9 +20,9 @@ import (
 )
 
 const (
-	Bucket     = "splits-cf-templates"
-	Directory  = "cloudformation"
-	Repository = "infrastructure"
+	Bucket     = "splits-cf-templates" // TODO configure env var KAYRON_CLOUDFORMATION_BUCKET
+	Directory  = "cloudformation"      // TODO configure env var KAYRON_INFRASTRUCTURE_DIRECTORY
+	Repository = "infrastructure"      // TODO configure env var KAYRON_INFRASTRUCTURE_REPOSITORY
 )
 
 type Config struct {

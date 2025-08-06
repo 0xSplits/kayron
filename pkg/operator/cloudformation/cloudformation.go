@@ -1,3 +1,6 @@
+// Package cloudformation triggers CloudFormation stack updates once a valid
+// state drift was detected. This operator function effectively applies any
+// infrastructure and service changes according to the configured desired state.
 package cloudformation
 
 import (

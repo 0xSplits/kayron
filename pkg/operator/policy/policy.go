@@ -1,3 +1,6 @@
+// Package policy inspects and verifies any potential state drift in order to
+// either allow the reconciliation loop to continue, or cancel it. Only valid
+// state drifts can be applied within the underlying infrastructure.
 package policy
 
 import (

@@ -1,3 +1,6 @@
+// Package container fetches the current state of the currently deployed
+// container image tags. This operator function caches information about the
+// currently deployed service versions.
 package container
 
 import (
