@@ -1,4 +1,7 @@
-package cloudformation
+// Package reference fetches the desired state of any service release source
+// code as Git reference. Those consistent release tags and commit shas define
+// the service versions intended to be deployed.
+package reference
 
 import (
 	"fmt"
@@ -6,62 +9,53 @@ import (
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
-	"github.com/0xSplits/otelgo/registry"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	"github.com/0xSplits/kayron/pkg/roghfs"
+	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
-	"go.opentelemetry.io/otel/metric"
-)
-
-const (
-	Metric = "deployment_event"
 )
 
 type Config struct {
 	Art cache.Interface[string, string]
-	Aws aws.Config
 	Env envvar.Env
 	Log logger.Interface
-	Met metric.Meter
 	Ser cache.Interface[int, service.Service]
 }
 
-type CloudFormation struct {
+type Reference struct {
 	art cache.Interface[string, string]
-	cfc *cloudformation.Client
+	git *github.Client
 	log logger.Interface
-	reg registry.Interface
+	own string
 	ser cache.Interface[int, service.Service]
 }
 
-func New(c Config) *CloudFormation {
+func New(c Config) *Reference {
 	if c.Art == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
 	}
-	if c.Aws.Region == "" {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
-	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
-	}
-	if c.Met == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Met must not be empty", c)))
 	}
 	if c.Ser == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ser must not be empty", c)))
 	}
 
-	var reg registry.Interface
+	var err error
+
+	var own string
 	{
-		reg = newRegistry(c.Env.Environment, c.Log, c.Met)
+		own, _, err = roghfs.Parse(c.Env.ReleaseSource)
+		if err != nil {
+			tracer.Panic(tracer.Mask(err))
+		}
 	}
 
-	return &CloudFormation{
+	return &Reference{
 		art: c.Art,
-		cfc: cloudformation.NewFromConfig(c.Aws),
+		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
-		reg: reg,
+		own: own,
 		ser: c.Ser,
 	}
 }

@@ -22,6 +22,10 @@ func (p *Policy) Ensure() error {
 			ser, _ = p.ser.Search(i)
 		}
 
+		// TODO the way we mingle the infrastructure settings with our service
+		// versions does not allow us to deploy infrastructure version changes. We
+		// are currently excluding the infrastructure repo from the state drift
+		// checks.
 		if ser.Provider == "cloudformation" {
 			continue
 		}

@@ -1,4 +1,7 @@
-package container
+// Package registry verifies whether the desired service version is readily
+// available inside the configured container registry. Only existing container
+// images can actually be deployed.
+package registry
 
 import (
 	"fmt"
@@ -7,8 +10,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
+	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -21,16 +23,15 @@ type Config struct {
 	Ser cache.Interface[int, service.Service]
 }
 
-type Container struct {
+type Registry struct {
 	art cache.Interface[string, string]
-	ecs *ecs.Client
+	ecr *ecr.Client
 	env envvar.Env
 	log logger.Interface
 	ser cache.Interface[int, service.Service]
-	tag *resourcegroupstaggingapi.Client
 }
 
-func New(c Config) *Container {
+func New(c Config) *Registry {
 	if c.Art == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
 	}
@@ -44,12 +45,11 @@ func New(c Config) *Container {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ser must not be empty", c)))
 	}
 
-	return &Container{
+	return &Registry{
 		art: c.Art,
-		ecs: ecs.NewFromConfig(c.Aws),
+		ecr: ecr.NewFromConfig(c.Aws),
 		env: c.Env,
 		log: c.Log,
 		ser: c.Ser,
-		tag: resourcegroupstaggingapi.NewFromConfig(c.Aws),
 	}
 }
