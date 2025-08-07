@@ -4,7 +4,6 @@ import (
 	"context"
 	"slices"
 
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -92,26 +91,18 @@ func (c *Container) task(det []detail) ([]task, error) {
 	// Below we want to filter for the Docker image tags of those ECS services
 	// that we have defined in the configured release source. In other words, if
 	// there is no service release for e.g. specta, then we are not interested in
-	// the Docker image tag of the specta containers in ECS. Note that the
-	// services that we are interested in do not specify a provider like
-	// CloudFormation.
+	// the Docker image tag of the specta containers in ECS. And so we can remove
+	// them from our list and only fetch the image tags of the relevant service
+	// releases.
 
 	var ser []string
-	for i := range c.ser.Length() {
-		var s service.Service
-		{
-			s, _ = c.ser.Search(i)
-		}
-
-		if s.Provider != "cloudformation" {
-			ser = append(ser, s.Docker.String())
-		}
+	for _, x := range c.ctx.Services() {
+		ser = append(ser, x.Release.Docker.String())
 	}
 
-	// Apply the service release filter according to the resource tag in
-	// AWS. Note that the existance check below using slices is faster for
-	// small data sets under roughly 50 items as compared to map checks that
-	// allocate.
+	// Apply the service release filter according to the resource tag in AWS. Note
+	// that the existance check below using slices is faster for small data sets
+	// under roughly 50 items as compared to map checks that allocate.
 
 	var fil []task
 	for _, x := range tas {

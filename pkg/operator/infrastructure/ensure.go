@@ -1,39 +1,20 @@
 package infrastructure
 
 import (
-	"bytes"
-	"context"
 	"fmt"
 	"io/fs"
 	"path/filepath"
 
-	"github.com/0xSplits/kayron/pkg/release/artifact"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/context"
 	"github.com/0xSplits/kayron/pkg/roghfs"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (i *Infrastructure) Ensure() error {
-	// Find the cached Github reference for the infrastructure repository
-	// containing our CloudFormation templates.
-
-	var ref string
-	var ser service.Service
-	for j := range i.ser.Length() {
-		{
-			ser, _ = i.ser.Search(j)
-		}
-
-		if ser.Github.String() != Repository {
-			continue
-		}
-
-		{
-			ref, _ = i.art.Search(artifact.ReferenceDesired(j))
-		}
+	var inf context.Object
+	{
+		inf = i.ctx.Infrastructure()
 	}
 
 	{
@@ -41,8 +22,8 @@ func (i *Infrastructure) Ensure() error {
 			"level", "debug",
 			"message", "resolved ref for github repository",
 			"environment", i.env,
-			"repository", fmt.Sprintf("https://github.com/%s/%s", i.own, Repository),
-			"ref", ref,
+			"repository", fmt.Sprintf("https://github.com/%s/%s", i.own, inf.Release.Github.String()),
+			"ref", inf.Artifact.Reference.Desired,
 		)
 	}
 
@@ -56,7 +37,7 @@ func (i *Infrastructure) Ensure() error {
 			Git: i.git,
 			Own: i.own,
 			Rep: Repository,
-			Ref: ref,
+			Ref: inf.Artifact.Reference.Desired,
 		})
 	}
 
@@ -86,35 +67,8 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
-		var key string
 		{
-			key, err = i.envKey(pat)
-			if err != nil {
-				return tracer.Mask(err)
-			}
-		}
-
-		{
-			i.log.Log(
-				"level", "debug",
-				"message", "uploading cloudformation template",
-				"bucket", Bucket,
-				"key", key,
-			)
-		}
-
-		var inp *s3.PutObjectInput
-		{
-			inp = &s3.PutObjectInput{
-				Bucket:      aws.String(Bucket),
-				Key:         aws.String(key),
-				Body:        bytes.NewReader(byt),
-				ContentType: aws.String("application/x-yaml"),
-			}
-		}
-
-		{
-			_, err = i.as3.PutObject(context.Background(), inp)
+			err = i.putObj(pat, byt)
 			if err != nil {
 				return tracer.Mask(err)
 			}
@@ -130,14 +84,16 @@ func (i *Infrastructure) Ensure() error {
 		}
 	}
 
-	return nil
-}
+	// Once all infrastructure templates have been uploaded to S3, we can set the
+	// condition success for this particular release artifact.
 
-func (i *Infrastructure) envKey(pat string) (string, error) {
-	key, err := filepath.Rel(Directory, pat)
-	if err != nil {
-		return "", tracer.Mask(err)
+	{
+		inf.Artifact.Condition.Success = true
 	}
 
-	return filepath.Join(i.env, key), nil
+	{
+		i.ctx.Update(inf)
+	}
+
+	return nil
 }

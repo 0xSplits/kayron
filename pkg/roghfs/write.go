@@ -21,7 +21,7 @@ func (r *Roghfs) write(pat string, byt []byte) error {
 	}
 
 	{
-		defer fil.Close()
+		defer fil.Close() // nolint:errcheck
 	}
 
 	{

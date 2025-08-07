@@ -6,9 +6,8 @@ package container
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/context"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi"
@@ -17,42 +16,39 @@ import (
 )
 
 type Config struct {
-	Art cache.Interface[string, string]
 	Aws aws.Config
+	Ctx *context.Context
 	Env envvar.Env
 	Log logger.Interface
-	Ser cache.Interface[int, service.Service]
 }
 
 type Container struct {
-	art cache.Interface[string, string]
+	ctx *context.Context
 	ecs *ecs.Client
 	env envvar.Env
 	log logger.Interface
-	ser cache.Interface[int, service.Service]
 	tag *resourcegroupstaggingapi.Client
 }
 
 func New(c Config) *Container {
-	if c.Art == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
-	}
 	if c.Aws.Region == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
+	}
+	if c.Ctx == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	}
+	if c.Env.Environment == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}
-	if c.Ser == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ser must not be empty", c)))
-	}
 
 	return &Container{
-		art: c.Art,
+		ctx: c.Ctx,
 		ecs: ecs.NewFromConfig(c.Aws),
 		env: c.Env,
 		log: c.Log,
-		ser: c.Ser,
 		tag: resourcegroupstaggingapi.NewFromConfig(c.Aws),
 	}
 }

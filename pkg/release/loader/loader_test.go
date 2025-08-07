@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	"github.com/0xSplits/kayron/pkg/release/schema"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/docker"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/github"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/labels"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/provider"
+	"github.com/0xSplits/kayron/pkg/release/schema/release"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/github"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/provider"
 	"github.com/google/go-cmp/cmp"
 	"github.com/spf13/afero"
 )
@@ -36,7 +36,7 @@ func Test_Loader(t *testing.T) {
 		{
 			roo: ".",
 			sch: schema.Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Github:   github.String("infrastructure"),
 						Provider: provider.String("cloudformation"),
@@ -92,7 +92,7 @@ func Test_Loader(t *testing.T) {
 		{
 			roo: ".",
 			sch: schema.Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("splits"),
 						Github: github.String("server"),

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/release"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/suspend"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/webhook"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/release"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/suspend"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
 )
 
 func Test_Schema_Specification_Service_Deploy_name(t *testing.T) {
