@@ -12,7 +12,7 @@ func (p *Policy) Ensure() error {
 	// potentially be dangerous.
 
 	for _, x := range p.ctx.Releases() {
-		if x.Empty() {
+		if x.Artifact.Empty() {
 			p.log.Log(
 				"level", "warning",
 				"message", "cancelling reconciliation loop",
@@ -24,7 +24,7 @@ func (p *Policy) Ensure() error {
 				"desired", x.Artifact.Reference.Desired,
 			)
 
-			return tracer.Mask(cancelError)
+			return tracer.Mask(cacheStateEmptyError)
 		}
 	}
 
@@ -41,7 +41,7 @@ func (p *Policy) Ensure() error {
 	//
 
 	for _, x := range p.ctx.Releases() {
-		if x.Drift() && x.Valid() {
+		if x.Artifact.Drift() && x.Artifact.Valid() {
 			p.log.Log(
 				"level", "info",
 				"message", "continuing reconciliation loop",

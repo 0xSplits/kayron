@@ -22,20 +22,21 @@ import (
 type Config struct {
 	Aws aws.Config
 	Ctx *context.Context
+	Dry bool
 	Env envvar.Env
 	Log logger.Interface
 	Met metric.Meter
 }
 
 type Operator struct {
-	CloudFormation *cloudformation.CloudFormation
-	Container      *container.Container
-	Infrastructure *infrastructure.Infrastructure
-	Policy         *policy.Policy
-	Reference      *reference.Reference
-	Release        *release.Release
-	Registry       *registry.Registry
-	Template       *template.Template
+	cloudFormation *cloudformation.CloudFormation
+	container      *container.Container
+	infrastructure *infrastructure.Infrastructure
+	policy         *policy.Policy
+	reference      *reference.Reference
+	release        *release.Release
+	registry       *registry.Registry
+	template       *template.Template
 }
 
 func New(c Config) *Operator {
@@ -56,13 +57,13 @@ func New(c Config) *Operator {
 	}
 
 	return &Operator{
-		CloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log, Met: c.Met}),
-		Container:      container.New(container.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		Infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		Policy:         policy.New(policy.Config{Ctx: c.Ctx, Log: c.Log}),
-		Reference:      reference.New(reference.Config{Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		Release:        release.New(release.Config{Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		Registry:       registry.New(registry.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		Template:       template.New(template.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
+		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Ctx: c.Ctx, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met}),
+		container:      container.New(container.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
+		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Ctx: c.Ctx, Dry: c.Dry, Env: c.Env, Log: c.Log}),
+		policy:         policy.New(policy.Config{Ctx: c.Ctx, Log: c.Log}),
+		reference:      reference.New(reference.Config{Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
+		release:        release.New(release.Config{Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
+		registry:       registry.New(registry.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
+		template:       template.New(template.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
 	}
 }

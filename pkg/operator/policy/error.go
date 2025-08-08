@@ -15,3 +15,11 @@ var cancelError = &tracer.Error{
 func IsCancel(err error) bool {
 	return errors.Is(err, cancelError)
 }
+
+//
+//
+//
+
+var cacheStateEmptyError = &tracer.Error{
+	Description: "This critical error indicates that some cached state of the current reconciliation loop was missing.",
+}

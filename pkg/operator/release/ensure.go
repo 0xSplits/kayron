@@ -81,9 +81,13 @@ func (r *Release) Ensure() error {
 	}
 
 	// Initialize the cache for all configured releases regardless of their type.
+	// Here we require exactly one infrastructure release to be provided.
 
 	{
-		r.ctx.Create(sch.Release)
+		err = r.ctx.Create(sch.Release)
+		if err != nil {
+			return tracer.Mask(err)
+		}
 	}
 
 	return nil

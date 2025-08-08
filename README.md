@@ -118,6 +118,205 @@ KAYRON_ENVIRONMENT=development KAYRON_GITHUB_TOKEN=todo kayron daemon
 { "time":"2025-07-04 14:09:06", "level":"info", "message":"worker is executing tasks", "pipelines":"1",             "caller":".../pkg/worker/worker.go:110" }
 ```
 
+There is an [integration-test](.github/workflows/integration-test.yaml) workflow
+to verify several aspects of Kayron's various responsibilities. The test
+verifies that all operator functions are free from race conditions, which is
+critical, because several operator functions are running in parallel each and
+every reconciliation loop. The test also verifies that the operator's
+reconciliation loops are not unexpectedly cancelled due to internal data
+inconsistencies when looking all kinds of current and desired state for the
+internal artifact cache. The required AWS credentials need the
+[ViewOnlyAccess], [AmazonEC2ContainerRegistryReadOnly] and
+[ResourceGroupsandTagEditorReadOnlyAccess] permissions. The required Github auth
+token needs the repository scope.
+
+```
+go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
+```
+
+```
+=== RUN   Test_Operator_Integration
+{
+    "time": "2025-08-08 10:55:17",
+    "level": "debug",
+    "message": "resetting operator cache",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/context/delete.go:9"
+}
+{
+    "time": "2025-08-08 10:55:17",
+    "level": "debug",
+    "message": "resolved ref for github repository",
+    "environment": "testing",
+    "ref": "df8d6f875f3a8d9aa98ccd6567602de101ec9c02",
+    "repository": "https://github.com/0xSplits/releases",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/release/ensure.go:37"
+}
+{
+    "time": "2025-08-08 10:55:18",
+    "level": "debug",
+    "message": "caching release index",
+    "deploy": "v0.1.2",
+    "github": "infrastructure",
+    "provider": "cloudformation",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/context/create.go:16"
+}
+{
+    "time": "2025-08-08 10:55:18",
+    "level": "debug",
+    "message": "caching release index",
+    "deploy": "v0.1.16",
+    "docker": "specta",
+    "github": "specta",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/context/create.go:16"
+}
+{
+    "time": "2025-08-08 10:55:18",
+    "level": "debug",
+    "message": "caching desired state",
+    "desired": "v0.1.2",
+    "github": "infrastructure",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:35"
+}
+{
+    "time": "2025-08-08 10:55:18",
+    "level": "debug",
+    "message": "caching desired state",
+    "desired": "v0.1.16",
+    "github": "specta",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:35"
+}
+{
+    "time": "2025-08-08 10:55:20",
+    "level": "debug",
+    "message": "caching current state",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/template/ensure.go:34"
+}
+{
+    "time": "2025-08-08 10:55:20",
+    "level": "debug",
+    "message": "caching current state",
+    "current": "v0.1.15",
+    "docker": "specta",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:14"
+}
+{
+    "time": "2025-08-08 10:55:21",
+    "level": "debug",
+    "message": "executed image check",
+    "exists": "true",
+    "image": "specta",
+    "tag": "v0.1.16",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/registry/ensure.go:53"
+}
+{
+    "time": "2025-08-08 10:55:21",
+    "level": "info",
+    "message": "continuing reconciliation loop",
+    "reason": "detected state drift",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/policy/ensure.go:45"
+}
+{
+    "time": "2025-08-08 10:55:21",
+    "level": "debug",
+    "message": "resolved ref for github repository",
+    "environment": "testing",
+    "ref": "v0.1.2",
+    "repository": "https://github.com/0xSplits/infrastructure",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/ensure.go:21"
+}
+{
+    "time": "2025-08-08 10:55:22",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/deployment/deployment.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:23",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/discovery/discovery.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:23",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/elasticache/elasticache.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:24",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/fargate/fargate.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:24",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/index.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:25",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/rds/rds.alarms.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:25",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/rds/rds.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:26",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/server/server.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:26",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/specta/specta.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:27",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/telemetry/telemetry.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+{
+    "time": "2025-08-08 10:55:27",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/vpc/vpc.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:25"
+}
+--- PASS: Test_Operator_Integration (10.71s)
+PASS
+ok  	github.com/0xSplits/kayron/pkg/operator	12.006s
+```
+
 ### Releases
 
 In order to update the Docker image, prepare all desired changes within the
@@ -157,9 +356,12 @@ docker run \
 ```
 
 [Amazon ECR]: https://docs.aws.amazon.com/ecr
+[AmazonEC2ContainerRegistryReadOnly]: https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonEC2ContainerRegistryReadOnly.html
 [Cobra]: https://github.com/spf13/cobra
 [distroless]: https://github.com/GoogleContainerTools/distroless
 [Github Action]: .github/workflows/docker-release.yaml
 [operator pattern]: https://kubernetes.io/docs/concepts/extend-kubernetes/operator
 [Kubernetes]: https://kubernetes.io/docs/concepts/overview
+[ResourceGroupsandTagEditorReadOnlyAccess]: https://docs.aws.amazon.com/aws-managed-policy/latest/reference/ResourceGroupsandTagEditorReadOnlyAccess.html
 [Semver Format]: https://semver.org
+[ViewOnlyAccess]: https://docs.aws.amazon.com/aws-managed-policy/latest/reference/ViewOnlyAccess.html

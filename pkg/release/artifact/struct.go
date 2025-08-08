@@ -22,3 +22,38 @@ type Struct struct {
 	// infrastructure or service release.
 	Scheduler scheduler.Struct
 }
+
+func (s Struct) Drift() bool {
+	return s.Scheduler.Current != s.Reference.Desired
+}
+
+// Empty returns whether the desired reference of this artifact is empty.
+func (s Struct) Empty() bool {
+	return s.Reference.Desired == ""
+}
+
+// Merge applies the given forward only patch, which means that only non-zero
+// values can overwrite zero values. This particular patch strategy is important
+// because Kayron manages release artifacts concurrently, so we must only ever
+// update the leafs of an artifact where it actually changed. Otherwise zero
+// values would overwrite artifact leafs that are patched by another goroutine
+// in parallel.
+func (s Struct) Merge(p Struct) Struct {
+	if s.Condition.Success == false && p.Condition.Success != false { // nolint:staticcheck
+		s.Condition.Success = p.Condition.Success
+	}
+
+	if s.Reference.Desired == "" && p.Reference.Desired != "" {
+		s.Reference.Desired = p.Reference.Desired
+	}
+
+	if s.Scheduler.Current == "" && p.Scheduler.Current != "" {
+		s.Scheduler.Current = p.Scheduler.Current
+	}
+
+	return s
+}
+
+func (s Struct) Valid() bool {
+	return s.Condition.Success
+}

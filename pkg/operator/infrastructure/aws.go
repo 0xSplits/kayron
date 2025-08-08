@@ -30,6 +30,11 @@ func (i *Infrastructure) putObj(pat string, byt []byte) error {
 		)
 	}
 
+	// Make sure we respect the dry run flag when attempting to upload any
+	// template to S3, because "dry run" effectively means "read only". So
+	// if the dry run flag is set in e.g. the operator's integration test,
+	// then we want to emit the logs, but prevent making the network calls.
+
 	var inp *s3.PutObjectInput
 	{
 		inp = &s3.PutObjectInput{
@@ -40,7 +45,7 @@ func (i *Infrastructure) putObj(pat string, byt []byte) error {
 		}
 	}
 
-	{
+	if !i.dry {
 		_, err = i.as3.PutObject(context.Background(), inp)
 		if err != nil {
 			return tracer.Mask(err)

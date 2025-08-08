@@ -24,14 +24,14 @@ type task struct {
 // using the "service" resource tag as defined by the provided list of service
 // details.
 func (c *Container) task(det []detail) ([]task, error) {
-	var err error
-
 	var tas []task
 	{
 		tas = make([]task, len(det))
 	}
 
 	fnc := func(i int, d detail) error {
+		var err error
+
 		var inp *ecs.DescribeServicesInput
 		{
 			inp = &ecs.DescribeServicesInput{
@@ -51,6 +51,10 @@ func (c *Container) task(det []detail) ([]task, error) {
 
 		// Note that there should only ever be a single service in the response that
 		// we iterate over below.
+
+		if len(out.Services) != 1 {
+			return tracer.Mask(invalidEcsServiceError)
+		}
 
 		for _, x := range out.Services {
 			var tag string
@@ -72,6 +76,9 @@ func (c *Container) task(det []detail) ([]task, error) {
 				}
 			}
 
+			// This access pattern is concurrency safe because this callback only ever
+			// executes for its own index.
+
 			tas[i] = task{
 				arn: *x.TaskDefinition,
 				ser: tag,
@@ -82,7 +89,7 @@ func (c *Container) task(det []detail) ([]task, error) {
 	}
 
 	{
-		err = parallel.Slice(det, fnc)
+		err := parallel.Slice(det, fnc)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}

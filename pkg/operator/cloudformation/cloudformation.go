@@ -23,6 +23,7 @@ const (
 type Config struct {
 	Aws aws.Config
 	Ctx *context.Context
+	Dry bool
 	Env envvar.Env
 	Log logger.Interface
 	Met metric.Meter
@@ -31,6 +32,7 @@ type Config struct {
 type CloudFormation struct {
 	cfc *cloudformation.Client
 	ctx *context.Context
+	dry bool
 	log logger.Interface
 	reg registry.Interface
 }
@@ -60,6 +62,7 @@ func New(c Config) *CloudFormation {
 	return &CloudFormation{
 		cfc: cloudformation.NewFromConfig(c.Aws),
 		ctx: c.Ctx,
+		dry: c.Dry,
 		log: c.Log,
 		reg: reg,
 	}

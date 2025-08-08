@@ -6,21 +6,11 @@ func (c *Context) Update(obj Object) {
 		defer c.mut.Unlock()
 	}
 
-	if obj.Kind == Infrastructure {
-		for i, x := range c.inf {
-			if x.Release.Github == obj.Release.Github {
-				c.inf[i] = obj
-				break
-			}
-		}
+	if obj.kin == Infrastructure {
+		c.inf[obj.ind].Artifact = c.inf[obj.ind].Artifact.Merge(obj.Artifact)
 	}
 
-	if obj.Kind == Service {
-		for i, x := range c.ser {
-			if x.Release.Docker == obj.Release.Docker {
-				c.inf[i] = obj
-				break
-			}
-		}
+	if obj.kin == Service {
+		c.ser[obj.ind].Artifact = c.ser[obj.ind].Artifact.Merge(obj.Artifact)
 	}
 }

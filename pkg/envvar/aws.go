@@ -1,4 +1,4 @@
-package daemon
+package envvar
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func musAws() aws.Config {
+func MustAws() aws.Config {
 	reg := os.Getenv("AWS_REGION")
 	if reg == "" {
 		reg = "us-west-2"

@@ -3,9 +3,10 @@ package context
 import (
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
+	"github.com/xh3b4sd/tracer"
 )
 
-func (c *Context) Create(rel release.Slice) {
+func (c *Context) Create(rel release.Slice) error {
 	{
 		c.mut.Lock()
 		defer c.mut.Unlock()
@@ -31,7 +32,8 @@ func (c *Context) Create(rel release.Slice) {
 
 		if x.Provider.String() == "cloudformation" {
 			{
-				obj.Kind = Infrastructure
+				obj.ind = len(c.inf)
+				obj.kin = Infrastructure
 			}
 
 			{
@@ -39,7 +41,8 @@ func (c *Context) Create(rel release.Slice) {
 			}
 		} else {
 			{
-				obj.Kind = Service
+				obj.ind = len(c.ser)
+				obj.kin = Service
 			}
 
 			{
@@ -47,4 +50,10 @@ func (c *Context) Create(rel release.Slice) {
 			}
 		}
 	}
+
+	if len(c.inf) != 1 {
+		return tracer.Mask(invalidInfrastructureError)
+	}
+
+	return nil
 }

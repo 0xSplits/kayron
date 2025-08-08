@@ -27,6 +27,7 @@ const (
 type Config struct {
 	Aws aws.Config
 	Ctx *context.Context
+	Dry bool
 	Env envvar.Env
 	Log logger.Interface
 }
@@ -34,6 +35,7 @@ type Config struct {
 type Infrastructure struct {
 	as3 *s3.Client
 	ctx *context.Context
+	dry bool
 	env string
 	git *github.Client
 	log logger.Interface
@@ -67,6 +69,7 @@ func New(c Config) *Infrastructure {
 	return &Infrastructure{
 		as3: s3.NewFromConfig(c.Aws),
 		ctx: c.Ctx,
+		dry: c.Dry,
 		env: c.Env.Environment,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
