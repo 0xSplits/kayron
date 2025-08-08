@@ -1,84 +1,47 @@
 package policy
 
 import (
-	"strconv"
-
-	"github.com/0xSplits/kayron/pkg/release/artifact"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (p *Policy) Ensure() error {
-	for i := range p.ser.Length() {
-		var err error
+	// Verify that we have a valid artifact cache by iterating over all releases
+	// and checking their cashed state before doing anything else. We must not
+	// continue this reconciliation loop if there is any empty or invalid state,
+	// because the side effects of proceeding using such a broken state could
+	// potentially be dangerous.
 
-		// Iterate over all service releases, except those referencing our
-		// cloudformation templates. This exception may be removed in a later
-		// refactoring, once we have a better idea about the differentiation between
-		// services and infrastructure on the configuration level.
-
-		var ser service.Service
-		{
-			ser, _ = p.ser.Search(i)
-		}
-
-		// TODO the way we mingle the infrastructure settings with our service
-		// versions does not allow us to deploy infrastructure version changes. We
-		// are currently excluding the infrastructure repo from the state drift
-		// checks.
-		if ser.Provider == "cloudformation" {
-			continue
-		}
-
-		var exi string
-		var cur string
-		var des string
-		{
-			exi, _ = p.art.Search(artifact.ContainerDesired(i))
-			cur, _ = p.art.Search(artifact.ContainerCurrent(i))
-			des, _ = p.art.Search(artifact.ReferenceDesired(i))
-		}
-
-		if exi == "" || cur == "" || des == "" {
-			// This should never happen, but if it did, we must not continue this
-			// conciliation loop, because the side effects of proceeding using invalid
-			// state could potentially be dangerous.
-
+	for _, x := range p.cac.Releases() {
+		if x.Artifact.Empty() {
 			p.log.Log(
 				"level", "warning",
-				"message", "invalid artifact cache",
-				"reason", "detected empty state",
-				"docker", ser.Docker.String(),
-				"github", ser.Github.String(),
-				"exists", exi,
-				"current", cur,
-				"desired", des,
+				"message", "cancelling reconciliation loop",
+				"reason", "invalid artifact cache",
+				"docker", x.Release.Docker.String(),
+				"github", x.Release.Github.String(),
+				"provider", x.Release.Provider.String(),
+				"current", musStr(x.Artifact.Scheduler.Current),
+				"desired", musStr(x.Artifact.Reference.Desired),
 			)
 
-			return tracer.Mask(cancelError)
+			return tracer.Mask(cacheStateEmptyError)
 		}
+	}
 
-		var ima bool
-		{
-			ima, err = strconv.ParseBool(exi)
-			if err != nil {
-				return tracer.Mask(err)
-			}
-		}
+	// As soon as we detect a single valid state drift, we can return early and
+	// allow the operator chain to execute the rest of the business logic. Our
+	// current policy requires the following conditions to be true for a valid
+	// state drift.
+	//
+	//     1. the current and desired state must not be equal
+	//
+	//     2. the desired state must not be empty
+	//
+	//     3. the container image for the desired state must be pushed
+	//
 
-		if ima && cur != des {
-			// As soon as we detect a single valid state drift, we can return early
-			// and allow the worker engine to execute the rest of the business logic.
-			// Our current policy requires the following conditions to be true for a
-			// valid state drift.
-			//
-			//     1. the current and desired state must not be equal
-			//
-			//     2. either current and desired state must not be empty
-			//
-			//     3. the container image for the new desired state must be pushed
-			//
-
+	for _, x := range p.cac.Releases() {
+		if x.Artifact.Drift() && x.Artifact.Valid() {
 			p.log.Log(
 				"level", "info",
 				"message", "continuing reconciliation loop",
@@ -101,4 +64,12 @@ func (p *Policy) Ensure() error {
 	)
 
 	return tracer.Mask(cancelError)
+}
+
+func musStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return str
 }

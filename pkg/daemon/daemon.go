@@ -6,7 +6,6 @@ import (
 	"github.com/0xSplits/otelgo/recorder"
 	"github.com/xh3b4sd/logger"
 	"go.opentelemetry.io/otel/metric"
-	otelmetric "go.opentelemetry.io/otel/metric"
 )
 
 type Config struct {
@@ -16,7 +15,7 @@ type Config struct {
 type Daemon struct {
 	env envvar.Env
 	log logger.Interface
-	met otelmetric.Meter
+	met metric.Meter
 }
 
 func New(c Config) *Daemon {

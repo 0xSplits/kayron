@@ -1,10 +1,10 @@
 package deploy
 
 import (
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/branch"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/release"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/suspend"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/webhook"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/release"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/suspend"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
 	"github.com/xh3b4sd/tracer"
 )
 

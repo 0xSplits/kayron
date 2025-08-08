@@ -3,21 +3,21 @@
 package schema
 
 import (
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/xh3b4sd/tracer"
 )
 
 // Schema is the root of our release configuration.
 type Schema struct {
-	Service service.Slice
+	Release release.Slice
 }
 
 func (s Schema) Empty() bool {
-	return s.Service.Empty()
+	return s.Release.Empty()
 }
 
 func (s Schema) Verify() error {
-	err := s.Service.Verify()
+	err := s.Release.Verify()
 	if err != nil {
 		return tracer.Mask(err)
 	}

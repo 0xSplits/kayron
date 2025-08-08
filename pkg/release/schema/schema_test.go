@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy/webhook"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/docker"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/github"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/labels"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/provider"
+	"github.com/0xSplits/kayron/pkg/release/schema/release"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/github"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/provider"
 )
 
 // Test_Schema_Verify_failure ensures that invalid service definitions are
@@ -23,19 +23,19 @@ func Test_Schema_Verify_failure(t *testing.T) {
 		// Case 000, no service, nil
 		{
 			sch: Schema{},
-			mat: service.IsServiceDefinitionEmpty,
+			mat: release.IsServiceDefinitionEmpty,
 		},
 		// Case 001, no service
 		{
 			sch: Schema{
-				Service: service.Slice{},
+				Release: release.Slice{},
 			},
-			mat: service.IsServiceDefinitionEmpty,
+			mat: release.IsServiceDefinitionEmpty,
 		},
 		// Case 002, one service, no deployment strategy
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("kayron"),
 						Github: github.String("kayron"),
@@ -45,12 +45,12 @@ func Test_Schema_Verify_failure(t *testing.T) {
 					},
 				},
 			},
-			mat: service.IsServiceDeployEmpty,
+			mat: release.IsServiceDeployEmpty,
 		},
 		// Case 003, one service, no deployment strategy, cloudformation
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Github:   github.String("infrastructure"),
 						Provider: provider.String("cloudformation"),
@@ -60,12 +60,12 @@ func Test_Schema_Verify_failure(t *testing.T) {
 					},
 				},
 			},
-			mat: service.IsServiceDeployEmpty,
+			mat: release.IsServiceDeployEmpty,
 		},
 		// Case 004, one service, no docker repository, no provider setting
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Github: "kayron",
 						Deploy: deploy.Struct{
@@ -77,12 +77,12 @@ func Test_Schema_Verify_failure(t *testing.T) {
 					},
 				},
 			},
-			mat: service.IsServiceProviderEmpty,
+			mat: release.IsServiceProviderEmpty,
 		},
 		// Case 005, one service, no github repository
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: "kayron",
 						Deploy: deploy.Struct{
@@ -94,12 +94,12 @@ func Test_Schema_Verify_failure(t *testing.T) {
 					},
 				},
 			},
-			mat: service.IsServiceGithubEmpty,
+			mat: release.IsServiceGithubEmpty,
 		},
 		// Case 006, one service, more than one strategy
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("kayron"),
 						Github: github.String("kayron"),
@@ -118,7 +118,7 @@ func Test_Schema_Verify_failure(t *testing.T) {
 		// Case 007, many services, more than one strategy
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("kayron"),
 						Github: github.String("kayron"),
@@ -159,7 +159,7 @@ func Test_Schema_Verify_failure(t *testing.T) {
 		// Case 008, many services, no labels
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("kayron"),
 						Github: github.String("kayron"),
@@ -189,7 +189,7 @@ func Test_Schema_Verify_failure(t *testing.T) {
 					},
 				},
 			},
-			mat: service.IsServiceLabelsEmpty,
+			mat: release.IsServiceLabelsEmpty,
 		},
 	}
 
@@ -212,7 +212,7 @@ func Test_Schema_Verify_success(t *testing.T) {
 		// Case 000, one service, branch strategy
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("kayron"),
 						Github: github.String("kayron"),
@@ -229,7 +229,7 @@ func Test_Schema_Verify_success(t *testing.T) {
 		// Case 001, one service, release strategy
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: docker.String("specta"),
 						Github: github.String("specta"),
@@ -246,7 +246,7 @@ func Test_Schema_Verify_success(t *testing.T) {
 		// Case 002, many services, webhook strategy
 		{
 			sch: Schema{
-				Service: service.Slice{
+				Release: release.Slice{
 					{
 						Docker: "kayron",
 						Github: "kayron",

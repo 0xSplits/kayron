@@ -1,15 +1,15 @@
-package service
+package release
 
 import (
-	"github.com/0xSplits/kayron/pkg/release/schema/service/deploy"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/docker"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/github"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/labels"
-	"github.com/0xSplits/kayron/pkg/release/schema/service/provider"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/github"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/provider"
 	"github.com/xh3b4sd/tracer"
 )
 
-type Service struct {
+type Struct struct {
 	Deploy   deploy.Struct   `yaml:"deploy,omitempty"`
 	Docker   docker.String   `yaml:"docker,omitempty"`
 	Github   github.String   `yaml:"github,omitempty"`
@@ -17,11 +17,11 @@ type Service struct {
 	Provider provider.String `yaml:"provider,omitempty"`
 }
 
-func (s Service) Empty() bool {
+func (s Struct) Empty() bool {
 	return s.Docker.Empty() && s.Github.Empty() && s.Deploy.Empty() && s.Labels.Empty() && s.Provider.Empty()
 }
 
-func (s Service) Verify() error {
+func (s Struct) Verify() error {
 	err := s.verify()
 	if err != nil {
 		return tracer.Mask(err,
@@ -33,9 +33,9 @@ func (s Service) Verify() error {
 	return nil
 }
 
-func (s Service) verify() error {
+func (s Struct) verify() error {
 	if s.Deploy.Empty() {
-		return tracer.Mask(serviceDeployEmptyError)
+		return tracer.Mask(releaseDeployEmptyError)
 	} else {
 		err := s.Deploy.Verify()
 		if err != nil {
@@ -44,7 +44,7 @@ func (s Service) verify() error {
 	}
 
 	if s.Github.Empty() {
-		return tracer.Mask(serviceGithubEmptyError)
+		return tracer.Mask(releaseGithubEmptyError)
 	} else {
 		err := s.Github.Verify()
 		if err != nil {
@@ -53,7 +53,7 @@ func (s Service) verify() error {
 	}
 
 	if s.Labels.Empty() {
-		return tracer.Mask(serviceLabelsEmptyError)
+		return tracer.Mask(releaseLabelsEmptyError)
 	} else {
 		err := s.Labels.Verify()
 		if err != nil {
@@ -62,7 +62,7 @@ func (s Service) verify() error {
 	}
 
 	if s.Docker.Empty() && s.Provider.Empty() {
-		return tracer.Mask(serviceProviderEmptyError)
+		return tracer.Mask(releaseProviderEmptyError)
 	} else {
 		if !s.Docker.Empty() {
 			err := s.Docker.Verify()

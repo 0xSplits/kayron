@@ -5,15 +5,15 @@ import (
 	"path/filepath"
 
 	"github.com/0xSplits/kayron/pkg/release/schema"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	yaml "github.com/goccy/go-yaml"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )
 
-// Loader collects all available service settings by walking the provided
+// Loader collects all available service releases by walking the provided
 // filesystem, starting at the given root directory. All .yaml files are
-// inspected and their content is unmarshalled into slices of service.Service
+// inspected and their content is unmarshalled into slices of release.Struct
 // types. An error is returned if walking, reading or unmarshalling fails.
 func Loader(sys afero.Fs, roo string) (schema.Schema, error) {
 	var sch schema.Schema
@@ -44,7 +44,7 @@ func Loader(sys afero.Fs, roo string) (schema.Schema, error) {
 			}
 		}
 
-		var lis service.Slice
+		var lis release.Slice
 		{
 			err = yaml.Unmarshal(byt, &lis)
 			if err != nil {
@@ -58,7 +58,7 @@ func Loader(sys afero.Fs, roo string) (schema.Schema, error) {
 		}
 
 		{
-			sch.Service = append(sch.Service, lis...)
+			sch.Release = append(sch.Release, lis...)
 		}
 
 		return nil

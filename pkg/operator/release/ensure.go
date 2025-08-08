@@ -1,8 +1,6 @@
 package release
 
 import (
-	"fmt"
-
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
@@ -14,15 +12,13 @@ import (
 func (r *Release) Ensure() error {
 	var err error
 
-	// The release handler is the very first building block in our execution path.
-	// We get all chaches injected into this handler, and we have to make sure
-	// that every reconciliation loop starts with a blank slate. So before doing
-	// anything else, we have to purge all cache state by calling Delete without
-	// arguments.
+	// The release handler is the very first building block in our operator chain.
+	// We have to make sure that every reconciliation loop starts with a blank
+	// slate. So before doing anything else, we have to purge all cache state by
+	// calling Delete below.
 
 	{
-		r.art.Delete()
-		r.ser.Delete()
+		r.cac.Delete()
 	}
 
 	// Figure out which Git ref to look at when fetching release information. See
@@ -84,31 +80,14 @@ func (r *Release) Ensure() error {
 		}
 	}
 
-	// Create the release cache for all configured services so that the cache key
-	// aligns with its respective service index across all caches. That way, the
-	// following business logic can iterate over all cached artifact and release
-	// settings like shown below. The first return value is the respective cache
-	// value, and the second return value indicates whether the cache key exists,
-	// which should always be true on idiomatic iteration.
-	//
-	//     for i := range r.ser.Length() {
-	//       ser, _ := r.ser.Search(i)
-	//     }
-	//
+	// Initialize the cache for all configured releases regardless of their type.
+	// Here we require exactly one infrastructure release to be provided.
 
-	for i, x := range sch.Service {
-		{
-			r.ser.Create(i, x)
+	{
+		err = r.cac.Create(sch.Release)
+		if err != nil {
+			return tracer.Mask(err)
 		}
-
-		r.log.Log(
-			"level", "debug",
-			"message", "cached service release",
-			"docker", x.Docker.String(),
-			"github", x.Github.String(),
-			"deploy", x.Deploy.String(),
-			"artifact", fmt.Sprintf("[%d]", i),
-		)
 	}
 
 	return nil

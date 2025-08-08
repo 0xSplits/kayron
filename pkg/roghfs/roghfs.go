@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/roghfs/cache"
 	"github.com/Masterminds/semver/v3"
 	"github.com/google/go-github/v73/github"
 	"github.com/spf13/afero"
@@ -50,8 +50,8 @@ type Roghfs struct {
 	rep string
 	ref string
 
-	// cac is the internal donwload cache telling us which source files we have
-	// alreadz fetched. This cache is necessary because we are initializing the
+	// cac is the internal download cache telling us which source files we have
+	// already fetched. This cache is necessary because we are initializing the
 	// configured root directory inside the injected base file system with empty
 	// files using a single network call to Github's Tree API. This is most
 	// efficient to minimize rate limit errors, but implies that we cannot tell

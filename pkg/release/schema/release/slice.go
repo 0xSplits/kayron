@@ -1,11 +1,11 @@
-package service
+package release
 
 import "github.com/xh3b4sd/tracer"
 
 // Slice describes a list of independently deployable services, defined by a
 // Docker image and a GitHub repository, plus the deployment strategies used for
 // their rollout.
-type Slice []Service
+type Slice []Struct
 
 func (s Slice) Empty() bool {
 	return len(s) == 0
@@ -15,7 +15,7 @@ func (s Slice) Verify() error {
 	{
 		emp := s.Empty()
 		if emp {
-			return tracer.Mask(serviceDefinitionEmptyError)
+			return tracer.Mask(releaseDefinitionEmptyError)
 		}
 	}
 

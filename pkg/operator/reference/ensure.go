@@ -1,10 +1,7 @@
 package reference
 
 import (
-	"context"
-
-	"github.com/0xSplits/kayron/pkg/release/artifact"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/xh3b4sd/choreo/parallel"
 	"github.com/xh3b4sd/tracer"
 )
@@ -12,29 +9,21 @@ import (
 func (r *Reference) Ensure() error {
 	var err error
 
-	// Get the list of cached service releases so that we can lookup their
-	// respective artifact references concurrently, if necessary.
+	// Get the list of cached releases so that we can lookup their respective
+	// artifact references concurrently, if necessary. This includes
+	// infrastructure and service releases.
 
-	var ser []service.Service
-	for i := range r.ser.Length() {
-		var s service.Service
-		{
-			s, _ = r.ser.Search(i)
-		}
-
-		{
-			ser = append(ser, s)
-		}
+	var rel []cache.Object
+	{
+		rel = r.cac.Releases()
 	}
 
 	// Find the reference for every branch deployment strategy. The concurrently
-	// executed function below prevents network calls for every service that does
-	// not define a branch deployment strategy. Note that we can update the
-	// indexed cache keys concurrently, because we are only ever updating cache
-	// leafs, which is to say non-nested data structures.
+	// executed function below prevents network calls for every release that does
+	// not define a branch deployment strategy.
 
-	fnc := func(i int, x service.Service) error {
-		ref, err := r.desRef(x)
+	fnc := func(i int, x cache.Object) error {
+		ref, err := r.desRef(x.Release)
 		if err != nil {
 			return tracer.Mask(err)
 		}
@@ -43,29 +32,26 @@ func (r *Reference) Ensure() error {
 			return nil
 		}
 
-		var key string
-		{
-			key = artifact.ReferenceDesired(i)
-		}
-
-		{
-			r.art.Update(key, ref)
-		}
-
 		r.log.Log(
 			"level", "debug",
-			"message", "cached desired state",
-			"docker", x.Docker.String(),
-			"github", x.Github.String(),
-			"artifact", key,
-			"desired", ref,
+			"message", "caching desired state",
+			"github", x.Release.Github.String(),
+			"desired", musStr(ref),
 		)
+
+		{
+			x.Artifact.Reference.Desired = ref
+		}
+
+		{
+			r.cac.Update(x)
+		}
 
 		return nil
 	}
 
 	{
-		err = parallel.Slice(ser, fnc)
+		err = parallel.Slice(rel, fnc)
 		if err != nil {
 			return tracer.Mask(err)
 		}
@@ -74,29 +60,10 @@ func (r *Reference) Ensure() error {
 	return nil
 }
 
-func (r *Reference) desRef(ser service.Service) (string, error) {
-	// Return the commit sha if the branch deployment strategy is selected.
-
-	if !ser.Deploy.Branch.Empty() {
-		bra, _, err := r.git.Repositories.GetBranch(context.Background(), r.own, ser.Github.String(), ser.Deploy.Branch.String(), 3)
-		if err != nil {
-			return "", tracer.Mask(err)
-		}
-
-		return bra.GetCommit().GetSHA(), nil
+func musStr(str string) string {
+	if str == "" {
+		return "''"
 	}
 
-	// Return the configured release tag if the pinned release deployment strategy
-	// is selected.
-
-	if !ser.Deploy.Release.Empty() {
-		return ser.Deploy.Release.String(), nil
-	}
-
-	// Fall through for e.g. suspended service deployments.
-	//
-	//     !ser.Deploy.Suspend.Empty()
-	//
-
-	return "", nil
+	return str
 }

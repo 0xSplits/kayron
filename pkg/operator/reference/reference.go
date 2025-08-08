@@ -8,7 +8,6 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
 	"github.com/0xSplits/kayron/pkg/roghfs"
 	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/logger"
@@ -16,29 +15,27 @@ import (
 )
 
 type Config struct {
-	Art cache.Interface[string, string]
+	Cac *cache.Cache
 	Env envvar.Env
 	Log logger.Interface
-	Ser cache.Interface[int, service.Service]
 }
 
 type Reference struct {
-	art cache.Interface[string, string]
+	cac *cache.Cache
 	git *github.Client
 	log logger.Interface
 	own string
-	ser cache.Interface[int, service.Service]
 }
 
 func New(c Config) *Reference {
-	if c.Art == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Art must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
+	}
+	if c.Env.Environment == "" {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
-	}
-	if c.Ser == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ser must not be empty", c)))
 	}
 
 	var err error
@@ -52,10 +49,9 @@ func New(c Config) *Reference {
 	}
 
 	return &Reference{
-		art: c.Art,
+		cac: c.Cac,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
 		own: own,
-		ser: c.Ser,
 	}
 }

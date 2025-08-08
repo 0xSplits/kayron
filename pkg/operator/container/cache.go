@@ -1,43 +1,30 @@
 package container
 
-import (
-	"github.com/0xSplits/kayron/pkg/release/artifact"
-	"github.com/0xSplits/kayron/pkg/release/schema/service"
-)
-
 func (c *Container) cache(ima []image) {
-	for i := range c.ser.Length() {
-		var s service.Service
-		{
-			s, _ = c.ser.Search(i)
-		}
-
+	for _, x := range c.cac.Services() {
 		var tag string
 		{
-			tag = curTag(ima, s.Docker.String())
+			tag = curTag(ima, x.Release.Docker.String())
 		}
 
 		if tag == "" {
 			continue
 		}
 
-		var key string
-		{
-			key = artifact.ContainerCurrent(i)
-		}
-
-		{
-			c.art.Update(key, tag)
-		}
-
 		c.log.Log(
 			"level", "debug",
-			"message", "cached current state",
-			"docker", s.Docker.String(),
-			"github", s.Github.String(),
-			"artifact", key,
-			"current", tag,
+			"message", "caching current state",
+			"docker", x.Release.Docker.String(),
+			"current", musStr(tag),
 		)
+
+		{
+			x.Artifact.Scheduler.Current = tag
+		}
+
+		{
+			c.cac.Update(x)
+		}
 	}
 }
 
@@ -49,4 +36,12 @@ func curTag(ima []image, ser string) string {
 	}
 
 	return ""
+}
+
+func musStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return str
 }

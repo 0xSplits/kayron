@@ -29,7 +29,7 @@ func (r *Roghfs) search(pat string) ([]byte, error) {
 	}
 
 	{
-		defer rea.Close()
+		defer rea.Close() // nolint:errcheck
 	}
 
 	var byt []byte
