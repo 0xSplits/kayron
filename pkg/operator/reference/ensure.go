@@ -36,7 +36,7 @@ func (r *Reference) Ensure() error {
 			"level", "debug",
 			"message", "caching desired state",
 			"github", x.Release.Github.String(),
-			"desired", ref,
+			"desired", musStr(ref),
 		)
 
 		{
@@ -58,4 +58,12 @@ func (r *Reference) Ensure() error {
 	}
 
 	return nil
+}
+
+func musStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return str
 }

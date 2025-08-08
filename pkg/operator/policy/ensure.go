@@ -20,8 +20,8 @@ func (p *Policy) Ensure() error {
 				"docker", x.Release.Docker.String(),
 				"github", x.Release.Github.String(),
 				"provider", x.Release.Provider.String(),
-				"current", x.Artifact.Scheduler.Current,
-				"desired", x.Artifact.Reference.Desired,
+				"current", musStr(x.Artifact.Scheduler.Current),
+				"desired", musStr(x.Artifact.Reference.Desired),
 			)
 
 			return tracer.Mask(cacheStateEmptyError)
@@ -64,4 +64,12 @@ func (p *Policy) Ensure() error {
 	)
 
 	return tracer.Mask(cancelError)
+}
+
+func musStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return str
 }

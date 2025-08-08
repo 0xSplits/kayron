@@ -15,7 +15,7 @@ func (c *Container) cache(ima []image) {
 			"level", "debug",
 			"message", "caching current state",
 			"docker", x.Release.Docker.String(),
-			"current", tag,
+			"current", musStr(tag),
 		)
 
 		{
@@ -36,4 +36,12 @@ func curTag(ima []image, ser string) string {
 	}
 
 	return ""
+}
+
+func musStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return str
 }

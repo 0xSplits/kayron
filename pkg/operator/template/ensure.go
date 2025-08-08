@@ -34,8 +34,8 @@ func (t *Template) Ensure() error {
 	t.log.Log(
 		"level", "debug",
 		"message", "caching current state",
-		"docker", inf.Release.Docker.String(),
-		"current", ver,
+		"github", inf.Release.Github.String(),
+		"current", musStr(ver),
 	)
 
 	{
@@ -47,6 +47,14 @@ func (t *Template) Ensure() error {
 	}
 
 	return nil
+}
+
+func musStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return str
 }
 
 func temVer(par []types.Parameter) string {
