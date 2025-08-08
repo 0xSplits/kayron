@@ -36,7 +36,7 @@ func (i *Infrastructure) Ensure() error {
 			Bas: afero.NewMemMapFs(),
 			Git: i.git,
 			Own: i.own,
-			Rep: Repository,
+			Rep: inf.Release.Github.String(),
 			Ref: inf.Artifact.Reference.Desired,
 		})
 	}

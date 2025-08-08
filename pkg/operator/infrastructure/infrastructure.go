@@ -19,9 +19,8 @@ import (
 )
 
 const (
-	Bucket     = "splits-cf-templates" // TODO configure env var KAYRON_CLOUDFORMATION_BUCKET
-	Directory  = "cloudformation"      // TODO configure env var KAYRON_INFRASTRUCTURE_DIRECTORY
-	Repository = "infrastructure"      // TODO configure env var KAYRON_INFRASTRUCTURE_REPOSITORY
+	Bucket    = "splits-cf-templates" // TODO configure env var KAYRON_CLOUDFORMATION_BUCKET
+	Directory = "cloudformation"      // TODO configure env var KAYRON_INFRASTRUCTURE_DIRECTORY
 )
 
 type Config struct {
