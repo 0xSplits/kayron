@@ -138,13 +138,13 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
 ```
 === RUN   Test_Operator_Integration
 {
-    "time": "2025-08-08 14:21:33",
+    "time": "2025-08-08 15:12:07",
     "level": "debug",
     "message": "resetting operator cache",
     "caller": "/home/runner/work/kayron/kayron/pkg/cache/delete.go:9"
 }
 {
-    "time": "2025-08-08 14:21:34",
+    "time": "2025-08-08 15:12:07",
     "level": "debug",
     "message": "resolved ref for github repository",
     "environment": "testing",
@@ -153,7 +153,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/release/ensure.go:37"
 }
 {
-    "time": "2025-08-08 14:21:34",
+    "time": "2025-08-08 15:12:08",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "v0.1.2",
@@ -162,7 +162,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/cache/create.go:16"
 }
 {
-    "time": "2025-08-08 14:21:34",
+    "time": "2025-08-08 15:12:08",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "v0.1.16",
@@ -171,15 +171,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/cache/create.go:16"
 }
 {
-    "time": "2025-08-08 14:21:34",
-    "level": "debug",
-    "message": "caching desired state",
-    "desired": "v0.1.16",
-    "github": "specta",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/reference/ensure.go:35"
-}
-{
-    "time": "2025-08-08 14:21:34",
+    "time": "2025-08-08 15:12:08",
     "level": "debug",
     "message": "caching desired state",
     "desired": "v0.1.2",
@@ -187,13 +179,23 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/reference/ensure.go:35"
 }
 {
-    "time": "2025-08-08 14:21:35",
+    "time": "2025-08-08 15:12:08",
+    "level": "debug",
+    "message": "caching desired state",
+    "desired": "v0.1.16",
+    "github": "specta",
+    "caller": "/home/runner/work/kayron/kayron/pkg/operator/reference/ensure.go:35"
+}
+{
+    "time": "2025-08-08 15:12:08",
     "level": "debug",
     "message": "caching current state",
+    "current": "''",
+    "github": "infrastructure",
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/template/ensure.go:34"
 }
 {
-    "time": "2025-08-08 14:21:35",
+    "time": "2025-08-08 15:12:08",
     "level": "debug",
     "message": "caching current state",
     "current": "v0.1.15",
@@ -201,7 +203,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/container/cache.go:14"
 }
 {
-    "time": "2025-08-08 14:21:35",
+    "time": "2025-08-08 15:12:09",
     "level": "debug",
     "message": "executed image check",
     "exists": "true",
@@ -210,14 +212,14 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/registry/ensure.go:53"
 }
 {
-    "time": "2025-08-08 14:21:35",
+    "time": "2025-08-08 15:12:09",
     "level": "info",
     "message": "continuing reconciliation loop",
     "reason": "detected state drift",
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/policy/ensure.go:45"
 }
 {
-    "time": "2025-08-08 14:21:35",
+    "time": "2025-08-08 15:12:09",
     "level": "debug",
     "message": "resolved ref for github repository",
     "environment": "testing",
@@ -226,7 +228,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/ensure.go:21"
 }
 {
-    "time": "2025-08-08 14:21:36",
+    "time": "2025-08-08 15:12:09",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -234,7 +236,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:36",
+    "time": "2025-08-08 15:12:09",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -242,7 +244,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:36",
+    "time": "2025-08-08 15:12:09",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -250,7 +252,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:36",
+    "time": "2025-08-08 15:12:10",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -258,7 +260,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:36",
+    "time": "2025-08-08 15:12:10",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -266,7 +268,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:36",
+    "time": "2025-08-08 15:12:10",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -274,7 +276,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:37",
+    "time": "2025-08-08 15:12:10",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -282,7 +284,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:37",
+    "time": "2025-08-08 15:12:10",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -290,7 +292,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:37",
+    "time": "2025-08-08 15:12:10",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -298,7 +300,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:37",
+    "time": "2025-08-08 15:12:11",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -306,16 +308,16 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
 {
-    "time": "2025-08-08 14:21:37",
+    "time": "2025-08-08 15:12:11",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/vpc/vpc.yaml",
     "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:25"
 }
---- PASS: Test_Operator_Integration (3.88s)
+--- PASS: Test_Operator_Integration (4.19s)
 PASS
-ok  	github.com/0xSplits/kayron/pkg/operator	4.907s
+ok  	github.com/0xSplits/kayron/pkg/operator	5.215s
 ```
 
 ### Releases
