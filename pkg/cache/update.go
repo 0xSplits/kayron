@@ -1,6 +1,6 @@
-package context
+package cache
 
-func (c *Context) Update(obj Object) {
+func (c *Cache) Update(obj Object) {
 	{
 		c.mut.Lock()
 		defer c.mut.Unlock()

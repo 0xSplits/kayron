@@ -1,4 +1,4 @@
-package context
+package cache
 
 import (
 	"github.com/0xSplits/kayron/pkg/release/artifact"
@@ -6,7 +6,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (c *Context) Create(rel release.Slice) error {
+func (c *Cache) Create(rel release.Slice) error {
 	{
 		c.mut.Lock()
 		defer c.mut.Unlock()

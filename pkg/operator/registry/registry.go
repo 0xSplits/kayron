@@ -6,7 +6,7 @@ package registry
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
@@ -16,13 +16,13 @@ import (
 
 type Config struct {
 	Aws aws.Config
-	Ctx *context.Context
+	Cac *cache.Cache
 	Env envvar.Env
 	Log logger.Interface
 }
 
 type Registry struct {
-	ctx *context.Context
+	cac *cache.Cache
 	ecr *ecr.Client
 	env envvar.Env
 	log logger.Interface
@@ -32,8 +32,8 @@ func New(c Config) *Registry {
 	if c.Aws.Region == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
 	}
-	if c.Ctx == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
 	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
@@ -43,7 +43,7 @@ func New(c Config) *Registry {
 	}
 
 	return &Registry{
-		ctx: c.Ctx,
+		cac: c.Cac,
 		ecr: ecr.NewFromConfig(c.Aws),
 		env: c.Env,
 		log: c.Log,

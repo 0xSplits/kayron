@@ -18,7 +18,7 @@ func (r *Release) Ensure() error {
 	// calling Delete below.
 
 	{
-		r.ctx.Delete()
+		r.cac.Delete()
 	}
 
 	// Figure out which Git ref to look at when fetching release information. See
@@ -84,7 +84,7 @@ func (r *Release) Ensure() error {
 	// Here we require exactly one infrastructure release to be provided.
 
 	{
-		err = r.ctx.Create(sch.Release)
+		err = r.cac.Create(sch.Release)
 		if err != nil {
 			return tracer.Mask(err)
 		}

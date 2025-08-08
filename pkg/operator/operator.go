@@ -3,7 +3,7 @@ package operator
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator/cloudformation"
 	"github.com/0xSplits/kayron/pkg/operator/container"
@@ -21,7 +21,7 @@ import (
 
 type Config struct {
 	Aws aws.Config
-	Ctx *context.Context
+	Cac *cache.Cache
 	Dry bool
 	Env envvar.Env
 	Log logger.Interface
@@ -43,8 +43,8 @@ func New(c Config) *Operator {
 	if c.Aws.Region == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
 	}
-	if c.Ctx == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
 	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
@@ -57,13 +57,13 @@ func New(c Config) *Operator {
 	}
 
 	return &Operator{
-		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Ctx: c.Ctx, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met}),
-		container:      container.New(container.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Ctx: c.Ctx, Dry: c.Dry, Env: c.Env, Log: c.Log}),
-		policy:         policy.New(policy.Config{Ctx: c.Ctx, Log: c.Log}),
-		reference:      reference.New(reference.Config{Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		release:        release.New(release.Config{Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		registry:       registry.New(registry.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
-		template:       template.New(template.Config{Aws: c.Aws, Ctx: c.Ctx, Env: c.Env, Log: c.Log}),
+		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met}),
+		container:      container.New(container.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log}),
+		policy:         policy.New(policy.Config{Cac: c.Cac, Log: c.Log}),
+		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		release:        release.New(release.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		template:       template.New(template.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
 	}
 }

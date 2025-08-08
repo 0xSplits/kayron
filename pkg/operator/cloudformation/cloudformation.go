@@ -6,7 +6,7 @@ package cloudformation
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/otelgo/registry"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -22,7 +22,7 @@ const (
 
 type Config struct {
 	Aws aws.Config
-	Ctx *context.Context
+	Cac *cache.Cache
 	Dry bool
 	Env envvar.Env
 	Log logger.Interface
@@ -31,7 +31,7 @@ type Config struct {
 
 type CloudFormation struct {
 	cfc *cloudformation.Client
-	ctx *context.Context
+	cac *cache.Cache
 	dry bool
 	log logger.Interface
 	reg registry.Interface
@@ -41,8 +41,8 @@ func New(c Config) *CloudFormation {
 	if c.Aws.Region == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
 	}
-	if c.Ctx == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
 	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
@@ -61,7 +61,7 @@ func New(c Config) *CloudFormation {
 
 	return &CloudFormation{
 		cfc: cloudformation.NewFromConfig(c.Aws),
-		ctx: c.Ctx,
+		cac: c.Cac,
 		dry: c.Dry,
 		log: c.Log,
 		reg: reg,

@@ -3,21 +3,21 @@ package registry
 import (
 	"strconv"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/xh3b4sd/choreo/parallel"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (r *Registry) Ensure() error {
-	var ser []context.Object
+	var ser []cache.Object
 	{
-		ser = r.ctx.Services()
+		ser = r.cac.Services()
 	}
 
 	// Check whether the desired Docker image exists within the underlying
 	// container registry, if the current and desired state differs.
 
-	fnc := func(i int, x context.Object) error {
+	fnc := func(i int, x cache.Object) error {
 		var err error
 
 		var cur string
@@ -47,7 +47,7 @@ func (r *Registry) Ensure() error {
 		}
 
 		{
-			r.ctx.Update(x)
+			r.cac.Update(x)
 		}
 
 		r.log.Log(

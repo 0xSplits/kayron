@@ -3,7 +3,7 @@ package daemon
 import (
 	"time"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator"
 	"github.com/0xSplits/kayron/pkg/operator/policy"
@@ -18,9 +18,9 @@ func (d *Daemon) Worker() *worker.Worker {
 		cfg = envvar.MustAws()
 	}
 
-	var ctx *context.Context
+	var cac *cache.Cache
 	{
-		ctx = context.New(context.Config{
+		cac = cache.New(cache.Config{
 			Log: d.log,
 		})
 	}
@@ -29,7 +29,7 @@ func (d *Daemon) Worker() *worker.Worker {
 	{
 		ope = operator.New(operator.Config{
 			Aws: cfg,
-			Ctx: ctx,
+			Cac: cac,
 			Env: d.env,
 			Log: d.log,
 			Met: d.met,

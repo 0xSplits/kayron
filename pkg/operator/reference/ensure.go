@@ -1,7 +1,7 @@
 package reference
 
 import (
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/xh3b4sd/choreo/parallel"
 	"github.com/xh3b4sd/tracer"
 )
@@ -13,16 +13,16 @@ func (r *Reference) Ensure() error {
 	// artifact references concurrently, if necessary. This includes
 	// infrastructure and service releases.
 
-	var rel []context.Object
+	var rel []cache.Object
 	{
-		rel = r.ctx.Releases()
+		rel = r.cac.Releases()
 	}
 
 	// Find the reference for every branch deployment strategy. The concurrently
 	// executed function below prevents network calls for every release that does
 	// not define a branch deployment strategy.
 
-	fnc := func(i int, x context.Object) error {
+	fnc := func(i int, x cache.Object) error {
 		ref, err := r.desRef(x.Release)
 		if err != nil {
 			return tracer.Mask(err)
@@ -44,7 +44,7 @@ func (r *Reference) Ensure() error {
 		}
 
 		{
-			r.ctx.Update(x)
+			r.cac.Update(x)
 		}
 
 		return nil

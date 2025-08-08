@@ -11,7 +11,7 @@ func (p *Policy) Ensure() error {
 	// because the side effects of proceeding using such a broken state could
 	// potentially be dangerous.
 
-	for _, x := range p.ctx.Releases() {
+	for _, x := range p.cac.Releases() {
 		if x.Artifact.Empty() {
 			p.log.Log(
 				"level", "warning",
@@ -40,7 +40,7 @@ func (p *Policy) Ensure() error {
 	//     3. the container image for the desired state must be pushed
 	//
 
-	for _, x := range p.ctx.Releases() {
+	for _, x := range p.cac.Releases() {
 		if x.Artifact.Drift() && x.Artifact.Valid() {
 			p.log.Log(
 				"level", "info",

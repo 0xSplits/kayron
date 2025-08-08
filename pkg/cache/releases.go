@@ -1,6 +1,6 @@
-package context
+package cache
 
-func (c *Context) Releases() []Object {
+func (c *Cache) Releases() []Object {
 	{
 		c.mut.Lock()
 		defer c.mut.Unlock()

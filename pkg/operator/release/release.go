@@ -7,7 +7,7 @@ package release
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
 	"github.com/0xSplits/kayron/pkg/roghfs"
@@ -17,13 +17,13 @@ import (
 )
 
 type Config struct {
-	Ctx *context.Context
+	Cac *cache.Cache
 	Env envvar.Env
 	Log logger.Interface
 }
 
 type Release struct {
-	ctx *context.Context
+	cac *cache.Cache
 	env envvar.Env
 	git *github.Client
 	log logger.Interface
@@ -33,8 +33,8 @@ type Release struct {
 }
 
 func New(c Config) *Release {
-	if c.Ctx == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
 	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
@@ -69,7 +69,7 @@ func New(c Config) *Release {
 	}
 
 	return &Release{
-		ctx: c.Ctx,
+		cac: c.Cac,
 		env: c.Env,
 		git: git,
 		log: c.Log,

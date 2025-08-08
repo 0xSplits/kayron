@@ -140,7 +140,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "time": "2025-08-08 10:55:17",
     "level": "debug",
     "message": "resetting operator cache",
-    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/context/delete.go:9"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/delete.go:9"
 }
 {
     "time": "2025-08-08 10:55:17",
@@ -158,7 +158,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "deploy": "v0.1.2",
     "github": "infrastructure",
     "provider": "cloudformation",
-    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/context/create.go:16"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:16"
 }
 {
     "time": "2025-08-08 10:55:18",
@@ -167,7 +167,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "deploy": "v0.1.16",
     "docker": "specta",
     "github": "specta",
-    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/context/create.go:16"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:16"
 }
 {
     "time": "2025-08-08 10:55:18",

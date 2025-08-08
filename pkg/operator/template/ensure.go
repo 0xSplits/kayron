@@ -1,7 +1,7 @@
 package template
 
 import (
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	"github.com/xh3b4sd/tracer"
@@ -10,9 +10,9 @@ import (
 func (t *Template) Ensure() error {
 	var err error
 
-	var inf context.Object
+	var inf cache.Object
 	{
-		inf = t.ctx.Infrastructure()
+		inf = t.cac.Infrastructure()
 	}
 
 	var roo types.Stack
@@ -43,7 +43,7 @@ func (t *Template) Ensure() error {
 	}
 
 	{
-		t.ctx.Update(inf)
+		t.cac.Update(inf)
 	}
 
 	return nil

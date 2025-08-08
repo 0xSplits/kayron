@@ -1,6 +1,6 @@
-package context
+package cache
 
-func (c *Context) Delete() {
+func (c *Cache) Delete() {
 	{
 		c.mut.Lock()
 		defer c.mut.Unlock()

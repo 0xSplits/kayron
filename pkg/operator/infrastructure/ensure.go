@@ -5,16 +5,16 @@ import (
 	"io/fs"
 	"path/filepath"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (i *Infrastructure) Ensure() error {
-	var inf context.Object
+	var inf cache.Object
 	{
-		inf = i.ctx.Infrastructure()
+		inf = i.cac.Infrastructure()
 	}
 
 	{
@@ -92,7 +92,7 @@ func (i *Infrastructure) Ensure() error {
 	}
 
 	{
-		i.ctx.Update(inf)
+		i.cac.Update(inf)
 	}
 
 	return nil

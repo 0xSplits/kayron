@@ -103,7 +103,7 @@ func (c *Container) task(det []detail) ([]task, error) {
 	// releases.
 
 	var ser []string
-	for _, x := range c.ctx.Services() {
+	for _, x := range c.cac.Services() {
 		ser = append(ser, x.Release.Docker.String())
 	}
 

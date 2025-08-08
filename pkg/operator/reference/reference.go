@@ -6,7 +6,7 @@ package reference
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/roghfs"
 	"github.com/google/go-github/v73/github"
@@ -15,21 +15,21 @@ import (
 )
 
 type Config struct {
-	Ctx *context.Context
+	Cac *cache.Cache
 	Env envvar.Env
 	Log logger.Interface
 }
 
 type Reference struct {
-	ctx *context.Context
+	cac *cache.Cache
 	git *github.Client
 	log logger.Interface
 	own string
 }
 
 func New(c Config) *Reference {
-	if c.Ctx == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
 	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
@@ -49,7 +49,7 @@ func New(c Config) *Reference {
 	}
 
 	return &Reference{
-		ctx: c.Ctx,
+		cac: c.Cac,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
 		own: own,

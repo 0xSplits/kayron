@@ -1,6 +1,6 @@
-package context
+package cache
 
-func (c *Context) Infrastructure() Object {
+func (c *Cache) Infrastructure() Object {
 	{
 		c.mut.Lock()
 		defer c.mut.Unlock()

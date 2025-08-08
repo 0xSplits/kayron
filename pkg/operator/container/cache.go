@@ -1,7 +1,7 @@
 package container
 
 func (c *Container) cache(ima []image) {
-	for _, x := range c.ctx.Services() {
+	for _, x := range c.cac.Services() {
 		var tag string
 		{
 			tag = curTag(ima, x.Release.Docker.String())
@@ -23,7 +23,7 @@ func (c *Container) cache(ima []image) {
 		}
 
 		{
-			c.ctx.Update(x)
+			c.cac.Update(x)
 		}
 	}
 }

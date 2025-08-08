@@ -8,7 +8,7 @@ package infrastructure
 import (
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/roghfs"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -26,7 +26,7 @@ const (
 
 type Config struct {
 	Aws aws.Config
-	Ctx *context.Context
+	Cac *cache.Cache
 	Dry bool
 	Env envvar.Env
 	Log logger.Interface
@@ -34,7 +34,7 @@ type Config struct {
 
 type Infrastructure struct {
 	as3 *s3.Client
-	ctx *context.Context
+	cac *cache.Cache
 	dry bool
 	env string
 	git *github.Client
@@ -46,8 +46,8 @@ func New(c Config) *Infrastructure {
 	if c.Aws.Region == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Aws must not be empty", c)))
 	}
-	if c.Ctx == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Ctx must not be empty", c)))
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
 	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
@@ -68,7 +68,7 @@ func New(c Config) *Infrastructure {
 
 	return &Infrastructure{
 		as3: s3.NewFromConfig(c.Aws),
-		ctx: c.Ctx,
+		cac: c.Cac,
 		dry: c.Dry,
 		env: c.Env.Environment,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),

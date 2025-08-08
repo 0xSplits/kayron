@@ -5,7 +5,7 @@ package operator
 import (
 	"testing"
 
-	"github.com/0xSplits/kayron/pkg/context"
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
@@ -45,9 +45,9 @@ func Test_Operator_Integration(t *testing.T) {
 		cfg = envvar.MustAws()
 	}
 
-	var ctx *context.Context
+	var cac *cache.Cache
 	{
-		ctx = context.New(context.Config{
+		cac = cache.New(cache.Config{
 			Log: log,
 		})
 	}
@@ -65,7 +65,7 @@ func Test_Operator_Integration(t *testing.T) {
 	{
 		ope = New(Config{
 			Aws: cfg,
-			Ctx: ctx,
+			Cac: cac,
 			Dry: true, // dry run, read only
 			Env: env,
 			Log: log,
