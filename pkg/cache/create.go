@@ -15,7 +15,7 @@ func (c *Cache) Create(rel release.Slice) error {
 	for _, x := range rel {
 		c.log.Log(
 			"level", "debug",
-			"message", "caching release index",
+			"message", "caching release artifact",
 			"docker", x.Docker.String(),
 			"github", x.Github.String(),
 			"deploy", x.Deploy.String(),

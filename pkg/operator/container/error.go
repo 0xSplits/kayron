@@ -9,7 +9,7 @@ var invalidAmazonResourceNameError = &tracer.Error{
 }
 
 var invalidEcsServiceError = &tracer.Error{
-	Description: "This critical error indicates that the query for a single ECS service did not result in exactly one service result in the response.",
+	Description: "This critical error indicates that the query for a single ECS service did not yield exactly one service result in the response, which means that the operator does not know how to proceed safely.",
 }
 
 //

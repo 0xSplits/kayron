@@ -6,5 +6,5 @@ func (c *Cache) Infrastructure() Object {
 		defer c.mut.Unlock()
 	}
 
-	return c.inf[0]
+	return c.inf[0] // Cache.Create guarantees 1 infrastructure release
 }
