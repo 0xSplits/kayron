@@ -2,8 +2,8 @@
 
 This repository contains the operator responsible for our automated change
 management. The relevant components here are described by the `server` and
-`worker` packages. Kayron's sole responsibility is to keep our infrastructure
-and services up to date, according to our release artifacts managed in Github.
+`operator` packages. Kayron's sole responsibility is to keep our infrastructure
+and services up to date, according to our [release artifacts] managed in Github.
 
 ![Kayron Overview](.github/assets/Kayron-Overview.svg)
 
@@ -25,9 +25,10 @@ go_gc_duration_seconds{quantile="0.5"} 0
 
 ### Worker
 
-The worker is a custom task engine executing asynchronous worker handlers
+The worker is a [custom task engine] executing asynchronous worker handlers
 iteratively. New worker handlers can be added easily by implementing the handler
-interface and registering the handler in the worker engine.
+interface and registering the handler in the worker engine. Kayron's operator
+chain is executed by a single standard worker handler.
 
 ```
 type Interface interface {
@@ -51,8 +52,8 @@ Kayron is a change management controller implementing the [operator pattern], in
 this particular case without the involvement of [Kubernetes]. The main goroutine
 for the operator's reconciliation loop is the operator worker handler running a
 sequence of steps according to their operator functions located in
-`./pkg/operator/`. Secondary worker handlers may be executed within their own
-isolated failure domain.
+[pkg/operator](./pkg/operator/). Secondary worker handlers may be executed
+within their own isolated failure domain.
 
 Operators try to continuously drive the current state of a system towards the
 desired state of a system. In our case, the current state is represented by the
@@ -358,10 +359,12 @@ docker run \
 [Amazon ECR]: https://docs.aws.amazon.com/ecr
 [AmazonEC2ContainerRegistryReadOnly]: https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonEC2ContainerRegistryReadOnly.html
 [Cobra]: https://github.com/spf13/cobra
+[custom task engine]: https://github.com/0xSplits/workit
 [distroless]: https://github.com/GoogleContainerTools/distroless
 [Github Action]: .github/workflows/docker-release.yaml
 [operator pattern]: https://kubernetes.io/docs/concepts/extend-kubernetes/operator
 [Kubernetes]: https://kubernetes.io/docs/concepts/overview
+[release artifacts]: https://github.com/0xSplits/releases
 [ResourceGroupsandTagEditorReadOnlyAccess]: https://docs.aws.amazon.com/aws-managed-policy/latest/reference/ResourceGroupsandTagEditorReadOnlyAccess.html
 [Semver Format]: https://semver.org
 [ViewOnlyAccess]: https://docs.aws.amazon.com/aws-managed-policy/latest/reference/ViewOnlyAccess.html
