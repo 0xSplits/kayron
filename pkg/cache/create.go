@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/xh3b4sd/tracer"
@@ -30,7 +31,11 @@ func (c *Cache) Create(rel release.Slice) error {
 			}
 		}
 
-		if x.Provider.String() == "cloudformation" {
+		if x.Provider.String() == constant.Cloudformation {
+			{
+				obj.Artifact.Condition.Trigger = c.frc // forward the infrastructure trigger
+			}
+
 			{
 				obj.ind = len(c.inf)
 				obj.kin = Infrastructure

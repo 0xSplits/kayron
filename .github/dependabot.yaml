@@ -17,7 +17,6 @@ updates:
     schedule:
       interval: "daily"
       time: "04:00"
-    target-branch: "main"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -28,7 +27,6 @@ updates:
     schedule:
       interval: "daily"
       time: "04:00"
-    target-branch: "main"
 
   - package-ecosystem: "gomod"
     directory: "/"
@@ -39,4 +37,3 @@ updates:
     schedule:
       interval: "daily"
       time: "04:00"
-    target-branch: "main"

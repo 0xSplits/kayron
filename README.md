@@ -105,12 +105,26 @@ Use "kayron [command] --help" for more information about a command.
 
 ### Development
 
-Running the Kayron daemon requires the environment to be injected via
-environment variable with one of these values: `development` `testing` `staging`
-`production`. Any other value will cause an early runtime panic.
+As a convention, Kayron's `.env` file should remain simple and generic. A
+reasonable setting within that config file is e.g. `KAYRON_LOG_LEVEL`. Kayron
+requires the standard AWS credentials format to be properly setup. More specific
+organization and environment related settings must be provided separately. And
+so running e.g. the Kayron daemon requires several additional environment
+variables to be injected.
+
+- `KAYRON_CLOUDFORMATION_STACK`, the CloudFormation stack name to reconcile, e.g. `server-test`.
+- `KAYRON_ENVIRONMENT`, the environment Kayron is running in, one of `development` `testing` `staging` `production`.
+- `KAYRON_GITHUB_TOKEN`, the Github token to use for fetching releases, requires the `repo` scope.
+- `KAYRON_RELEASE_SOURCE`, the Github repository containing releases, e.g. https://github.com/0xSplits/releases.
+- `KAYRON_S3_BUCKET`, the S3 bucket to upload CloudFormation templates, e.g. `splits-cf-templates`.
+
+---
+
+- `KAYRON_CLOUDFORMATION_PARAMETERS`, the optional CloudFormation parameter overwrites, in the format `key:value,foo:bar`.
+- `KAYRON_CLOUDFORMATION_TAGS`, the optional CloudFormation tag overwrites, in the format `key:value,foo:bar`.
 
 ```
-KAYRON_ENVIRONMENT=development KAYRON_GITHUB_TOKEN=todo kayron daemon
+kayron daemon
 ```
 
 ```
