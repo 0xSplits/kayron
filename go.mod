@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/0xSplits/otelgo v0.1.0
 	github.com/0xSplits/workit v0.4.1
-	github.com/aws/aws-sdk-go-v2 v1.37.2
+	github.com/aws/aws-sdk-go-v2 v1.38.0
 	github.com/aws/aws-sdk-go-v2/config v1.30.3
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.62.0
 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.28.0
