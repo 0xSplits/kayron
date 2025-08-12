@@ -1,6 +1,12 @@
 name: "integration-test"
 
-on: "push"
+on:
+  push:
+    # Dependabot has no access to the secrets that this integration test
+    # requires. So we skip running integration tests in branches that dependabot
+    # presumably created.
+    branches-ignore:
+      - "dependabot/**"
 
 permissions:
   contents: read
