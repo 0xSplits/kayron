@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.38.0
 	github.com/aws/aws-sdk-go-v2/config v1.30.3
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.62.0
-	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.28.0
+	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.29.0
 	github.com/distribution/reference v0.6.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/go-cmp v0.7.0
