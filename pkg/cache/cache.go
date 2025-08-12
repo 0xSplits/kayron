@@ -9,6 +9,12 @@ import (
 )
 
 type Config struct {
+	// Frc is to forcefully trigger an infrastructure deployment, regardless of
+	// any detectable state drift. This option should be used with caution. E.g.
+	// the command "kayron daemon" should never allow to apply this trigger flag
+	// within Kayron's normal reconciliation loop.
+	Frc bool
+
 	Log logger.Interface
 }
 
@@ -21,6 +27,7 @@ type Config struct {
 // some business logic to be skipped temporarily, or cause the reconciliation
 // loop to be cancelled entirely.
 type Cache struct {
+	frc bool
 	inf []Object
 	log logger.Interface
 	mut sync.Mutex
@@ -33,6 +40,7 @@ func New(c Config) *Cache {
 	}
 
 	return &Cache{
+		frc: c.Frc,
 		inf: nil,
 		log: c.Log,
 		mut: sync.Mutex{},

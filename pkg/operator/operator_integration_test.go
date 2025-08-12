@@ -18,17 +18,20 @@ import (
 // Test_Operator_Integration runs the entire operator chain against all network
 // dependencies, as if the operator was deploying for real. The required Github
 // auth token to run this integration test needs at least public repo
-// permissions. Also, a set of AWS credentials is required.
+// permissions. Also, a set of standard AWS credentials is required with
+// read-only access as described in the README.md.
 //
 //	KAYRON_GITHUB_TOKEN=todo go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
 func Test_Operator_Integration(t *testing.T) {
 	var env envvar.Env
 	{
 		env = envvar.Env{
-			Environment:   "testing",
-			GithubToken:   envvar.MustGithub(),
-			LogLevel:      "debug",
-			ReleaseSource: "https://github.com/0xSplits/releases",
+			CloudformationStack: "server-test",
+			Environment:         "testing",
+			GithubToken:         envvar.MustGithub(),
+			LogLevel:            "debug",
+			ReleaseSource:       "https://github.com/0xSplits/releases",
+			S3Bucket:            "splits-cf-templates",
 		}
 	}
 

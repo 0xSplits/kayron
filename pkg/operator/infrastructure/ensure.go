@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/0xSplits/kayron/pkg/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
@@ -21,7 +22,7 @@ func (i *Infrastructure) Ensure() error {
 		i.log.Log(
 			"level", "debug",
 			"message", "resolved ref for github repository",
-			"environment", i.env,
+			"environment", i.env.Environment,
 			"repository", fmt.Sprintf("https://github.com/%s/%s", i.own, inf.Release.Github.String()),
 			"ref", inf.Artifact.Reference.Desired,
 		)
@@ -78,7 +79,7 @@ func (i *Infrastructure) Ensure() error {
 	}
 
 	{
-		err := afero.Walk(gfs, Directory, fnc)
+		err := afero.Walk(gfs, constant.Cloudformation, fnc)
 		if err != nil {
 			return tracer.Mask(err)
 		}

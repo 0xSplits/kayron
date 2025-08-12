@@ -5,6 +5,7 @@ import (
 	"context"
 	"path/filepath"
 
+	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/xh3b4sd/tracer"
@@ -25,7 +26,7 @@ func (i *Infrastructure) putObj(pat string, byt []byte) error {
 		i.log.Log(
 			"level", "debug",
 			"message", "uploading cloudformation template",
-			"bucket", Bucket,
+			"bucket", i.env.S3Bucket,
 			"key", key,
 		)
 	}
@@ -38,7 +39,7 @@ func (i *Infrastructure) putObj(pat string, byt []byte) error {
 	var inp *s3.PutObjectInput
 	{
 		inp = &s3.PutObjectInput{
-			Bucket:      aws.String(Bucket),
+			Bucket:      aws.String(i.env.S3Bucket),
 			Key:         aws.String(key),
 			Body:        bytes.NewReader(byt),
 			ContentType: aws.String("application/x-yaml"),
@@ -56,10 +57,10 @@ func (i *Infrastructure) putObj(pat string, byt []byte) error {
 }
 
 func (i *Infrastructure) envKey(pat string) (string, error) {
-	key, err := filepath.Rel(Directory, pat)
+	key, err := filepath.Rel(constant.Cloudformation, pat)
 	if err != nil {
 		return "", tracer.Mask(err)
 	}
 
-	return filepath.Join(i.env, key), nil
+	return filepath.Join(i.env.Environment, key), nil
 }

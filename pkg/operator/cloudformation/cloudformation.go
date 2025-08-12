@@ -33,6 +33,7 @@ type CloudFormation struct {
 	cfc *cloudformation.Client
 	cac *cache.Cache
 	dry bool
+	env envvar.Env
 	log logger.Interface
 	reg registry.Interface
 }
@@ -63,6 +64,7 @@ func New(c Config) *CloudFormation {
 		cfc: cloudformation.NewFromConfig(c.Aws),
 		cac: c.Cac,
 		dry: c.Dry,
+		env: c.Env,
 		log: c.Log,
 		reg: reg,
 	}
