@@ -6,19 +6,28 @@ import (
 
 const (
 	use = "deploy"
-	sho = "Claim the given test environment and continuously deploy the given service branch."
-	lon = "Claim the given test environment and continuously deploy the given service branch."
+	sho = "Manually trigger a CloudFormation stack update."
+	lon = "Manually trigger a CloudFormation stack update."
 )
 
 func New() *cobra.Command {
+	var flg *flag
+	{
+		flg = &flag{}
+	}
+
 	var cmd *cobra.Command
 	{
 		cmd = &cobra.Command{
 			Use:   use,
 			Short: sho,
 			Long:  lon,
-			Run:   (&run{}).run,
+			RunE:  (&run{flag: flg}).runE,
 		}
+	}
+
+	{
+		flg.Init(cmd)
 	}
 
 	return cmd

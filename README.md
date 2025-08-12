@@ -93,7 +93,7 @@ Usage:
 
 Available Commands:
   daemon      Execute Kayron's long running process for running the operator.
-  deploy      Claim the given test environment and continuously deploy the given service branch.
+  deploy      Manually trigger a CloudFormation stack update.
   lint        Validate the release configuration under the given path.
   version     Print the version information for this command line tool.
 

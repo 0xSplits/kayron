@@ -87,7 +87,7 @@ func (c *CloudFormation) Ensure() error {
 	// TODO
 	//
 	//     add inhibition operator function to cancel reconciliation if stack is updating
-	//     emit deployment event, if updated
+	//     emit deployment event via Specta, if updated
 	//
 
 	return nil
