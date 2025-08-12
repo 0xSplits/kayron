@@ -1,13 +1,83 @@
 package deploy
 
 import (
-	"fmt"
-
+	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/envvar"
+	"github.com/0xSplits/kayron/pkg/operator"
+	"github.com/0xSplits/kayron/pkg/operator/policy"
+	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/0xSplits/otelgo/recorder"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/spf13/cobra"
+	"github.com/xh3b4sd/logger"
+	"github.com/xh3b4sd/tracer"
+	"go.opentelemetry.io/otel/metric"
 )
 
-type run struct{}
+type run struct {
+	flag *flag
+}
 
-func (r *run) run(cmd *cobra.Command, arg []string) {
-	fmt.Printf("TODO\n")
+func (r *run) runE(cmd *cobra.Command, arg []string) error {
+	var env envvar.Env
+	{
+		env = envvar.Load(r.flag.Env)
+	}
+
+	var log logger.Interface
+	{
+		log = logger.New(logger.Config{
+			Filter: logger.NewLevelFilter(env.LogLevel),
+			Format: logger.JSONIndenter,
+		})
+	}
+
+	var cfg aws.Config
+	{
+		cfg = envvar.MustAws()
+	}
+
+	var cac *cache.Cache
+	{
+		cac = cache.New(cache.Config{
+			Frc: r.flag.Frc,
+			Log: log,
+		})
+	}
+
+	var met metric.Meter
+	{
+		met = recorder.NewMeter(recorder.MeterConfig{
+			Env: env.Environment,
+			Sco: "kayron",
+			Ver: runtime.Tag(),
+		})
+	}
+
+	var ope *operator.Operator
+	{
+		ope = operator.New(operator.Config{
+			Aws: cfg,
+			Cac: cac,
+			Env: env,
+			Log: log,
+			Met: met,
+		})
+	}
+
+	var fnc func() error
+	{
+		fnc = ope.Chain()
+	}
+
+	{
+		err := fnc()
+		if policy.IsCancel(err) {
+			// fall through
+		} else if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	return nil
 }

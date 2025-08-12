@@ -2,6 +2,7 @@ package template
 
 import (
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	"github.com/xh3b4sd/tracer"
@@ -59,7 +60,7 @@ func musStr(str string) string {
 
 func temVer(par []types.Parameter) string {
 	for _, x := range par {
-		if aws.ToString(x.ParameterKey) == "KayronTemplateVersion" {
+		if aws.ToString(x.ParameterKey) == constant.KayronTemplateVersion {
 			return aws.ToString(x.ParameterValue)
 		}
 	}

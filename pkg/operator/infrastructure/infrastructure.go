@@ -18,11 +18,6 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-const (
-	Bucket    = "splits-cf-templates" // TODO configure env var KAYRON_CLOUDFORMATION_BUCKET
-	Directory = "cloudformation"      // TODO configure env var KAYRON_INFRASTRUCTURE_DIRECTORY
-)
-
 type Config struct {
 	Aws aws.Config
 	Cac *cache.Cache
@@ -35,7 +30,7 @@ type Infrastructure struct {
 	as3 *s3.Client
 	cac *cache.Cache
 	dry bool
-	env string
+	env envvar.Env
 	git *github.Client
 	log logger.Interface
 	own string
@@ -69,7 +64,7 @@ func New(c Config) *Infrastructure {
 		as3: s3.NewFromConfig(c.Aws),
 		cac: c.Cac,
 		dry: c.Dry,
-		env: c.Env.Environment,
+		env: c.Env,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
 		own: own,

@@ -23,8 +23,10 @@ type Struct struct {
 	Scheduler scheduler.Struct
 }
 
+// Drift returns whether the current state is different from the desired state,
+// or whether this artifcat should trigger a deployment regardless.
 func (s Struct) Drift() bool {
-	return s.Scheduler.Current != s.Reference.Desired
+	return s.Scheduler.Current != s.Reference.Desired || s.Condition.Trigger
 }
 
 // Empty returns whether the desired reference of this artifact is empty.
@@ -41,6 +43,10 @@ func (s Struct) Empty() bool {
 func (s Struct) Merge(p Struct) Struct {
 	if s.Condition.Success == false && p.Condition.Success != false { // nolint:staticcheck
 		s.Condition.Success = p.Condition.Success
+	}
+
+	if s.Condition.Trigger == false && p.Condition.Trigger != false { // nolint:staticcheck
+		s.Condition.Trigger = p.Condition.Trigger
 	}
 
 	if s.Reference.Desired == "" && p.Reference.Desired != "" {
