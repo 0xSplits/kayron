@@ -57,6 +57,7 @@ func hasEnv(tags []types.Tag, env string) bool {
 	return false
 }
 
+// hasPar returns true if the given stack has a parent ID that is not nil.
 func hasPar(sta types.Stack) bool {
-	return sta.ParentId == nil
+	return sta.ParentId != nil
 }
