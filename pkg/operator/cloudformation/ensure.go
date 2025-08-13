@@ -24,7 +24,7 @@ func (c *CloudFormation) Ensure() error {
 	// Inject all desired artifact versions into the parameters that we are just
 	// about to deploy. Injecting those parameters after all user inputs have been
 	// applied above guarantees that only the release versions as defined in the
-	// release source repository release will ever be applied.
+	// release source repository will ever be applied.
 
 	for _, x := range c.cac.Releases() {
 		par = append(par, types.Parameter{
