@@ -2,7 +2,6 @@ package template
 
 import (
 	"github.com/0xSplits/kayron/pkg/cache"
-	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	"github.com/xh3b4sd/tracer"
@@ -29,7 +28,7 @@ func (t *Template) Ensure() error {
 
 	var ver string
 	{
-		ver = temVer(roo.Parameters)
+		ver = temVer(roo, inf)
 	}
 
 	t.log.Log(
@@ -58,9 +57,9 @@ func musStr(str string) string {
 	return str
 }
 
-func temVer(par []types.Parameter) string {
-	for _, x := range par {
-		if aws.ToString(x.ParameterKey) == constant.KayronTemplateVersion {
+func temVer(roo types.Stack, inf cache.Object) string {
+	for _, x := range roo.Parameters {
+		if aws.ToString(x.ParameterKey) == inf.Parameter() {
 			return aws.ToString(x.ParameterValue)
 		}
 	}

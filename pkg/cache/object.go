@@ -1,8 +1,12 @@
 package cache
 
 import (
+	"fmt"
+
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // kind is a private type for private object properties in order to guarantee
@@ -23,4 +27,21 @@ type Object struct {
 
 	ind int
 	kin kind
+}
+
+// Parameter returns the CloudFormation stack parameter key for this release
+// artifact. The keys generated here have to be supported in the CloudFormation
+// template being deployed.
+func (o Object) Parameter() string {
+	cas := cases.Title(language.English)
+
+	if o.kin == Infrastructure {
+		return fmt.Sprintf("%sVersion", cas.String(o.Release.Github.String())) // e.g. InfrastructureVersion
+	}
+
+	if o.kin == Service {
+		return fmt.Sprintf("%sVersion", cas.String(o.Release.Docker.String())) // e.g. SpectaVersion
+	}
+
+	return ""
 }
