@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/0xSplits/kayron/pkg/cache"
-	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
@@ -15,11 +13,6 @@ import (
 func (c *CloudFormation) Ensure() error {
 	var err error
 
-	var inf cache.Object
-	{
-		inf = c.cac.Infrastructure()
-	}
-
 	var par []types.Parameter
 	for k, v := range c.env.CloudformationParameters {
 		par = append(par, types.Parameter{
@@ -28,15 +21,15 @@ func (c *CloudFormation) Ensure() error {
 		})
 	}
 
-	// Inject the new template version into the parameters that we are just about
-	// to deploy. Injecting this parameter after all user inputs have been applied
-	// above guarantees that only the infrastructure version as defined with its
-	// own infrastructure release will ever be applied.
+	// Inject all desired artifact versions into the parameters that we are just
+	// about to deploy. Injecting those parameters after all user inputs have been
+	// applied above guarantees that only the release versions as defined in the
+	// release source repository will ever be applied.
 
-	{
+	for _, x := range c.cac.Releases() {
 		par = append(par, types.Parameter{
-			ParameterKey:   aws.String(constant.KayronTemplateVersion),
-			ParameterValue: aws.String(inf.Artifact.Reference.Desired),
+			ParameterKey:   aws.String(x.Parameter()),
+			ParameterValue: aws.String(x.Artifact.Reference.Desired),
 		})
 	}
 
