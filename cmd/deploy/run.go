@@ -2,10 +2,11 @@ package deploy
 
 import (
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator"
-	"github.com/0xSplits/kayron/pkg/operator/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/0xSplits/otelgo/recorder"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/spf13/cobra"
@@ -54,6 +55,15 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 		})
 	}
 
+	var sta stack.Interface
+	{
+		sta = stack.New(stack.Config{
+			Aws: cfg,
+			Env: env,
+			Log: log,
+		})
+	}
+
 	var ope *operator.Operator
 	{
 		ope = operator.New(operator.Config{
@@ -62,6 +72,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 			Env: env,
 			Log: log,
 			Met: met,
+			Sta: sta,
 		})
 	}
 
@@ -72,7 +83,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 
 	{
 		err := fnc()
-		if policy.IsCancel(err) {
+		if cancel.Is(err) {
 			// fall through
 		} else if err != nil {
 			return tracer.Mask(err)
