@@ -1,6 +1,7 @@
 package policy
 
 import (
+	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -58,12 +59,12 @@ func (p *Policy) Ensure() error {
 	// Cancel.
 
 	p.log.Log(
-		"level", "debug",
+		"level", "info",
 		"message", "cancelling reconciliation loop",
 		"reason", "no state drift",
 	)
 
-	return tracer.Mask(cancelError)
+	return tracer.Mask(cancel.Error)
 }
 
 func musStr(str string) string {

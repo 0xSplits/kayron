@@ -13,6 +13,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator/registry"
 	"github.com/0xSplits/kayron/pkg/operator/release"
 	"github.com/0xSplits/kayron/pkg/operator/template"
+	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -26,6 +27,7 @@ type Config struct {
 	Env envvar.Env
 	Log logger.Interface
 	Met metric.Meter
+	Sta stack.Interface
 }
 
 type Operator struct {
@@ -55,6 +57,9 @@ func New(c Config) *Operator {
 	if c.Met == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Met must not be empty", c)))
 	}
+	if c.Sta == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Sta must not be empty", c)))
+	}
 
 	return &Operator{
 		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met}),
@@ -62,8 +67,8 @@ func New(c Config) *Operator {
 		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log}),
 		policy:         policy.New(policy.Config{Cac: c.Cac, Log: c.Log}),
 		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		release:        release.New(release.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Sta: c.Sta}),
 		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		template:       template.New(template.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		template:       template.New(template.Config{Cac: c.Cac, Log: c.Log, Sta: c.Sta}),
 	}
 }

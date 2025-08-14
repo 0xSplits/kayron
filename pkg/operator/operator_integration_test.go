@@ -6,9 +6,10 @@ import (
 	"testing"
 
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/operator/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/0xSplits/otelgo/recorder"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/xh3b4sd/logger"
@@ -64,6 +65,15 @@ func Test_Operator_Integration(t *testing.T) {
 		})
 	}
 
+	var sta stack.Interface
+	{
+		sta = stack.New(stack.Config{
+			Aws: cfg,
+			Env: env,
+			Log: log,
+		})
+	}
+
 	var ope *Operator
 	{
 		ope = New(Config{
@@ -73,6 +83,7 @@ func Test_Operator_Integration(t *testing.T) {
 			Env: env,
 			Log: log,
 			Met: met,
+			Sta: sta,
 		})
 	}
 
@@ -83,7 +94,7 @@ func Test_Operator_Integration(t *testing.T) {
 
 	{
 		err := fnc()
-		if policy.IsCancel(err) {
+		if cancel.Is(err) {
 			// fall through
 		} else if err != nil {
 			t.Fatal("expected", nil, "got", err)

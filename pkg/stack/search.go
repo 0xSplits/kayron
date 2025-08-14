@@ -1,4 +1,4 @@
-package template
+package stack
 
 import (
 	"context"
@@ -9,30 +9,35 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-// rooSta returns the root level CloudFormation stack that is tagged with the
-// "environment" that matches Kayron's runtime configuration. In other words, if
-// Kayron is running in "staging", then rooSta will return the CloudFormation
-// root stack labelled with the resource tags environment=staging.
-func (t *Template) rooSta() (types.Stack, error) {
+func (s *Stack) Search() (types.Stack, error) {
 	var err error
+
+	{
+		s.mut.Lock()
+		defer s.mut.Unlock()
+	}
+
+	if s.sta != nil {
+		return *s.sta, nil
+	}
 
 	var inp *cloudformation.DescribeStacksInput
 	{
 		inp = &cloudformation.DescribeStacksInput{
-			StackName: aws.String(t.env.CloudformationStack),
+			StackName: aws.String(s.env.CloudformationStack),
 		}
 	}
 
 	var out *cloudformation.DescribeStacksOutput
 	{
-		out, err = t.cfc.DescribeStacks(context.Background(), inp)
+		out, err = s.cfc.DescribeStacks(context.Background(), inp)
 		if err != nil {
 			return types.Stack{}, tracer.Mask(err)
 		}
 	}
 
 	for _, x := range out.Stacks {
-		if !hasEnv(x.Tags, t.env.Environment) {
+		if !hasEnv(x.Tags, s.env.Environment) {
 			continue
 		}
 
@@ -40,16 +45,20 @@ func (t *Template) rooSta() (types.Stack, error) {
 		// stack without parent ID, then we found the root stack and return it.
 
 		if !hasPar(x) {
+			{
+				s.sta = &x
+			}
+
 			return x, nil
 		}
 	}
 
-	return types.Stack{}, tracer.Mask(invalidRootStackError, tracer.Context{Key: "environment", Value: t.env.Environment})
+	return types.Stack{}, tracer.Mask(invalidRootStackError, tracer.Context{Key: "environment", Value: s.env.Environment})
 }
 
 func hasEnv(tags []types.Tag, env string) bool {
-	for _, t := range tags {
-		if t.Key != nil && t.Value != nil && *t.Key == "environment" && *t.Value == env {
+	for _, x := range tags {
+		if x.Key != nil && x.Value != nil && *x.Key == "environment" && *x.Value == env {
 			return true
 		}
 	}
