@@ -23,18 +23,21 @@ import (
 func Test_Loader(t *testing.T) {
 	testCases := []struct {
 		roo string
+		wht []string
 		sch schema.Schema
 		err error
 	}{
 		// Case 000, no config
 		{
 			roo: ".",
+			wht: nil,
 			sch: schema.Schema{},
 			err: nil,
 		},
 		// Case 001, root folder
 		{
 			roo: ".",
+			wht: nil,
 			sch: schema.Schema{
 				Release: release.Slice{
 					{
@@ -91,6 +94,7 @@ func Test_Loader(t *testing.T) {
 		// Case 002, folder name is "foo"
 		{
 			roo: ".",
+			wht: nil,
 			sch: schema.Schema{
 				Release: release.Slice{
 					{
@@ -147,8 +151,69 @@ func Test_Loader(t *testing.T) {
 		// Case 003, folder "environment" does not exist
 		{
 			roo: "./environment",
+			wht: nil,
 			sch: schema.Schema{},
 			err: fs.ErrNotExist,
+		},
+		// Case 004, with whitelist
+		{
+			roo: ".",
+			wht: []string{
+				"./infrastructure/",
+				"./service/",
+			},
+			sch: schema.Schema{
+				Release: release.Slice{
+					{
+						Github:   github.String("infrastructure"),
+						Provider: provider.String("cloudformation"),
+						Deploy: deploy.Struct{
+							Release: "v1.13.0",
+						},
+						Labels: labels.Struct{
+							Source: "testdata/case.004/infrastructure/infrastructure.yaml",
+						},
+					},
+					{
+						Docker: docker.String("splits"),
+						Github: github.String("server"),
+						Labels: labels.Struct{
+							Source: "testdata/case.004/service/foobar.yaml",
+						},
+					},
+					{
+						Docker: docker.String("kayron"),
+						Github: github.String("kayron"),
+						Deploy: deploy.Struct{
+							Release: "v1.8.2",
+						},
+						Labels: labels.Struct{
+							Source: "testdata/case.004/service/kayron.yaml",
+						},
+					},
+					{
+						Docker: docker.String("server"),
+						Github: github.String("server"),
+						Deploy: deploy.Struct{
+							Branch: "feature",
+						},
+						Labels: labels.Struct{
+							Source: "testdata/case.004/service/server.yaml",
+						},
+					},
+					{
+						Docker: docker.String("specta"),
+						Github: github.String("specta"),
+						Deploy: deploy.Struct{
+							Suspend: true,
+						},
+						Labels: labels.Struct{
+							Source: "testdata/case.004/service/specta.yaml",
+						},
+					},
+				},
+			},
+			err: nil,
 		},
 	}
 
@@ -166,9 +231,13 @@ func Test_Loader(t *testing.T) {
 				roo = filepath.Join("testdata", fmt.Sprintf("case.%03d", i), tc.roo)
 			}
 
+			for j := range tc.wht {
+				tc.wht[j] = filepath.Join("testdata", fmt.Sprintf("case.%03d", i), tc.wht[j])
+			}
+
 			var sch schema.Schema
 			{
-				sch, err = Loader(fil, roo)
+				sch, err = Loader(fil, roo, tc.wht...)
 				if !errors.Is(err, tc.err) {
 					t.Fatalf("expected %#v got %#v", tc.err, err)
 				}

@@ -90,11 +90,13 @@ func (r *Release) Ensure() error {
 	// Fetch the release settings from the configured Github repository by using
 	// our standard schema loader. The behaviour of the loader is standardized, so
 	// that loading from a local file system and loading from Github remains
-	// logically the same.
+	// logically the same. Note that we whitelist the infrastructure and service
+	// specific folders within the file system of the remote repository, so that
+	// we ignore any irrelevant files and folders like .github/ and LICENSE.
 
 	var sch schema.Schema
 	{
-		sch, err = loader.Loader(gfs, ".")
+		sch, err = loader.Loader(gfs, ".", "./infrastructure/", "./service/")
 		if err != nil {
 			return tracer.Mask(err)
 		}
