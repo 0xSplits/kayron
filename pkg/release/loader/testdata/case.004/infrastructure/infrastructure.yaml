@@ -1,0 +1,4 @@
+- github: "infrastructure"
+  provider: "cloudformation"
+  deploy:
+    release: "v1.13.0"

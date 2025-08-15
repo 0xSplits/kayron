@@ -1,0 +1,4 @@
+- docker: "specta"
+  github: "specta"
+  deploy:
+    suspend: true

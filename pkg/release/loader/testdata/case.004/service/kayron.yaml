@@ -1,0 +1,4 @@
+- docker: "kayron"
+  github: "kayron"
+  deploy:
+    release: "v1.8.2"
