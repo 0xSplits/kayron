@@ -39,11 +39,12 @@ func Loader(sys afero.Fs, roo string, wht ...string) (schema.Schema, error) {
 			if err != nil {
 				return tracer.Mask(err)
 			}
-			if !whtPat(roo, wht, pat) {
-				return fs.SkipDir
-			}
 			if fil.IsDir() {
-				return nil
+				if !whtPat(roo, wht, pat) {
+					return fs.SkipDir // SkipDir must never be returned for files
+				} else {
+					return nil
+				}
 			}
 		}
 
