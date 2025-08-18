@@ -2,6 +2,7 @@ package release
 
 import (
 	"github.com/0xSplits/kayron/pkg/cancel"
+	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
@@ -96,7 +97,7 @@ func (r *Release) Ensure() error {
 
 	var sch schema.Schema
 	{
-		sch, err = loader.Loader(gfs, ".", "./infrastructure/", "./service/")
+		sch, err = loader.Loader(gfs, ".", constant.Infrastructure, constant.Service)
 		if err != nil {
 			return tracer.Mask(err)
 		}

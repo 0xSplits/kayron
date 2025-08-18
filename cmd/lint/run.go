@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/spf13/afero"
@@ -22,7 +23,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 
 	var sch schema.Schema
 	{
-		sch, err = loader.Loader(sys, r.flag.Pat)
+		sch, err = loader.Loader(sys, r.flag.Pat, constant.Infrastructure, constant.Service)
 		if err != nil {
 			return tracer.Mask(err)
 		}
