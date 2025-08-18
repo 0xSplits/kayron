@@ -85,16 +85,5 @@ func (i *Infrastructure) Ensure() error {
 		}
 	}
 
-	// Once all infrastructure templates have been uploaded to S3, we can set the
-	// condition success for this particular release artifact.
-
-	{
-		inf.Artifact.Condition.Success = true
-	}
-
-	{
-		i.cac.Update(inf)
-	}
-
 	return nil
 }

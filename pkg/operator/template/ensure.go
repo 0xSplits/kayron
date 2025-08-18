@@ -24,7 +24,8 @@ func (t *Template) Ensure() error {
 	}
 
 	// Once we have found the root stack for this environment, we can set the
-	// current state for this particular release artifact.
+	// current state and the condition success for this particular release
+	// artifact.
 
 	var ver string
 	{
@@ -39,6 +40,7 @@ func (t *Template) Ensure() error {
 	)
 
 	{
+		inf.Artifact.Condition.Success = true
 		inf.Artifact.Scheduler.Current = ver
 	}
 
