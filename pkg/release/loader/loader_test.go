@@ -16,6 +16,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release/provider"
 	"github.com/google/go-cmp/cmp"
 	"github.com/spf13/afero"
+	"github.com/xh3b4sd/tracer"
 )
 
 // Test_Loader ensures that release definitions can be loaded properly,
@@ -239,7 +240,7 @@ func Test_Loader(t *testing.T) {
 			{
 				sch, err = Loader(fil, roo, tc.wht...)
 				if !errors.Is(err, tc.err) {
-					t.Fatalf("expected %#v got %#v", tc.err, err)
+					t.Fatalf("expected %#v got %s", tc.err, tracer.Json(err))
 				}
 			}
 
