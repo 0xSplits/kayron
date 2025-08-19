@@ -24,11 +24,26 @@ jobs:
       - name: "Setup Build Environment"
         uses: "docker/setup-buildx-action@v3.11.1"
 
+      # We have to compute the image tag based on the kind of push that
+      # triggered this workflow. Ordinary commits should cause a Docker image
+      # tag to be pushed where the tag name is the commit sha of the push event.
+      # On the other hand, Github releases create Git tags, and if a tag
+      # creation event triggered this workflow, then we want the tag name to be
+      # the semver like release tag in the format v0.1.0.
+      - name: "Compute Image Tag"
+        id: image
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: "Push Docker Image"
         uses: "docker/build-push-action@v6.18.0"
         with:
           push: true
-          tags: "${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ github.event.repository.name }}:${{ github.ref_name }}"
+          tags: "${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ github.event.repository.name }}:${{ steps.image.outputs.tag }}"
           build-args: |
             SHA=${{ github.sha }}
             TAG=${{ github.ref_name }}
