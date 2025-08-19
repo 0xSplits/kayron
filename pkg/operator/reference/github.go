@@ -8,10 +8,12 @@ import (
 )
 
 func (r *Reference) desRef(rel release.Struct) (string, error) {
-	// Return the commit sha if the branch deployment strategy is selected.
+	// Return the commit sha if the branch deployment strategy is selected. Note
+	// that branches may be defined while they are not yet tracked inside of
+	// Github.
 
 	if !rel.Deploy.Branch.Empty() {
-		sha, err := r.comSha(rel)
+		sha, err := r.comSha(rel.Github.String(), rel.Deploy.Branch.String())
 		if err != nil {
 			return "", tracer.Mask(err)
 		}
@@ -34,8 +36,8 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 	return "", nil
 }
 
-func (r *Reference) comSha(rel release.Struct) (string, error) {
-	bra, res, err := r.git.Repositories.GetBranch(context.Background(), r.own, rel.Github.String(), rel.Deploy.Branch.String(), 3)
+func (r *Reference) comSha(rep string, ref string) (string, error) {
+	bra, res, err := r.git.Repositories.GetBranch(context.Background(), r.own, rep, ref, 3)
 	if isNotFound(res) {
 		r.log.Log(
 			"level", "warning",
@@ -43,16 +45,16 @@ func (r *Reference) comSha(rel release.Struct) (string, error) {
 			"reason", "branch not found",
 			"suggestion", "this issue might be caused by a user error or eventual consistency of the underlying backend",
 			"owner", r.own,
-			"repository", rel.Github.String(),
-			"branch", rel.Deploy.Branch.String(),
+			"repository", rep,
+			"branch", ref,
 		)
 
 		return "", nil
 	} else if err != nil {
 		return "", tracer.Mask(err,
 			tracer.Context{Key: "owner", Value: r.own},
-			tracer.Context{Key: "repository", Value: rel.Github.String()},
-			tracer.Context{Key: "branch", Value: rel.Deploy.Branch.String()},
+			tracer.Context{Key: "repository", Value: rep},
+			tracer.Context{Key: "branch", Value: ref},
 		)
 	}
 
