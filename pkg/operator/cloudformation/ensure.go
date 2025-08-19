@@ -42,7 +42,7 @@ func (c *CloudFormation) Ensure() error {
 	}
 
 	c.log.Log(
-		"level", "debug",
+		"level", "info",
 		"message", "updating cloudformation stack",
 		"name", c.env.CloudformationStack,
 	)
