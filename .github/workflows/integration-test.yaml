@@ -1,12 +1,12 @@
-name: "integration-test"
+name: "Integration Test"
 
 on:
   push:
-    # Dependabot has no access to the secrets that this integration test
-    # requires. So we skip running integration tests in branches that dependabot
-    # presumably created.
+    # Dependabot has no access to the secrets that this workflow requires. So we
+    # skip running the workflow in branches that dependabot presumably created.
     branches-ignore:
       - "dependabot/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -29,7 +29,7 @@ jobs:
           AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
           AWS_REGION: "${{ secrets.AWS_REGION }}"
           AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          KAYRON_ENVIRONMENT: "development"
+          KAYRON_ENVIRONMENT: "testing"
           KAYRON_GITHUB_TOKEN: "${{ secrets.KAYRON_GITHUB_TOKEN }}"
         run: |
           go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
