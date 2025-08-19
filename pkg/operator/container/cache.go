@@ -14,6 +14,14 @@ func (c *Container) cache(ima []image) {
 			"current", musStr(tag),
 		)
 
+		// It may happen that there is no tag for services that are deployed the
+		// first time. In those cases we want to log the current state above, but we
+		// do not have to perform any artifact update. So we skip the loop below.
+
+		if tag == "" {
+			continue
+		}
+
 		{
 			x.Artifact.Scheduler.Current = tag
 		}
