@@ -11,7 +11,7 @@ func (r *Resolver) Latest() (string, error) {
 	if isNotFound(res) {
 		return "", tracer.Mask(releaseNotFoundError,
 			tracer.Context{Key: "owner", Value: r.own},
-			tracer.Context{Key: "repo", Value: r.rep},
+			tracer.Context{Key: "repository", Value: r.rep},
 		)
 	} else if err != nil {
 		return "", tracer.Mask(err)
