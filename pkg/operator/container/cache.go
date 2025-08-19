@@ -7,10 +7,6 @@ func (c *Container) cache(ima []image) {
 			tag = curTag(ima, x.Release.Docker.String())
 		}
 
-		if tag == "" {
-			continue
-		}
-
 		c.log.Log(
 			"level", "debug",
 			"message", "caching current state",
