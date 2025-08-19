@@ -6,6 +6,13 @@ on:
     # skip running the workflow in branches that dependabot presumably created.
     branches-ignore:
       - "dependabot/**"
+    # Trigger this workflow on all branch updates where a new commit is being
+    # pushed.
+    branches:
+      - "**"
+    # Trigger this workflow for all new releases that create a Git tag.
+    tags:
+      - "v*.*.*"
 
 jobs:
   docker-push:
