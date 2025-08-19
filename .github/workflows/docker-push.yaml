@@ -1,12 +1,14 @@
-name: "docker-release"
+name: "Docker Push"
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    # Dependabot has no access to the secrets that this workflow requires. So we
+    # skip running the workflow in branches that dependabot presumably created.
+    branches-ignore:
+      - "dependabot/**"
 
 jobs:
-  build-and-push:
+  docker-push:
     permissions:
       contents: "read"
 
