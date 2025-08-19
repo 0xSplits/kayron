@@ -21,8 +21,6 @@ type image struct {
 
 // image resolves the current Docker image tag for any given task definition.
 func (c *Container) image(tas []task) ([]image, error) {
-	var err error
-
 	// Setup an image slice equivalent to the amount of injected tasks, so that we
 	// can run the lookups below in parallel.
 
@@ -32,6 +30,8 @@ func (c *Container) image(tas []task) ([]image, error) {
 	}
 
 	fnc := func(i int, t task) error {
+		var err error
+
 		var inp *ecs.DescribeTaskDefinitionInput
 		{
 			inp = &ecs.DescribeTaskDefinitionInput{
@@ -66,7 +66,7 @@ func (c *Container) image(tas []task) ([]image, error) {
 	}
 
 	{
-		err = parallel.Slice(tas, fnc)
+		err := parallel.Slice(tas, fnc)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}
