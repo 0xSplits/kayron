@@ -4,6 +4,9 @@ import (
 	"github.com/0xSplits/workit/handler"
 )
 
+// Chain returns the directed acyclic graph of worker handlers executed by the
+// sequential worker engine. All handlers of the same row are executed
+// concurrently, while one row is executed sequentially, one after another.
 func (o *Operator) Chain() [][]handler.Ensure {
 	return [][]handler.Ensure{
 		// Lookup all the release settings for the configured releases
@@ -44,14 +47,19 @@ func (o *Operator) Chain() [][]handler.Ensure {
 		// the ability to cancel the reconciliation loop.
 		{o.policy},
 
-		// Once the current and desired states of the runnable service
-		// releases are known to have drifted apart, we can fetch the current
-		// version of our cloudformation templates from the configured
-		// infrastructure repository. We only need to do this if there is at
+		// Once the current and desired states of the runnable service releases are
+		// known to have drifted apart, we can fetch the current version of our
+		// CloudFormation templates from the configured infrastructure repository,
+		// and upload all templates to S3. We only need to do this if there is at
 		// least one service release that has to get updated.
 		{o.infrastructure},
 
-		// TODO document
-		{o.cloudFormation},
-	}
+		// With the CloudFormation templates uploaded to S3, we can construct the
+		// payload to update the CloudFormation stack that we are responsible for.
+		// Optional parameters and tags will be considered for the UpdateStack
+		// command. Once a new update cycle got initiated, the reconciliation loop
+		// ends, and the operator should not reconcile the watched CloudFormation
+		// stack again until the ongoing stack update ended up in some retryable
+		// stack status.
+		{o.cloudFormation}}
 }
