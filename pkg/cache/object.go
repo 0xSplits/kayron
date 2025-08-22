@@ -29,19 +29,22 @@ type Object struct {
 	kin kind
 }
 
-// Parameter returns the CloudFormation stack parameter key for this release
-// artifact. The keys generated here have to be supported in the CloudFormation
-// template being deployed.
-func (o Object) Parameter() string {
-	cas := cases.Title(language.English)
-
+func (o Object) Name() string {
 	if o.kin == Infrastructure {
-		return fmt.Sprintf("%sVersion", cas.String(o.Release.Github.String())) // e.g. InfrastructureVersion
+		return o.Release.Github.String()
 	}
 
 	if o.kin == Service {
-		return fmt.Sprintf("%sVersion", cas.String(o.Release.Docker.String())) // e.g. SpectaVersion
+		return o.Release.Docker.String()
 	}
 
 	return ""
+}
+
+// Parameter returns the CloudFormation stack parameter key for this release
+// artifact. The parameter keys generated here have to be supported in the
+// CloudFormation template being deployed, e.g. InfrastructureVersion,
+// SpectaVersion.
+func (o Object) Parameter() string {
+	return fmt.Sprintf("%sVersion", cases.Title(language.English).String(o.Name()))
 }
