@@ -25,19 +25,14 @@ go_gc_duration_seconds{quantile="0.5"} 0
 
 ### Worker
 
-The worker is a [custom task engine] executing asynchronous worker handlers
-iteratively. New worker handlers can be added easily by implementing the handler
-interface and registering the handler in the worker engine. Kayron's operator
-chain is executed by a single standard worker handler.
+The worker is a [custom task engine] executing a directed acyclic graph of
+worker handlers iteratively. New worker handlers can be added easily by
+implementing the handler interface and registering the new handler in the
+operator chain. Kayron's operator chain is executed by a sequential worker
+engine.
 
 ```
 type Interface interface {
-	// Cooler is the amount of time that any given handler specifies to wait
-	// before being executed again. This is not an interval on a strict schedule.
-	// This is simply the time to sleep after execution, before another cycle
-	// repeats.
-	Cooler() time.Duration
-
 	// Ensure executes the handler specific business logic in order to complete
 	// the given task, if possible. Any error returned will be emitted using the
 	// underlying logger interface. Calling this method will not interfere with
@@ -149,196 +144,292 @@ token needs the repository scope.
 go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
 ```
 
-```
+```json
 === RUN   Test_Operator_Integration
 {
-    "time": "2025-08-12 12:29:25",
+    "time": "2025-08-21 18:19:32",
     "level": "debug",
     "message": "resetting operator cache",
-    "caller": "/home/runner/work/kayron/kayron/pkg/cache/delete.go:9"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/delete.go:9"
 }
 {
-    "time": "2025-08-12 12:29:25",
+    "time": "2025-08-21 18:19:34",
     "level": "debug",
     "message": "resolved ref for github repository",
     "environment": "testing",
-    "ref": "df8d6f875f3a8d9aa98ccd6567602de101ec9c02",
+    "ref": "2fd5cb440fe5e6b9ff205ea94c07a77a331fc79e",
     "repository": "https://github.com/0xSplits/releases",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/release/ensure.go:37"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/release/ensure.go:65"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:35",
     "level": "debug",
     "message": "caching release artifact",
-    "deploy": "v0.1.2",
+    "deploy": "v0.1.5",
     "github": "infrastructure",
     "provider": "cloudformation",
-    "caller": "/home/runner/work/kayron/kayron/pkg/cache/create.go:17"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:35",
     "level": "debug",
     "message": "caching release artifact",
-    "deploy": "v0.1.16",
+    "deploy": "v0.1.9",
+    "docker": "kayron",
+    "github": "kayron",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
+}
+{
+    "time": "2025-08-21 18:19:35",
+    "level": "debug",
+    "message": "caching release artifact",
+    "deploy": "v0.1.18",
     "docker": "specta",
     "github": "specta",
-    "caller": "/home/runner/work/kayron/kayron/pkg/cache/create.go:17"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:35",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "release",
+    "latency": "2.2552785s",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-08-21 18:19:35",
     "level": "debug",
     "message": "caching desired state",
-    "desired": "v0.1.16",
+    "desired": "v0.1.18",
     "github": "specta",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/reference/ensure.go:35"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:35"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:35",
     "level": "debug",
     "message": "caching desired state",
-    "desired": "v0.1.2",
-    "github": "infrastructure",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/reference/ensure.go:35"
+    "desired": "v0.1.9",
+    "github": "kayron",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:35"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:35",
     "level": "debug",
-    "message": "caching current state",
-    "current": "''",
+    "message": "caching desired state",
+    "desired": "v0.1.5",
     "github": "infrastructure",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/template/ensure.go:35"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:35"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:35",
     "level": "debug",
     "message": "caching current state",
-    "current": "v0.1.15",
+    "current": "v0.1.5",
+    "github": "infrastructure",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/template/ensure.go:35"
+}
+{
+    "time": "2025-08-21 18:19:35",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "reference",
+    "latency": "494.083µs",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-08-21 18:19:35",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "template",
+    "latency": "741.125µs",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-08-21 18:19:37",
+    "level": "debug",
+    "message": "caching current state",
+    "current": "v0.1.9",
+    "docker": "kayron",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:10"
+}
+{
+    "time": "2025-08-21 18:19:37",
+    "level": "debug",
+    "message": "caching current state",
+    "current": "v0.1.18",
     "docker": "specta",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/container/cache.go:14"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:10"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:37",
     "level": "debug",
-    "message": "executed image check",
-    "exists": "true",
-    "image": "specta",
-    "tag": "v0.1.16",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/registry/ensure.go:53"
+    "message": "instrumented worker handler",
+    "handler": "container",
+    "latency": "2.0316385s",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:37",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "registry",
+    "latency": "55.416µs",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-08-21 18:19:37",
     "level": "info",
     "message": "continuing reconciliation loop",
     "reason": "detected state drift",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/policy/ensure.go:45"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/policy/ensure.go:47"
 }
 {
-    "time": "2025-08-12 12:29:26",
+    "time": "2025-08-21 18:19:37",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "policy",
+    "latency": "112.334µs",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-08-21 18:19:37",
     "level": "debug",
     "message": "resolved ref for github repository",
     "environment": "testing",
-    "ref": "v0.1.2",
+    "ref": "v0.1.5",
     "repository": "https://github.com/0xSplits/infrastructure",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/ensure.go:22"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/ensure.go:22"
 }
 {
-    "time": "2025-08-12 12:29:27",
+    "time": "2025-08-21 18:19:37",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/deployment/deployment.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:27",
+    "time": "2025-08-21 18:19:38",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/discovery/discovery.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:27",
+    "time": "2025-08-21 18:19:38",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/elasticache/elasticache.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:28",
+    "time": "2025-08-21 18:19:38",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/fargate/fargate.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:28",
+    "time": "2025-08-21 18:19:38",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/index.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:28",
+    "time": "2025-08-21 18:19:39",
+    "level": "debug",
+    "message": "uploading cloudformation template",
+    "bucket": "splits-cf-templates",
+    "key": "testing/kayron/kayron.yaml",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
+}
+{
+    "time": "2025-08-21 18:19:39",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/rds/rds.alarms.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:28",
+    "time": "2025-08-21 18:19:39",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/rds/rds.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:28",
+    "time": "2025-08-21 18:19:40",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/server/server.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:29",
+    "time": "2025-08-21 18:19:40",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/specta/specta.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:29",
+    "time": "2025-08-21 18:19:40",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/telemetry/telemetry.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:29",
+    "time": "2025-08-21 18:19:40",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
     "key": "testing/vpc/vpc.yaml",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/infrastructure/aws.go:26"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-08-12 12:29:29",
+    "time": "2025-08-21 18:19:40",
     "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "infrastructure",
+    "latency": "3.557394083s",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-08-21 18:19:40",
+    "level": "info",
     "message": "updating cloudformation stack",
     "name": "server-test",
-    "caller": "/home/runner/work/kayron/kayron/pkg/operator/cloudformation/ensure.go:51"
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/cloudformation/ensure.go:44"
 }
---- PASS: Test_Operator_Integration (4.35s)
+{
+    "time": "2025-08-21 18:19:40",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "cloudformation",
+    "latency": "190.917µs",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/project/0xSplits/workit/handler/metrics/ensure.go:55"
+}
+--- PASS: Test_Operator_Integration (7.85s)
 PASS
-ok  	github.com/0xSplits/kayron/pkg/operator	5.373s
+ok  	github.com/0xSplits/kayron/pkg/operator	9.139s
 ```
 
 ### Releases
