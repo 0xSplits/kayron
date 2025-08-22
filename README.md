@@ -144,7 +144,7 @@ token needs the repository scope.
 go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
 ```
 
-```json
+```yaml
 === RUN   Test_Operator_Integration
 {
     "time": "2025-08-21 18:19:32",
