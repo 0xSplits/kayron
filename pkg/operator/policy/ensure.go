@@ -47,6 +47,8 @@ func (p *Policy) Ensure() error {
 				"level", "info",
 				"message", "continuing reconciliation loop",
 				"reason", "detected state drift",
+				"release", x.Name(),
+				"version", x.Artifact.Reference.Desired,
 			)
 
 			return nil
