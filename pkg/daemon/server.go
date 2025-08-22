@@ -20,11 +20,16 @@ func (d *Daemon) Server() *server.Server {
 		}
 	}
 
-	return server.New(server.Config{
-		Lis: lis,
-		Log: d.log,
-		Mid: []mux.MiddlewareFunc{
-			cors.New(cors.Config{Log: d.log}).Handler,
-		},
-	})
+	var ser *server.Server
+	{
+		ser = server.New(server.Config{
+			Lis: lis,
+			Log: d.log,
+			Mid: []mux.MiddlewareFunc{
+				cors.New(cors.Config{Log: d.log}).Handler,
+			},
+		})
+	}
+
+	return ser
 }

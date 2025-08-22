@@ -11,6 +11,8 @@ import (
 	"github.com/0xSplits/kayron/pkg/runtime"
 	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/0xSplits/otelgo/recorder"
+	"github.com/0xSplits/workit/registry"
+	"github.com/0xSplits/workit/worker/sequence"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/xh3b4sd/logger"
 	"go.opentelemetry.io/otel/metric"
@@ -87,13 +89,27 @@ func Test_Operator_Integration(t *testing.T) {
 		})
 	}
 
-	var fnc func() error
+	var reg *registry.Registry
 	{
-		fnc = ope.Chain()
+		reg = registry.New(registry.Config{
+			Env: env.Environment,
+			Fil: cancel.Is,
+			Log: log,
+			Met: met,
+		})
+	}
+
+	var wor *sequence.Worker
+	{
+		wor = sequence.New(sequence.Config{
+			Han: ope.Chain(),
+			Log: log,
+			Reg: reg,
+		})
 	}
 
 	{
-		err := fnc()
+		err := wor.Ensure()
 		if cancel.Is(err) {
 			// fall through
 		} else if err != nil {

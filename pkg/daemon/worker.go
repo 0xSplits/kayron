@@ -8,12 +8,12 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator"
 	"github.com/0xSplits/kayron/pkg/stack"
-	"github.com/0xSplits/workit/handler"
-	"github.com/0xSplits/workit/worker"
+	"github.com/0xSplits/workit/registry"
+	"github.com/0xSplits/workit/worker/sequence"
 	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
-func (d *Daemon) Worker() *worker.Worker {
+func (d *Daemon) Worker() *sequence.Worker {
 	var cfg aws.Config
 	{
 		cfg = envvar.MustAws()
@@ -47,16 +47,25 @@ func (d *Daemon) Worker() *worker.Worker {
 		})
 	}
 
-	return worker.New(worker.Config{
-		Env: d.env.Environment,
-		Fil: cancel.Is,
-		Han: []handler.Interface{
-			handler.New(handler.Config{
-				Coo: 10 * time.Second,
-				Ens: ope.Chain(),
-			}),
-		},
-		Log: d.log,
-		Met: d.met,
-	})
+	var reg *registry.Registry
+	{
+		reg = registry.New(registry.Config{
+			Env: d.env.Environment,
+			Fil: cancel.Is,
+			Log: d.log,
+			Met: d.met,
+		})
+	}
+
+	var wor *sequence.Worker
+	{
+		wor = sequence.New(sequence.Config{
+			Coo: 10 * time.Second,
+			Han: ope.Chain(),
+			Log: d.log,
+			Reg: reg,
+		})
+	}
+
+	return wor
 }
