@@ -1,5 +1,7 @@
 github.com/0xSplits/otelgo v0.1.2 h1:QjbUMNNQcUsnkOmZ35bc3Fbhz7u0PA611LYrh4aOpPk=
 github.com/0xSplits/otelgo v0.1.2/go.mod h1:YnmWxWUT7xaMQTF3FBmN8GuvIMafSJ/lYhlyIBlr99w=
+github.com/0xSplits/roghfs v0.1.0 h1:E3BB8+w+X3g64ezuJ13FssmfNorqy/fx2RGWBFtVifw=
+github.com/0xSplits/roghfs v0.1.0/go.mod h1:KVlXti9dNWj2YtskpRjZNFqccSKsh5K+UJs73GMXTJs=
 github.com/0xSplits/workit v0.5.0 h1:BuU1iafQxZXe4tmgMIdSc9KKDO54IH3U8efngsPntBs=
 github.com/0xSplits/workit v0.5.0/go.mod h1:sersLWCXePPbKi16XsCEAcy+mri833ZNVPewMB3JJJ0=
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
