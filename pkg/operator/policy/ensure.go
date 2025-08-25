@@ -1,18 +1,31 @@
 package policy
 
 import (
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (p *Policy) Ensure() error {
+	err := p.ensure(p.cac.Releases())
+	if err != nil {
+		return tracer.Mask(err)
+	}
+
+	return nil
+}
+
+// ensure is just a private proxy for the public worker handler interface that
+// is easier to test, because this method accepts the already parsed cache
+// objects.
+func (p *Policy) ensure(rel []cache.Object) error {
 	// Verify that we have a valid artifact cache by iterating over all releases
 	// and checking their cashed state before doing anything else. We must not
 	// continue this reconciliation loop if there is any empty or invalid state,
 	// because the side effects of proceeding using such a broken state could
 	// potentially be dangerous.
 
-	for _, x := range p.cac.Releases() {
+	for _, x := range rel {
 		if x.Artifact.Empty() {
 			p.log.Log(
 				"level", "warning",
@@ -34,15 +47,17 @@ func (p *Policy) Ensure() error {
 	// current policy requires the following conditions to be true for a valid
 	// state drift.
 	//
-	//     1. the current and desired state must not be equal
+	//     1. the desired deployment must not be suspended
 	//
-	//     2. the desired state must not be empty
+	//     2. the current and desired state must not be equal
 	//
-	//     3. the container image for the desired state must be pushed
+	//     3. the desired state must not be empty
+	//
+	//     4. the container image for the desired state must be pushed
 	//
 
-	for _, x := range p.cac.Releases() {
-		if x.Artifact.Drift() && x.Artifact.Valid() {
+	for _, x := range rel {
+		if !bool(x.Release.Deploy.Suspend) && x.Artifact.Drift() && x.Artifact.Valid() {
 			p.log.Log(
 				"level", "info",
 				"message", "continuing reconciliation loop",
