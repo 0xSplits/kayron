@@ -14,6 +14,5 @@ func (b Bool) String() string {
 }
 
 func (b Bool) Verify() error {
-	// TODO
 	return nil
 }

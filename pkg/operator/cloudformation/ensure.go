@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
@@ -12,26 +13,6 @@ import (
 
 func (c *CloudFormation) Ensure() error {
 	var err error
-
-	var par []types.Parameter
-	for k, v := range c.env.CloudformationParameters {
-		par = append(par, types.Parameter{
-			ParameterKey:   aws.String(k),
-			ParameterValue: aws.String(v),
-		})
-	}
-
-	// Inject all desired artifact versions into the parameters that we are just
-	// about to deploy. Injecting those parameters after all user inputs have been
-	// applied above guarantees that only the release versions as defined in the
-	// release source repository will ever be applied.
-
-	for _, x := range c.cac.Releases() {
-		par = append(par, types.Parameter{
-			ParameterKey:   aws.String(x.Parameter()),
-			ParameterValue: aws.String(x.Artifact.Reference.Desired),
-		})
-	}
 
 	var tag []types.Tag
 	for k, v := range c.env.CloudformationTags {
@@ -57,7 +38,7 @@ func (c *CloudFormation) Ensure() error {
 		inp = &cloudformation.UpdateStackInput{
 			StackName:   aws.String(c.env.CloudformationStack),
 			TemplateURL: aws.String(c.temUrl()),
-			Parameters:  par,
+			Parameters:  c.temPar(c.cac.Releases()),
 			Capabilities: []types.Capability{
 				types.CapabilityCapabilityIam,
 			},
@@ -79,11 +60,35 @@ func (c *CloudFormation) Ensure() error {
 
 	// TODO
 	//
-	//     add inhibition operator function to cancel reconciliation if stack is updating
 	//     emit deployment event via Specta, if updated
 	//
 
 	return nil
+}
+
+func (c *CloudFormation) temPar(rel []cache.Object) []types.Parameter {
+	var par []types.Parameter
+
+	for k, v := range c.env.CloudformationParameters {
+		par = append(par, types.Parameter{
+			ParameterKey:   aws.String(k),
+			ParameterValue: aws.String(v),
+		})
+	}
+
+	// Inject all desired artifact versions into the parameters that we are just
+	// about to deploy. Injecting those parameters after all user inputs have been
+	// applied above guarantees that only the release versions as defined in the
+	// release source repository will ever be applied.
+
+	for _, x := range rel {
+		par = append(par, types.Parameter{
+			ParameterKey:   aws.String(x.Parameter()),
+			ParameterValue: aws.String(x.Version()),
+		})
+	}
+
+	return par
 }
 
 func (c *CloudFormation) temUrl() string {

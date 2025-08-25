@@ -48,3 +48,25 @@ func (o Object) Name() string {
 func (o Object) Parameter() string {
 	return fmt.Sprintf("%sVersion", cases.Title(language.English).String(o.Name()))
 }
+
+// Version returns the desired state of this artifact's release version if the
+// following two conditions are true. Failed artifact conditions and deployment
+// suspensions will then yield the artifact version of the scheduler's current
+// state.
+//
+//  1. the artifact condition must be true
+//
+//  2. the deployment strategy must not be suspended
+//
+// E.g. we may observe the new version of a service v0.5.0, for which there does
+// no docker image exist yet. In this case we defer to the old version v0.4.0,
+// which is currently deployed. Once the docker image for v0.5.0 has been
+// confirmed inside of the underlying container registry, we will yield the new
+// desired version.
+func (o Object) Version() string {
+	if bool(o.Release.Deploy.Suspend) || !o.Artifact.Valid() {
+		return o.Artifact.Scheduler.Current
+	}
+
+	return o.Artifact.Reference.Desired
+}
