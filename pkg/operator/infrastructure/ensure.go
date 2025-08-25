@@ -7,7 +7,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/constant"
-	"github.com/0xSplits/kayron/pkg/roghfs"
+	"github.com/0xSplits/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )

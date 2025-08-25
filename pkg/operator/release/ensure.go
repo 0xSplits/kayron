@@ -6,7 +6,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
-	"github.com/0xSplits/kayron/pkg/roghfs"
+	"github.com/0xSplits/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )

@@ -10,7 +10,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/0xSplits/kayron/pkg/roghfs"
+	"github.com/0xSplits/roghfs"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/go-github/v73/github"
