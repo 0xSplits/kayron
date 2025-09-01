@@ -46,6 +46,14 @@ func Test_Cache_Object_Parameter(t *testing.T) {
 			},
 			par: "FoobarVersion",
 		},
+		// Case 004, with dash
+		{
+			obj: Object{
+				Release: release.Struct{Docker: docker.String("splits-lite")},
+				kin:     Service,
+			},
+			par: "SplitsLiteVersion",
+		},
 	}
 
 	for i, tc := range testCases {

@@ -23,10 +23,11 @@ func (p *Policy) ensure(rel []cache.Object) error {
 	// and checking their cashed state before doing anything else. We must not
 	// continue this reconciliation loop if there is any empty or invalid state,
 	// because the side effects of proceeding using such a broken state could
-	// potentially be dangerous.
+	// potentially be dangerous. Note that verification is skipped for those
+	// releases that are suspended.
 
 	for _, x := range rel {
-		if x.Artifact.Empty() {
+		if !bool(x.Release.Deploy.Suspend) && x.Artifact.Empty() {
 			p.log.Log(
 				"level", "warning",
 				"message", "cancelling reconciliation loop",
