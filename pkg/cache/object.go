@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
@@ -46,7 +47,7 @@ func (o Object) Name() string {
 // CloudFormation template being deployed, e.g. InfrastructureVersion,
 // SpectaVersion.
 func (o Object) Parameter() string {
-	return fmt.Sprintf("%sVersion", cases.Title(language.English).String(o.Name()))
+	return fmt.Sprintf("%sVersion", strings.Map(mapFnc, cases.Title(language.English).String(o.Name())))
 }
 
 // Version returns the desired state of this artifact's release version if the
@@ -69,4 +70,13 @@ func (o Object) Version() string {
 	}
 
 	return o.Artifact.Reference.Desired
+}
+
+// mapFnc signals the removal of dashes and spaces only.
+func mapFnc(r rune) rune {
+	if r == '-' || r == ' ' {
+		return -1
+	}
+
+	return r
 }
