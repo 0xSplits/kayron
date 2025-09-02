@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/artifact/condition"
 	"github.com/0xSplits/kayron/pkg/release/artifact/reference"
@@ -13,6 +14,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/suspend"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
@@ -138,6 +140,62 @@ func Test_Operator_CloudFormation_temPar(t *testing.T) {
 
 			par := clo.temPar(tc.rel)
 			if dif := cmp.Diff(tc.par, par, opt...); dif != "" {
+				t.Fatalf("-expected +actual:\n%s", dif)
+			}
+		})
+	}
+}
+
+// Test_Operator_CloudFormation_temUrl verifies that the actually injected
+// environment is properly used for the template URL of the root stack
+// CloudFormation template.
+func Test_Operator_CloudFormation_temUrl(t *testing.T) {
+	testCases := []struct {
+		buc string
+		reg string
+		env string
+		url string
+	}{
+		// Case 000
+		{
+			buc: "splits-cf-templates",
+			reg: "us-west-2",
+			env: "testing",
+			url: "https://splits-cf-templates.s3.us-west-2.amazonaws.com/testing/index.yaml",
+		},
+		// Case 001
+		{
+			buc: "template-files",
+			reg: "us-east-1",
+			env: "staging",
+			url: "https://template-files.s3.us-east-1.amazonaws.com/staging/index.yaml",
+		},
+		// Case 002
+		{
+			buc: "splits",
+			reg: "eu-central-1",
+			env: "production",
+			url: "https://splits.s3.eu-central-1.amazonaws.com/production/index.yaml",
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			var clo *CloudFormation
+			{
+				clo = &CloudFormation{
+					cfc: cloudformation.NewFromConfig(aws.Config{
+						Region: tc.reg,
+					}),
+					env: envvar.Env{
+						Environment: tc.env,
+						S3Bucket:    tc.buc,
+					},
+				}
+			}
+
+			url := clo.temUrl()
+			if dif := cmp.Diff(tc.url, url); dif != "" {
 				t.Fatalf("-expected +actual:\n%s", dif)
 			}
 		})
