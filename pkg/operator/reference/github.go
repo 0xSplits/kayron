@@ -9,8 +9,9 @@ import (
 
 func (r *Reference) desRef(rel release.Struct) (string, error) {
 	// Return the commit sha if the branch deployment strategy is selected. Note
-	// that branches may be defined while they are not yet tracked inside of
-	// Github.
+	// that branches may be referenced in releases while they are not yet tracked,
+	// or not tracked anymore inside of Github. This may happen predominantly
+	// during testing when preparing or finishing releases and their dependencies.
 
 	if !rel.Deploy.Branch.Empty() {
 		sha, err := r.comSha(rel.Github.String(), rel.Deploy.Branch.String())
