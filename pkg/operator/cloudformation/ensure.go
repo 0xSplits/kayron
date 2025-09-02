@@ -22,10 +22,16 @@ func (c *CloudFormation) Ensure() error {
 		})
 	}
 
+	var url string
+	{
+		url = c.temUrl()
+	}
+
 	c.log.Log(
 		"level", "info",
 		"message", "updating cloudformation stack",
 		"name", c.env.CloudformationStack,
+		"url", url,
 	)
 
 	// Make sure we respect the dry run flag when attempting to update any stack
@@ -37,7 +43,7 @@ func (c *CloudFormation) Ensure() error {
 	{
 		inp = &cloudformation.UpdateStackInput{
 			StackName:   aws.String(c.env.CloudformationStack),
-			TemplateURL: aws.String(c.temUrl()),
+			TemplateURL: aws.String(url),
 			Parameters:  c.temPar(c.cac.Releases()),
 			Capabilities: []types.Capability{
 				types.CapabilityCapabilityIam,
@@ -87,10 +93,11 @@ func (c *CloudFormation) temPar(rel []cache.Object) []types.Parameter {
 			ParameterValue: aws.String(x.Version()),
 		})
 	}
-
 	return par
 }
 
+// temUrl returns the environment specific template URL for the root stack
+// CloudFormation template.
 func (c *CloudFormation) temUrl() string {
-	return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/testing/index.yaml", c.env.S3Bucket, c.cfc.Options().Region)
+	return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s/index.yaml", c.env.S3Bucket, c.cfc.Options().Region, c.env.Environment)
 }

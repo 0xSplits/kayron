@@ -65,7 +65,7 @@ func (c *Container) task(det []detail) ([]task, error) {
 			if tag == "" {
 				c.log.Log(
 					"level", "warning",
-					"message", "skipping instrumentation for ECS service",
+					"message", "skipping reconciliation for ECS service",
 					"reason", "ECS service has no 'service' tag",
 					"cluster", *x.ClusterArn,
 					"service", *x.ServiceArn,
