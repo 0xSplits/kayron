@@ -1,6 +1,8 @@
 module github.com/0xSplits/kayron
 
-go 1.24
+go 1.24.0
+
+toolchain go1.24.6
 
 require (
 	github.com/0xSplits/otelgo v0.1.2
@@ -8,9 +10,9 @@ require (
 	github.com/0xSplits/workit v0.6.0
 	github.com/aws/aws-sdk-go-v2 v1.38.3
 	github.com/aws/aws-sdk-go-v2/config v1.31.6
-	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.65.2
+	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.66.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.50.1
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.63.4
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.63.5
 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.30.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.87.3
 	github.com/distribution/reference v0.6.0
@@ -20,15 +22,15 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/prometheus/client_golang v1.23.0
+	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/cors v1.11.1
 	github.com/spf13/afero v1.14.0
-	github.com/spf13/cobra v1.9.1
+	github.com/spf13/cobra v1.10.1
 	github.com/xh3b4sd/choreo v0.5.0
 	github.com/xh3b4sd/logger v0.11.1
 	github.com/xh3b4sd/tracer v1.0.0
 	go.opentelemetry.io/otel/metric v1.38.0
-	golang.org/x/text v0.28.0
+	golang.org/x/text v0.29.0
 )
 
 require (
@@ -50,8 +52,8 @@ require (
 	github.com/aws/smithy-go v1.23.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/containerd/stargz-snapshotter/estargz v0.16.3 // indirect
-	github.com/docker/cli v28.2.2+incompatible // indirect
+	github.com/containerd/stargz-snapshotter/estargz v0.17.0 // indirect
+	github.com/docker/cli v28.4.0+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
@@ -59,7 +61,7 @@ require (
 	github.com/google/go-containerregistry v0.20.6
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
+	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -68,20 +70,21 @@ require (
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.65.0 // indirect
-	github.com/prometheus/otlptranslator v0.0.0-20250717125610-8549f4ab4f8f // indirect
+	github.com/prometheus/common v0.66.1 // indirect
+	github.com/prometheus/otlptranslator v0.0.2 // indirect
 	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/puzpuzpuz/xsync/v4 v4.1.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/pflag v1.0.7 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/vbatts/tar-split v0.12.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect
-	go.opentelemetry.io/otel/exporters/prometheus v0.59.1 // indirect
-	go.opentelemetry.io/otel/sdk v1.37.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.37.0 // indirect
+	go.opentelemetry.io/otel/exporters/prometheus v0.60.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.38.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	go.yaml.in/yaml/v2 v2.4.2 // indirect
+	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
 )
