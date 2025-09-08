@@ -28,7 +28,7 @@ func (h *Handler) Ensure() error {
 	// configured repository. The amount of images we are looking for here must be
 	// larger than the amount of most recent image tags that we want to keep in
 	// place. If we want to keep 10 of the most recent image tags, then we have to
-	// fetch more than that.  The default of images to lookup here is 100.
+	// fetch more than that. The default of images to lookup here is 100.
 
 	var ima []types.ImageDetail
 	{

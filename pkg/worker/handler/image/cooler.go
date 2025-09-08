@@ -5,5 +5,5 @@ import (
 )
 
 func (h *Handler) Cooler() time.Duration {
-	return h.jit.Percent(12 * time.Hour)
+	return h.jit.Percent(1 * time.Minute)
 }
