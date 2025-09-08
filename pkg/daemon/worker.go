@@ -68,14 +68,14 @@ func (d *Daemon) Worker() *combined.Worker {
 				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Kayron}),
 				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Kayron}),
 
-				// image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Server}),
-				// image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Server}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Server}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Server}),
 
-				// image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Specta}),
-				// image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Specta}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Specta}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Specta}),
 
-				// image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.SplitsLite}),
-				// image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.SplitsLite}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.SplitsLite}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.SplitsLite}),
 			},
 			Log: d.log,
 			Reg: reg,

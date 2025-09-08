@@ -54,14 +54,18 @@ func (h *Handler) Ensure() error {
 		return nil
 	}
 
-	// TODO
+	// At this point we found more images than we want to maintain. So we take the
+	// list of all tagged container images and select those that qualify for
+	// deletion.
 
 	var rem []types.ImageDetail
 	{
 		rem = selRem(pre)
 	}
 
-	// TODO
+	// Use the resulting list of tagged images that we want to remove and find all
+	// associated images for those tags. There might be more images related to a
+	// tagged container image if we are working with multi architecture builds.
 
 	var dig []string
 	{
@@ -71,7 +75,8 @@ func (h *Handler) Ensure() error {
 		}
 	}
 
-	// TODO
+	// Finally, delete all resolved images by digest hash inside the configured
+	// ECR repository.
 
 	{
 		err = h.delete(string(h.rep), dig)
