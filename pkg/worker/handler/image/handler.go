@@ -16,12 +16,13 @@ import (
 
 const (
 	// Keep is the minimum amount of the most recent images that we want to keep
-	// in the underlying registry, per repository, at all times.
+	// in the underlying registry, per repository, at all times. This number must
+	// be smaller than the amount of images that we fetch in Handler.search.
 	Keep = 10
 
 	// Drop is the maximum amount of older images that we want to cleanup at once,
 	// while respecting the minimum amount of images to keep at all times.
-	Drop = 2
+	Drop = 5
 )
 
 type Config struct {
