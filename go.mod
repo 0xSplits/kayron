@@ -24,7 +24,7 @@ require (
 	github.com/rs/cors v1.11.1
 	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.9.1
-	github.com/xh3b4sd/choreo v0.4.0
+	github.com/xh3b4sd/choreo v0.5.0
 	github.com/xh3b4sd/logger v0.11.1
 	github.com/xh3b4sd/tracer v1.0.0
 	go.opentelemetry.io/otel/metric v1.38.0
