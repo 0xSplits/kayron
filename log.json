@@ -1,0 +1,36 @@
+[
+  {
+    "time": "2025-09-01 14:47:24",
+    "level": "warning",
+    "message": "git ref unresolvable",
+    "branch": "lite",
+    "owner": "0xSplits",
+    "reason": "branch not found",
+    "repository": "infrastructure",
+    "suggestion": "this issue might be caused by a user error or eventual consistency of the underlying backend",
+    "caller": "/build/pkg/operator/reference/github.go:42"
+  },
+  {
+    "time": "2025-09-01 14:44:06",
+    "level": "error",
+    "message": "worker execution failed",
+    "stack": {
+      "context": [
+        {
+          "key": "handler",
+          "value": "policy"
+        }
+      ],
+      "description": "This critical error indicates that some cached state of the current reconciliation loop was missing, which means that the operator does not know how to proceed safely.",
+      "trace": [
+        "/build/pkg/operator/policy/ensure.go:42",
+        "/build/pkg/operator/policy/ensure.go:12",
+        "/go/pkg/mod/github.com/0x!splits/workit@v0.5.0/handler/metrics/ensure.go:44",
+        "/go/pkg/mod/github.com/0x!splits/workit@v0.5.0/worker/sequence/ensure.go:79",
+        "/go/pkg/mod/github.com/0x!splits/workit@v0.5.0/worker/sequence/ensure.go:24",
+        "/go/pkg/mod/github.com/0x!splits/workit@v0.5.0/worker/sequence/daemon.go:23"
+      ]
+    },
+    "caller": "/go/pkg/mod/github.com/0x!splits/workit@v0.5.0/worker/sequence/daemon.go:39"
+  }
+]

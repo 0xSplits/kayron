@@ -1,0 +1,308 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation template for the Splits Lite containers and their load balancer configuration"
+
+Parameters:
+  Environment:
+    Description: "the name of the deployed environment"
+    Type: String
+
+  DiscoveryStack:
+    Description: "the name of the discovery stack"
+    Type: String
+
+  FargateStack:
+    Description: "the name of the server stack"
+    Type: String
+
+  NetworkStack:
+    Description: "the name of the networking stack"
+    Type: String
+
+  Secret:
+    Description: "the name of the environment/stack specific secret"
+    Type: String
+
+  LiteCertificate:
+    Description: "the ARN of the SSL certificate for the Splits Lite containers"
+    Type: String
+
+  LiteDomain:
+    Description: "the domain name of the Splits Lite DNS"
+    Type: String
+
+  LitePort:
+    Description: "the server port of the Splits Lite containers"
+    Type: Number
+
+  LiteVersion:
+    Description: "the Docker image tag for the Splits Lite containers"
+    Type: String
+
+Conditions:
+  IsProd: !Equals [!Ref Environment, production]
+
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref AWS::StackName
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+        - Key: "service"
+          Value: "splits-lite" # must match repo name
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub "${AWS::StackName}-lite"
+      DesiredCount: 1
+      LaunchType: "FARGATE"
+      TaskDefinition: !Ref TaskDefinition
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: "DISABLED"
+          SecurityGroups:
+            - !Ref SecurityGroup
+          Subnets:
+            - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet1ID"
+            - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet2ID"
+      LoadBalancers:
+        - TargetGroupArn: !Ref TargetGroup
+          ContainerName: !Sub "${AWS::StackName}-lite"
+          ContainerPort: !Ref LitePort
+      ServiceRegistries:
+        - ContainerName: !Sub "${AWS::StackName}-lite"
+          RegistryArn: !GetAtt ServiceDiscovery.Arn
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+        - Key: "service"
+          Value: "splits-lite" # must match repo name
+    DependsOn:
+      - Cluster
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-lite"
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/splits-ecs-role"
+      ContainerDefinitions:
+        - Name: !Sub "${AWS::StackName}-lite"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/splits-lite:${LiteVersion}"
+          PortMappings:
+            - ContainerPort: !Ref LitePort
+              Protocol: "tcp"
+          Essential: true
+          Secrets:
+            - Name: ALCHEMY_API_KEY
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}:ALCHEMY_API_KEY::"
+            - Name: WALLETCONNECT_PROJECT_ID
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}:WALLETCONNECT_PROJECT_ID::"
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub "/fargate/${AWS::StackName}/lite"
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/fargate/${AWS::StackName}/lite"
+      RetentionInDays: 7
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  TaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: secrets-access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}*"
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  DomainRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId:
+        Fn::ImportValue: !Sub "${NetworkStack}-EnvironmentHostedZoneId"
+      Name: !Ref LiteDomain
+      Type: A
+      AliasTarget:
+        DNSName:
+          Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerBaseDnsName"
+        HostedZoneId:
+          Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerCanonicalHostedZoneId"
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: !Ref LitePort
+      Protocol: "HTTP"
+      VpcId:
+        Fn::ImportValue: !Sub "${NetworkStack}-VpcID"
+      TargetType: "ip"
+      HealthCheckPath: "/"
+      HealthCheckProtocol: "HTTP"
+      Matcher:
+        HttpCode: 200
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  ListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      Conditions:
+        - Field: host-header
+          HostHeaderConfig:
+            Values:
+              - !Ref LiteDomain
+      ListenerArn:
+        Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
+      Priority: 12 # Host header = lite.{environment}.splits.org
+
+  ListenerCertificate:
+    Type: AWS::ElasticLoadBalancingV2::ListenerCertificate
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref LiteCertificate
+      ListenerArn:
+        Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
+
+  # ProdListenerRule registers the target group of the splits lite containers
+  # under the shorthand production domain lite.splits.org, but only for the
+  # production environment. Note that in order to make this work, we are also
+  # registering the respective SSL certificate in the load balancer, so that the
+  # TLS handshake may succeed.
+  ProdListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Condition: IsProd
+    Properties:
+      Actions:
+        - Type: "forward"
+          TargetGroupArn: !Ref TargetGroup
+      Conditions:
+        - Field: "host-header"
+          HostHeaderConfig:
+            Values:
+              - "lite.splits.org"
+      ListenerArn:
+        Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
+      Priority: 16 # Host header = lite.splits.org
+
+  ProdListenerCertificate:
+    Condition: IsProd
+    Type: AWS::ElasticLoadBalancingV2::ListenerCertificate
+    Properties:
+      Certificates:
+        - CertificateArn: "arn:aws:acm:us-west-2:995626699990:certificate/4e1a3a6b-c119-4594-a6c9-7f667401d78e"
+      ListenerArn:
+        Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "the security group for the Splits Lite containers in the Splits Lite stack"
+      VpcId:
+        Fn::ImportValue: !Sub "${NetworkStack}-VpcID"
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  FromAlloyToLiteIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: "the ingress rule to allow traffic from the Alloy to the Splits Lite containers"
+      GroupId: !Ref SecurityGroup
+      IpProtocol: "tcp"
+      FromPort: !Ref LitePort
+      ToPort: !Ref LitePort
+      SourceSecurityGroupId:
+        Fn::ImportValue: !Sub "${NetworkStack}-AlloySecurityGroupId"
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  FromLoadBalancerToLiteIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: "the ingress rule to allow traffic from the ELB to the Splits Lite containers"
+      GroupId: !Ref SecurityGroup
+      IpProtocol: tcp
+      FromPort: !Ref LitePort
+      ToPort: !Ref LitePort
+      SourceSecurityGroupId:
+        Fn::ImportValue: !Sub "${NetworkStack}-ELBSecurityGroupID"
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  FromLoadBalancerToLiteEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: "the egress rule to allow traffic from the ELB to the Splits Lite containers"
+      GroupId:
+        Fn::ImportValue: !Sub "${NetworkStack}-ELBSecurityGroupID"
+      IpProtocol: tcp
+      ToPort: !Ref LitePort
+      FromPort: !Ref LitePort
+      DestinationSecurityGroupId: !Ref SecurityGroup
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  # ServiceDiscovery exposes the private DNS for the Splits Lite service via
+  # Cloud Map within the environment specific VPC. Multiple tasks of the same
+  # service resolve to their respective private IPs, which can be accessed with
+  # the appropriate security group configuration.
+  #
+  #     dig +short lite.splits.local
+  #
+  #     10.50.117.100
+  #     10.50.114.203
+  #     10.50.113.188
+  #
+  ServiceDiscovery:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Name: "lite"
+      NamespaceId:
+        Fn::ImportValue: !Sub "${DiscoveryStack}-DiscoveryNamespaceId"
+      DnsConfig:
+        DnsRecords:
+          - Type: A
+            TTL: 60

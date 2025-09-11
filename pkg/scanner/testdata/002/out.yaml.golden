@@ -1,0 +1,9 @@
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+
+  Service:
+    Type: AWS::ECS::Service
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition

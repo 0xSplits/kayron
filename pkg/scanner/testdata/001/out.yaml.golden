@@ -1,0 +1,3 @@
+  TaskDefinition:
+
+    Type: AWS::ECS::TaskDefinition

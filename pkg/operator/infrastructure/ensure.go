@@ -68,6 +68,8 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
+		// TODO somewhere here we need to inject the preview resources
+
 		{
 			err = i.putObj(pat, byt)
 			if err != nil {
