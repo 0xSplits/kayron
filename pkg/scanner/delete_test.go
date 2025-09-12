@@ -1,4 +1,4 @@
-package preview
+package scanner
 
 import (
 	"bytes"
@@ -9,17 +9,25 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-// TODO test more branch names with non standard characters
-
-func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
+func Test_Scanner_Delete(t *testing.T) {
 	testCases := []struct {
-		bra []string
+		pre string
 	}{
 		// Case 000
 		{
-			bra: []string{
-				"fancy-feature-branch",
-			},
+			pre: "  Service:",
+		},
+		// Case 001
+		{
+			pre: "  TaskDefinition:",
+		},
+		// Case 002
+		{
+			pre: "Resources:",
+		},
+		// Case 003
+		{
+			pre: "      ServiceRegistries:",
 		},
 	}
 
@@ -29,7 +37,7 @@ func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 
 			var inp []byte
 			{
-				inp, err = os.ReadFile(fmt.Sprintf("./testdata/%03d/inp.yaml.golden", i))
+				inp, err = os.ReadFile(fmt.Sprintf("./testdata/delete/%03d/inp.yaml.golden", i))
 				if err != nil {
 					t.Fatal("expected", nil, "got", err)
 				}
@@ -37,25 +45,22 @@ func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 
 			var out []byte
 			{
-				out, err = os.ReadFile(fmt.Sprintf("./testdata/%03d/out.yaml.golden", i))
+				out, err = os.ReadFile(fmt.Sprintf("./testdata/delete/%03d/out.yaml.golden", i))
 				if err != nil {
 					t.Fatal("expected", nil, "got", err)
 				}
 			}
 
-			var pre *Preview
+			var sca *Scanner
 			{
-				pre = New(Config{
+				sca = New(Config{
 					Inp: inp,
 				})
 			}
 
 			var res []byte
 			{
-				res = pre.Render(tc.bra)
-				if err != nil {
-					t.Fatal("expected", nil, "got", err)
-				}
+				res = sca.Delete([]byte(tc.pre)).Bytes()
 			}
 
 			if dif := cmp.Diff(bytes.TrimSpace(out), bytes.TrimSpace(res)); dif != "" {

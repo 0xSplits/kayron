@@ -3,20 +3,19 @@ package scanner
 import (
 	"bufio"
 	"bytes"
-	"unicode"
 )
 
-// Search tries to find the entire YAML block identified by the given key line,
-// e.g. "  Service:". A new scanner configured with the found YAML block as
+// Delete tries to drop the entire YAML block identified by the given key line,
+// e.g. "  Service:". A new scanner configured without the found YAML block as
 // input bytes is returned.
-func (s *Scanner) Search(key []byte) *Scanner {
+func (s *Scanner) Delete(key []byte) *Scanner {
 	var buf *bufio.Scanner
 	{
 		buf = bufio.NewScanner(bytes.NewReader(s.inp))
 	}
 
 	var blo [][]byte
-	var fou bool
+	var drp bool
 	var end int
 	var sta int
 	for buf.Scan() {
@@ -25,20 +24,20 @@ func (s *Scanner) Search(key []byte) *Scanner {
 			lin = append([]byte(nil), buf.Bytes()...) // copy to prevent buffer overwrites
 		}
 
-		if fou {
+		if drp {
 			end = spaces(lin)
 		}
 
-		if fou && sta == end && len(lin) != 0 {
-			break
+		if drp && end <= sta && len(lin) != 0 {
+			drp = false
 		}
 
-		if !fou {
-			fou = bytes.Equal(lin, key)
+		if bytes.Equal(lin, key) {
+			drp = true
 			sta = spaces(lin)
 		}
 
-		if fou {
+		if !drp {
 			blo = append(blo, lin)
 		}
 	}
@@ -51,18 +50,4 @@ func (s *Scanner) Search(key []byte) *Scanner {
 	return New(Config{
 		Inp: inp,
 	})
-}
-
-func spaces(b []byte) int {
-	var cou int
-
-	for _, x := range b {
-		if unicode.IsSpace(rune(x)) {
-			cou++
-		} else {
-			break
-		}
-	}
-
-	return cou
 }

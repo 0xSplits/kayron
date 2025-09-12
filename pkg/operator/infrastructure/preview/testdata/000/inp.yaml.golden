@@ -79,7 +79,7 @@ Resources:
         - Key: "environment"
           Value: !Ref Environment
         - Key: "service"
-          Value: "splits-lite" # must match repo name
+          Value: "splits-lite"
     DependsOn:
       - Cluster
 

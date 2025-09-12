@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+
+  Service:
+    Type: AWS::ECS::Service
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+
+Outputs:
+  ServiceVersion:
+    Value: "v0.2.0-1234"

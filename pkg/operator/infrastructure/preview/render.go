@@ -1,12 +1,5 @@
 package preview
 
-import (
-	"bytes"
-	"fmt"
-
-	"github.com/iancoleman/strcase"
-)
-
 func (p *Preview) Render(bra []string) []byte {
 	var res Resource
 	{
@@ -31,38 +24,50 @@ func (p *Preview) Render(bra []string) []byte {
 	return out
 }
 
+// TODO scanner needs Replace and Delete
 func (p *Preview) render(res Resource, bra string) []byte {
 	var out []byte
 
-	var cam string
-	var keb string
+	var hsh string
 	{
-		cam = strcase.ToCamel(bra) // FancyFeatureBranch
-		keb = strcase.ToKebab(bra) // fancy-feature-branch
-	}
-
-	fmt.Printf("%#v\n", cam)
-	fmt.Printf("%#v\n", keb)
-
-	{
-		res.Ser = bytes.Replace(res.Ser, []byte("  Service:"), fmt.Appendf(nil, "  Service%s:", cam), 1)
-		res.Tas = bytes.Replace(res.Tas, []byte("  TaskDefinition:"), fmt.Appendf(nil, "  TaskDefinition%s:", cam), 1)
-		res.Dom = bytes.Replace(res.Dom, []byte("  DomainRecord:"), fmt.Appendf(nil, "  DomainRecord%s:", cam), 1)
-		res.Tar = bytes.Replace(res.Tar, []byte("  TargetGroup:"), fmt.Appendf(nil, "  TargetGroup%s:", cam), 1)
-		res.Lis = bytes.Replace(res.Lis, []byte("  ListenerRule:"), fmt.Appendf(nil, "  ListenerRule%s:", cam), 1)
+		hsh = Hash(bra)
 	}
 
 	{
-		out = append(out, '\n')
-		out = append(out, res.Ser...)
-		out = append(out, '\n')
-		out = append(out, res.Tas...)
-		out = append(out, '\n')
-		out = append(out, res.Dom...)
-		out = append(out, '\n')
-		out = append(out, res.Tar...)
-		out = append(out, '\n')
-		out = append(out, res.Lis...)
+		res.Ser = res.Ser.Append([]byte("  Service:"), []byte(hsh))
+		res.Ser = res.Ser.Append([]byte("      ServiceName:"), []byte("-"+hsh))
+		res.Ser = res.Ser.Append([]byte("      TaskDefinition:"), []byte(hsh))
+		res.Ser = res.Ser.Append([]byte("        - TargetGroupArn:"), []byte(hsh))
+	}
+
+	{
+		res.Tas = res.Tas.Append([]byte("  TaskDefinition:"), []byte(hsh))
+		res.Tas = res.Tas.Append([]byte("      Family:"), []byte("-"+hsh))
+	}
+
+	{
+		res.Dom = res.Dom.Append([]byte("  DomainRecord:"), []byte(hsh))
+	}
+
+	{
+		res.Tar = res.Tar.Append([]byte("  TargetGroup:"), []byte(hsh))
+	}
+
+	{
+		res.Lis = res.Lis.Append([]byte("  ListenerRule:"), []byte(hsh))
+	}
+
+	{
+		out = append(out, '\n', '\n')
+		out = append(out, res.Ser.Bytes()...)
+		out = append(out, '\n', '\n')
+		out = append(out, res.Tas.Bytes()...)
+		out = append(out, '\n', '\n')
+		out = append(out, res.Dom.Bytes()...)
+		out = append(out, '\n', '\n')
+		out = append(out, res.Tar.Bytes()...)
+		out = append(out, '\n', '\n')
+		out = append(out, res.Lis.Bytes()...)
 	}
 
 	return out

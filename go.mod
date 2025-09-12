@@ -2,8 +2,6 @@ module github.com/0xSplits/kayron
 
 go 1.24.0
 
-toolchain go1.24.6
-
 require (
 	github.com/0xSplits/otelgo v0.1.2
 	github.com/0xSplits/roghfs v0.1.0
@@ -18,6 +16,7 @@ require (
 	github.com/distribution/reference v0.6.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/go-cmp v0.7.0
+	github.com/google/go-containerregistry v0.20.6
 	github.com/google/go-github/v73 v73.0.0
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
@@ -58,11 +57,9 @@ require (
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/google/go-containerregistry v0.20.6
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853 // indirect
-	github.com/iancoleman/strcase v0.3.0
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

@@ -9,25 +9,40 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func Test_Scanner_Search(t *testing.T) {
+func Test_Scanner_Append(t *testing.T) {
 	testCases := []struct {
-		key string
+		pre string
+		suf string
 	}{
 		// Case 000
 		{
-			key: "  Service:",
+			pre: "    Value:",
+			suf: "-1234",
 		},
 		// Case 001
 		{
-			key: "  TaskDefinition:",
+			pre: "    Value:",
+			suf: ".0xFa73",
 		},
 		// Case 002
 		{
-			key: "Resources:",
+			pre: "      ServiceName:",
+			suf: "-1d0fd508",
 		},
 		// Case 003
 		{
-			key: "      ServiceRegistries:",
+			pre: "      TaskDefinition:",
+			suf: "-e3eae11",
+		},
+		// Case 004
+		{
+			pre: "      TaskDefinition:",
+			suf: "-XHEKSOUDL",
+		},
+		// Case 005
+		{
+			pre: "  Service:",
+			suf: "FancyFeatureBranch",
 		},
 	}
 
@@ -37,7 +52,7 @@ func Test_Scanner_Search(t *testing.T) {
 
 			var inp []byte
 			{
-				inp, err = os.ReadFile(fmt.Sprintf("./testdata/search/%03d/inp.yaml.golden", i))
+				inp, err = os.ReadFile(fmt.Sprintf("./testdata/append/%03d/inp.yaml.golden", i))
 				if err != nil {
 					t.Fatal("expected", nil, "got", err)
 				}
@@ -45,7 +60,7 @@ func Test_Scanner_Search(t *testing.T) {
 
 			var out []byte
 			{
-				out, err = os.ReadFile(fmt.Sprintf("./testdata/search/%03d/out.yaml.golden", i))
+				out, err = os.ReadFile(fmt.Sprintf("./testdata/append/%03d/out.yaml.golden", i))
 				if err != nil {
 					t.Fatal("expected", nil, "got", err)
 				}
@@ -60,7 +75,7 @@ func Test_Scanner_Search(t *testing.T) {
 
 			var res []byte
 			{
-				res = sca.Search([]byte(tc.key)).Bytes()
+				res = sca.Append([]byte(tc.pre), []byte(tc.suf)).Bytes()
 			}
 
 			if dif := cmp.Diff(bytes.TrimSpace(out), bytes.TrimSpace(res)); dif != "" {
