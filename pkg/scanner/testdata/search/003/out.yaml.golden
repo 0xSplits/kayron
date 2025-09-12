@@ -1,0 +1,3 @@
+      ServiceRegistries:
+        - ContainerName: !Sub "${AWS::StackName}-lite"
+          RegistryArn: !GetAtt ServiceDiscovery.Arn

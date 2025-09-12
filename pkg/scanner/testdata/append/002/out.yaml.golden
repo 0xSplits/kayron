@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub "${AWS::StackName}-lite-1d0fd508"
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+
+Outputs:
+  ServiceVersion:
+    Value: "v0.2.0"

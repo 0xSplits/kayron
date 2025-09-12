@@ -1,0 +1,5 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Outputs:
+  ServiceVersion:
+    Value: "v0.2.0"
