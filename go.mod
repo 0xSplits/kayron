@@ -24,7 +24,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/prometheus/client_golang v1.23.2
 	github.com/rs/cors v1.11.1
-	github.com/spf13/afero v1.14.0
+	github.com/spf13/afero v1.15.0
 	github.com/spf13/cobra v1.10.1
 	github.com/xh3b4sd/choreo v0.5.0
 	github.com/xh3b4sd/logger v0.11.1
