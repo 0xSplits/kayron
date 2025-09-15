@@ -34,7 +34,7 @@ func (s *Scanner) Search(key []byte) *Scanner {
 		}
 
 		if !fou {
-			fou = bytes.Equal(lin, key)
+			fou = bytes.HasPrefix(lin, key)
 			sta = spaces(lin)
 		}
 

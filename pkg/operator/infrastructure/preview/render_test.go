@@ -6,19 +6,49 @@ import (
 	"os"
 	"testing"
 
+	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/release/artifact"
+	"github.com/0xSplits/kayron/pkg/release/artifact/reference"
+	"github.com/0xSplits/kayron/pkg/release/schema/release"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
 	"github.com/google/go-cmp/cmp"
 )
 
-// TODO test more branch names with non standard characters
-
 func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 	testCases := []struct {
-		bra []string
+		obj []cache.Object
 	}{
 		// Case 000
 		{
-			bra: []string{
-				"fancy-feature-branch",
+			obj: []cache.Object{
+				{
+					Artifact: artifact.Struct{
+						Reference: reference.Struct{
+							Desired: "bc7891268e44f62e0aebbe339c0850b61d52c417",
+						},
+					},
+					Release: release.Struct{
+						Deploy: deploy.Struct{
+							Branch: branch.String("fancy-feature-branch"),
+						},
+						Docker: docker.String("lite"),
+					},
+				},
+				{
+					Artifact: artifact.Struct{
+						Reference: reference.Struct{
+							Desired: "02b42b7ec63d4078767cb3b7cb0d34fde91b6237",
+						},
+					},
+					Release: release.Struct{
+						Deploy: deploy.Struct{
+							Branch: branch.String("dependabot/another-one"),
+						},
+						Docker: docker.String("lite"),
+					},
+				},
 			},
 		},
 	}
@@ -52,7 +82,7 @@ func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 
 			var res []byte
 			{
-				res = pre.Render(tc.bra)
+				res, err = pre.Render(tc.obj)
 				if err != nil {
 					t.Fatal("expected", nil, "got", err)
 				}

@@ -12,22 +12,42 @@ import (
 func Test_Scanner_Delete(t *testing.T) {
 	testCases := []struct {
 		pre string
+		sub []byte
 	}{
 		// Case 000
 		{
 			pre: "  Service:",
+			sub: nil,
 		},
 		// Case 001
 		{
 			pre: "  TaskDefinition:",
+			sub: nil,
 		},
 		// Case 002
 		{
 			pre: "Resources:",
+			sub: nil,
 		},
-		// Case 003
+		// Case 003, real production example
 		{
 			pre: "      ServiceRegistries:",
+			sub: nil,
+		},
+		// Case 004
+		{
+			pre: "          Image:",
+			sub: nil,
+		},
+		// Case 005
+		{
+			pre: "          Image:",
+			sub: []byte("          Image: registry/image:tag"),
+		},
+		// Case 006
+		{
+			pre: "      ContainerDefinitions:",
+			sub: []byte("      ContainerDefinitions:\n        Foo: 1\n        Bar: 2"),
 		},
 	}
 
@@ -60,7 +80,7 @@ func Test_Scanner_Delete(t *testing.T) {
 
 			var res []byte
 			{
-				res = sca.Delete([]byte(tc.pre)).Bytes()
+				res = sca.Delete([]byte(tc.pre), tc.sub...).Bytes()
 			}
 
 			if dif := cmp.Diff(bytes.TrimSpace(out), bytes.TrimSpace(res)); dif != "" {

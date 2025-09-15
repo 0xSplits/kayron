@@ -29,6 +29,10 @@ func Test_Scanner_Search(t *testing.T) {
 		{
 			key: "      ServiceRegistries:",
 		},
+		// Case 004
+		{
+			key: "          Image:",
+		},
 	}
 
 	for i, tc := range testCases {

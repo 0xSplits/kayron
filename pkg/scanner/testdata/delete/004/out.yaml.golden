@@ -1,0 +1,31 @@
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-lite"
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/splits-ecs-role"
+      ContainerDefinitions:
+        - Name: !Sub "${AWS::StackName}-lite"
+          PortMappings:
+            - ContainerPort: !Ref LitePort
+              Protocol: "tcp"
+          Essential: true
+          Secrets:
+            - Name: ALCHEMY_API_KEY
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}:ALCHEMY_API_KEY::"
+            - Name: WALLETCONNECT_PROJECT_ID
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}:WALLETCONNECT_PROJECT_ID::"
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub "/fargate/${AWS::StackName}/lite"
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment

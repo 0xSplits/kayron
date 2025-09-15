@@ -307,15 +307,18 @@ Resources:
           - Type: A
             TTL: 60
 
+  #
+  # AUTO GENERATED PREVIEW DEPLOYMENT
+  #
 
-  Service1d0fd508:
+  Service1D0FD508:
     Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref Cluster
-      ServiceName: !Sub "${AWS::StackName}-lite-1d0fd508"
+      ServiceName: !Sub "${AWS::StackName}-lite-1D0FD508"
       DesiredCount: 1
       LaunchType: "FARGATE"
-      TaskDefinition: !Ref TaskDefinition1d0fd508
+      TaskDefinition: !Ref TaskDefinition1D0FD508
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: "DISABLED"
@@ -325,7 +328,7 @@ Resources:
             - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet1ID"
             - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet2ID"
       LoadBalancers:
-        - TargetGroupArn: !Ref TargetGroup1d0fd508
+        - TargetGroupArn: !Ref TargetGroup1D0FD508
           ContainerName: !Sub "${AWS::StackName}-lite"
           ContainerPort: !Ref LitePort
       Tags:
@@ -336,10 +339,10 @@ Resources:
     DependsOn:
       - Cluster
 
-  TaskDefinition1d0fd508:
+  TaskDefinition1D0FD508:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub "${AWS::StackName}-lite-1d0fd508"
+      Family: !Sub "${AWS::StackName}-lite-1D0FD508"
       RequiresCompatibilities:
         - FARGATE
       Cpu: 512
@@ -369,12 +372,12 @@ Resources:
         - Key: "environment"
           Value: !Ref Environment
 
-  DomainRecord1d0fd508:
+  DomainRecord1D0FD508:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId:
         Fn::ImportValue: !Sub "${NetworkStack}-EnvironmentHostedZoneId"
-      Name: !Sub "1d0fd508.lite.${Environment}.splits.org"
+      Name: !Sub "1D0FD508.lite.${Environment}.splits.org"
       Type: A
       AliasTarget:
         DNSName:
@@ -382,7 +385,7 @@ Resources:
         HostedZoneId:
           Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerCanonicalHostedZoneId"
 
-  TargetGroup1d0fd508:
+  TargetGroup1D0FD508:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Port: !Ref LitePort
@@ -398,17 +401,126 @@ Resources:
         - Key: "environment"
           Value: !Ref Environment
 
-  ListenerRule1d0fd508:
+  ListenerRule1D0FD508:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
       Actions:
         - Type: forward
-          TargetGroupArn: !Ref TargetGroup1d0fd508
+          TargetGroupArn: !Ref TargetGroup1D0FD508
       Conditions:
         - Field: host-header
           HostHeaderConfig:
             Values:
-              - !Sub "1d0fd508.lite.${Environment}.splits.org"
+              - !Sub "1D0FD508.lite.${Environment}.splits.org"
       ListenerArn:
         Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
-      Priority: 17 # Host header = 1d0fd508.lite.{environment}.splits.org
+      Priority: 30 # Host header = 1D0FD508.lite.${Environment}.splits.org
+
+  #
+  # AUTO GENERATED PREVIEW DEPLOYMENT
+  #
+
+  ServiceF4436797:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub "${AWS::StackName}-lite-F4436797"
+      DesiredCount: 1
+      LaunchType: "FARGATE"
+      TaskDefinition: !Ref TaskDefinitionF4436797
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: "DISABLED"
+          SecurityGroups:
+            - !Ref SecurityGroup
+          Subnets:
+            - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet1ID"
+            - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet2ID"
+      LoadBalancers:
+        - TargetGroupArn: !Ref TargetGroupF4436797
+          ContainerName: !Sub "${AWS::StackName}-lite"
+          ContainerPort: !Ref LitePort
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+        - Key: "service"
+          Value: "splits-lite"
+    DependsOn:
+      - Cluster
+
+  TaskDefinitionF4436797:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-lite-F4436797"
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/splits-ecs-role"
+      ContainerDefinitions:
+        - Name: !Sub "${AWS::StackName}-lite"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/splits-lite:02b42b7ec63d4078767cb3b7cb0d34fde91b6237"
+          PortMappings:
+            - ContainerPort: !Ref LitePort
+              Protocol: "tcp"
+          Essential: true
+          Secrets:
+            - Name: ALCHEMY_API_KEY
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}:ALCHEMY_API_KEY::"
+            - Name: WALLETCONNECT_PROJECT_ID
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Secret}:WALLETCONNECT_PROJECT_ID::"
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub "/fargate/${AWS::StackName}/lite"
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  DomainRecordF4436797:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId:
+        Fn::ImportValue: !Sub "${NetworkStack}-EnvironmentHostedZoneId"
+      Name: !Sub "F4436797.lite.${Environment}.splits.org"
+      Type: A
+      AliasTarget:
+        DNSName:
+          Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerBaseDnsName"
+        HostedZoneId:
+          Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerCanonicalHostedZoneId"
+
+  TargetGroupF4436797:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: !Ref LitePort
+      Protocol: "HTTP"
+      VpcId:
+        Fn::ImportValue: !Sub "${NetworkStack}-VpcID"
+      TargetType: "ip"
+      HealthCheckPath: "/"
+      HealthCheckProtocol: "HTTP"
+      Matcher:
+        HttpCode: 200
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+
+  ListenerRuleF4436797:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroupF4436797
+      Conditions:
+        - Field: host-header
+          HostHeaderConfig:
+            Values:
+              - !Sub "F4436797.lite.${Environment}.splits.org"
+      ListenerArn:
+        Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
+      Priority: 31 # Host header = F4436797.lite.${Environment}.splits.org
