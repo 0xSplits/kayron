@@ -16,6 +16,7 @@ type kind string
 
 const (
 	Infrastructure kind = "infrastructure"
+	Preview        kind = "preview"
 	Service        kind = "service"
 )
 
@@ -35,7 +36,7 @@ func (o Object) Name() string {
 		return o.Release.Github.String()
 	}
 
-	if o.kin == Service {
+	if o.kin == Preview || o.kin == Service {
 		return o.Release.Docker.String()
 	}
 

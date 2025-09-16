@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
+	"strings"
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/constant"
+	"github.com/0xSplits/kayron/pkg/preview"
 	"github.com/0xSplits/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
@@ -52,6 +54,8 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
+		// Skip everything that is not a YAML file.
+
 		var ext string
 		{
 			ext = filepath.Ext(fil.Name())
@@ -68,7 +72,32 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
-		// TODO somewhere here we need to inject the preview resources
+		// Before uploading our templates to S3, we have to inject any preview
+		// deployments configured for the service release that matches this
+		// particular template by file name.
+		//
+		//     "lite.yaml" == Release.Docker.String()
+		//
+
+		var pre *preview.Preview
+		{
+			pre = preview.New(preview.Config{
+				Env: i.env,
+				Inp: byt,
+			})
+		}
+
+		var rep string
+		{
+			rep = strings.TrimSuffix(fil.Name(), ext)
+		}
+
+		{
+			byt, err = pre.Render(i.cac.Previews(rep))
+			if err != nil {
+				return tracer.Mask(err)
+			}
+		}
 
 		{
 			err = i.putObj(pat, byt)

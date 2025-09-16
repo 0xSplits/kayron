@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/0xSplits/kayron/pkg/cache"
+	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/artifact/reference"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
@@ -76,6 +77,11 @@ func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 			var pre *Preview
 			{
 				pre = New(Config{
+					Env: envvar.Env{
+						Environment:   "testing",
+						GithubToken:   "foo",
+						ReleaseSource: "https://github.com/0xSplits/releases",
+					},
 					Inp: inp,
 				})
 			}

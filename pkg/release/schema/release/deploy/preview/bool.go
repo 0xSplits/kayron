@@ -1,8 +1,8 @@
-package suspend
+package preview
 
 import "strconv"
 
-// Bool disables any further reconciliation of this release indefinitely.
+// Bool enables preview deployments for this service.
 type Bool bool
 
 func (b Bool) Empty() bool {

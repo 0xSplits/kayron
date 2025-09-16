@@ -7,8 +7,6 @@ import (
 )
 
 func (r *Reference) Ensure() error {
-	var err error
-
 	// Get the list of cached releases so that we can lookup their respective
 	// artifact references concurrently, if necessary. This includes
 	// infrastructure and service releases.
@@ -51,7 +49,7 @@ func (r *Reference) Ensure() error {
 	}
 
 	{
-		err = parallel.Slice(rel, fnc)
+		err := parallel.Slice(rel, fnc)
 		if err != nil {
 			return tracer.Mask(err)
 		}

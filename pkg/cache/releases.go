@@ -10,6 +10,7 @@ func (c *Cache) Releases() []Object {
 
 	{
 		lis = append(lis, c.inf...)
+		lis = append(lis, c.pre...)
 		lis = append(lis, c.ser...)
 	}
 

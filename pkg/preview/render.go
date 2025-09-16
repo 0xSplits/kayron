@@ -20,8 +20,13 @@ var (
 	)
 )
 
-func (p *Preview) Render(art []cache.Object) ([]byte, error) {
+func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 	var err error
+
+	// TODO write test
+	if len(pre) == 0 {
+		return p.inp, nil
+	}
 
 	var res Resource
 	{
@@ -39,12 +44,18 @@ func (p *Preview) Render(art []cache.Object) ([]byte, error) {
 		out = append(p.inp, '\n')
 	}
 
+	// Derive the base of our listener rule priority range from the provided
+	// template defining a AWS::ElasticLoadBalancingV2::ListenerRule resource.
+
 	var pri int
 	{
-		pri = 30
+		pri, err = lisPri(res.Lis.Search([]byte("      Priority:")).Bytes())
+		if err != nil {
+			return nil, tracer.Mask(err)
+		}
 	}
 
-	for _, x := range art {
+	for _, x := range pre {
 		var hsh hash.Hash
 		{
 			hsh = hash.New(x.Release.Deploy.Branch.String())
@@ -63,19 +74,23 @@ func (p *Preview) Render(art []cache.Object) ([]byte, error) {
 			}
 		}
 
-		{
-			out = append(out, p.render(res, dom, pri, hsh, ima)...)
-		}
+		// Increment the listener rule priority per preview release. This must be
+		// done before the call to render(), because the base priority resolved
+		// above is already taken by the main release defining our preview
+		// deployments.
 
 		{
 			pri++
+		}
+
+		{
+			out = append(out, p.render(res, dom, pri, hsh, ima)...)
 		}
 	}
 
 	return out, nil
 }
 
-// TODO scanner needs Replace and Delete
 func (p *Preview) render(res Resource, dom string, pri int, hsh hash.Hash, ima []byte) []byte {
 	{
 		res.Ser = res.Ser.Append([]byte("  Service:"), hsh.Hsh)

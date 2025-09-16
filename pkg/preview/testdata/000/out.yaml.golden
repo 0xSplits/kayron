@@ -193,7 +193,7 @@ Resources:
               - !Ref LiteDomain
       ListenerArn:
         Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
-      Priority: 12 # Host header = lite.{environment}.splits.org
+      Priority: 12000 # Host header = lite.${Environment}.splits.org
 
   ListenerCertificate:
     Type: AWS::ElasticLoadBalancingV2::ListenerCertificate
@@ -414,7 +414,7 @@ Resources:
               - !Sub "1D0FD508.lite.${Environment}.splits.org"
       ListenerArn:
         Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
-      Priority: 30 # Host header = 1D0FD508.lite.${Environment}.splits.org
+      Priority: 12001 # Host header = 1D0FD508.lite.${Environment}.splits.org
 
   #
   # AUTO GENERATED PREVIEW DEPLOYMENT
@@ -523,4 +523,4 @@ Resources:
               - !Sub "F4436797.lite.${Environment}.splits.org"
       ListenerArn:
         Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
-      Priority: 31 # Host header = F4436797.lite.${Environment}.splits.org
+      Priority: 12002 # Host header = F4436797.lite.${Environment}.splits.org

@@ -7,7 +7,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func Test_Operator_Infrastructure_Preview_Image(t *testing.T) {
+func Test_Preview_repIma(t *testing.T) {
 	testCases := []struct {
 		lin []byte
 		tag []byte

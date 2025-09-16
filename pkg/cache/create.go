@@ -20,6 +20,7 @@ func (c *Cache) Create(rel release.Slice) error {
 			"docker", x.Docker.String(),
 			"github", x.Github.String(),
 			"deploy", x.Deploy.String(),
+			"preview", x.Deploy.Preview.String(),
 			"provider", x.Provider.String(),
 		)
 
@@ -43,6 +44,15 @@ func (c *Cache) Create(rel release.Slice) error {
 
 			{
 				c.inf = append(c.inf, obj)
+			}
+		} else if bool(x.Deploy.Preview) {
+			{
+				obj.ind = len(c.pre)
+				obj.kin = Preview
+			}
+
+			{
+				c.pre = append(c.pre, obj)
 			}
 		} else {
 			{
