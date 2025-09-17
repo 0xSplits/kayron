@@ -14,6 +14,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
 	"github.com/google/go-cmp/cmp"
@@ -34,7 +35,8 @@ func Test_Preview_Render(t *testing.T) {
 					},
 					Release: release.Struct{
 						Deploy: deploy.Struct{
-							Branch: branch.String("fancy-feature-branch"),
+							Branch:  branch.String("fancy-feature-branch"),
+							Preview: preview.Bool(true),
 						},
 						Docker: docker.String("lite"),
 						Labels: labels.Struct{
@@ -50,7 +52,8 @@ func Test_Preview_Render(t *testing.T) {
 					},
 					Release: release.Struct{
 						Deploy: deploy.Struct{
-							Branch: branch.String("dependabot/another-one"),
+							Branch:  branch.String("dependabot/another-one"),
+							Preview: preview.Bool(true),
 						},
 						Docker: docker.String("lite"),
 						Labels: labels.Struct{
