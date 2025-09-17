@@ -35,6 +35,11 @@ func (c *Container) task(det []detail) ([]task, error) {
 	fnc := func(i int, d detail) error {
 		var err error
 
+		// TODO we can make this call more efficient and rate limit friendly by
+		// fetching all services at once for all injected details. It should then
+		// not even be necessary anymore to execute this particular code using
+		// parallel.Slice.
+
 		var inp *ecs.DescribeServicesInput
 		{
 			inp = &ecs.DescribeServicesInput{
@@ -60,6 +65,18 @@ func (c *Container) task(det []detail) ([]task, error) {
 		}
 
 		for _, x := range out.Services {
+			if aws.ToString(x.Status) != "ACTIVE" {
+				// There might be inactive or draining services with our desired service
+				// labels in case we updated CloudFormation stacks multiple times during
+				// with preview deployments during testing. We only want to consider the
+				// current state of those stacks that are still active, because the
+				// inactive versions have most likely been deleted already.
+
+				{
+					continue
+				}
+			}
+
 			var pre string
 			var ser string
 			{
@@ -129,8 +146,8 @@ func (c *Container) task(det []detail) ([]task, error) {
 
 func serTag(tag []types.Tag, key string) string {
 	for _, x := range tag {
-		if x.Key != nil && x.Value != nil && *x.Key == key {
-			return *x.Value
+		if aws.ToString(x.Key) == key {
+			return aws.ToString(x.Value)
 		}
 	}
 

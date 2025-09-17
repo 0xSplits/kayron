@@ -47,7 +47,7 @@ func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 
 		var dom string
 		{
-			dom = preDom(hsh.String(), x.Release.Docker.String())
+			dom = x.Domain("${Environment}")
 		}
 
 		var ima []byte

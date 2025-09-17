@@ -30,6 +30,34 @@ type Object struct {
 	kin kind
 }
 
+// Domain returns the hash based testing domain for preview deployments, or an
+// empty string for any other main release and non-testing environment.
+func (o Object) Domain(env string) string {
+	// Note that we filter the domain name creation by preview deployments,
+	// because at the time of writing we do not have any convenient way to tell
+	// whether this release artifact is exposed to the internet via DNS. Right now
+	// we only know that for certain in case of preview deployments, because their
+	// sole purpose is to be exposed to the internet.
+
+	if !bool(o.Release.Deploy.Preview) {
+		return ""
+	}
+
+	return fmt.Sprintf("%s.%s.%s.splits.org",
+		o.Release.Labels.Hash.String(),
+
+		// Note that this is a dirty hack to make preview deployments work today for
+		// existing services that already work using certain incosnistencies between
+		// repository and domain names. E.g. we have "splits-lite" in Github, but
+		// use just "lite.testing.splits.org". A better way of doing this would be
+		// to allow for some kind of domain configuration in the release definition,
+		// so that we can remove this magical string replacement below.
+		strings.TrimPrefix(o.Release.Docker.String(), "splits-"),
+
+		env,
+	)
+}
+
 func (o Object) Name() string {
 	if o.kin == Infrastructure {
 		return o.Release.Github.String()

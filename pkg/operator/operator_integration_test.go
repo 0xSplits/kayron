@@ -27,6 +27,7 @@ import (
 //	KAYRON_GITHUB_TOKEN=todo go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
 func Test_Operator_Integration(t *testing.T) {
 	var env envvar.Env
+
 	{
 		env = envvar.Env{
 			CloudformationStack: "server-test",

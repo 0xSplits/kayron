@@ -147,13 +147,13 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
 ```yaml
 === RUN   Test_Operator_Integration
 {
-    "time": "2025-09-17 14:24:33",
+    "time": "2025-09-17 15:31:59",
     "level": "debug",
     "message": "resetting operator cache",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/delete.go:9"
 }
 {
-    "time": "2025-09-17 14:24:35",
+    "time": "2025-09-17 15:32:01",
     "level": "debug",
     "message": "resolved ref for github repository",
     "environment": "testing",
@@ -162,7 +162,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/release/ensure.go:66"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "branch=preview",
@@ -172,7 +172,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "release=v0.1.1",
@@ -182,7 +182,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "branch=fancy-feature-branch",
@@ -192,7 +192,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "branch=preview",
@@ -202,7 +202,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching release artifact",
     "deploy": "release=v0.2.2",
@@ -212,33 +212,33 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/cache/create.go:17"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "release",
-    "latency": "3.93228675s",
+    "latency": "3.727451s",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-09-17 14:24:37",
-    "level": "debug",
-    "message": "caching desired state",
-    "desired": "v0.2.2",
-    "github": "specta",
-    "preview": "false",
-    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:45"
-}
-{
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching current state",
-    "current": "3c113413a19f82f906f45ba22c2cd17bb7a62682",
+    "current": "d5fa88afd502edc9052f89c956618b2cb567d984",
     "github": "infrastructure",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/template/ensure.go:35"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
+    "level": "debug",
+    "message": "instrumented worker handler",
+    "handler": "template",
+    "latency": "173.083µs",
+    "success": "true",
+    "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
+}
+{
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
     "message": "caching desired state",
     "desired": "v0.1.1",
@@ -247,16 +247,16 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:45"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:02",
     "level": "debug",
-    "message": "instrumented worker handler",
-    "handler": "template",
-    "latency": "238.584µs",
-    "success": "true",
-    "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
+    "message": "caching desired state",
+    "desired": "v0.2.2",
+    "github": "specta",
+    "preview": "false",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:45"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:03",
     "level": "debug",
     "message": "caching desired state",
     "desired": "d5fa88afd502edc9052f89c956618b2cb567d984",
@@ -265,61 +265,61 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:45"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:03",
     "level": "debug",
     "message": "caching desired state",
-    "desired": "1814c2027b7aef51e38e110c45ae5b4b79b6f856",
+    "desired": "eb9f56e195f25218499897a6c6d79c62261faba5",
     "github": "kayron",
     "preview": "false",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:45"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:03",
     "level": "debug",
     "message": "caching desired state",
-    "desired": "bc7891268e44f62e0aebbe339c0850b61d52c417",
+    "desired": "e307253e62c2da119579e2505db0b6185642ab9b",
     "github": "splits-lite",
     "preview": "true",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/reference/ensure.go:45"
 }
 {
-    "time": "2025-09-17 14:24:37",
+    "time": "2025-09-17 15:32:03",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "reference",
-    "latency": "304.052167ms",
+    "latency": "367.2485ms",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-09-17 14:24:39",
+    "time": "2025-09-17 15:32:04",
     "level": "debug",
     "message": "caching current state",
-    "current": "v0.1.1",
+    "current": "bc7891268e44f62e0aebbe339c0850b61d52c417",
     "docker": "splits-lite",
     "preview": "false",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:10"
 }
 {
-    "time": "2025-09-17 14:24:39",
+    "time": "2025-09-17 15:32:04",
     "level": "debug",
     "message": "caching current state",
-    "current": "''",
+    "current": "bc7891268e44f62e0aebbe339c0850b61d52c417",
     "docker": "splits-lite",
     "preview": "true",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:10"
 }
 {
-    "time": "2025-09-17 14:24:39",
+    "time": "2025-09-17 15:32:04",
     "level": "debug",
     "message": "caching current state",
-    "current": "1814c2027b7aef51e38e110c45ae5b4b79b6f856",
+    "current": "eb9f56e195f25218499897a6c6d79c62261faba5",
     "docker": "kayron",
     "preview": "false",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:10"
 }
 {
-    "time": "2025-09-17 14:24:39",
+    "time": "2025-09-17 15:32:04",
     "level": "debug",
     "message": "caching current state",
     "current": "v0.2.2",
@@ -328,54 +328,73 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/container/cache.go:10"
 }
 {
-    "time": "2025-09-17 14:24:39",
+    "time": "2025-09-17 15:32:04",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "container",
-    "latency": "1.884508333s",
+    "latency": "1.705606292s",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-09-17 14:24:40",
+    "time": "2025-09-17 15:32:05",
     "level": "debug",
     "message": "executed image check",
     "exists": "true",
     "image": "splits-lite",
     "preview": "true",
-    "tag": "bc7891268e44f62e0aebbe339c0850b61d52c417",
+    "tag": "e307253e62c2da119579e2505db0b6185642ab9b",
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/registry/ensure.go:45"
 }
 {
-    "time": "2025-09-17 14:24:40",
+    "time": "2025-09-17 15:32:05",
+    "level": "debug",
+    "message": "executed image check",
+    "exists": "true",
+    "image": "splits-lite",
+    "preview": "false",
+    "tag": "v0.1.1",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/registry/ensure.go:45"
+}
+{
+    "time": "2025-09-17 15:32:05",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "registry",
-    "latency": "1.037679042s",
+    "latency": "875.278125ms",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-09-17 14:24:40",
+    "time": "2025-09-17 15:32:05",
     "level": "info",
     "message": "continuing reconciliation loop",
-    "preview": "false",
     "reason": "detected state drift",
-    "release": "infrastructure",
-    "version": "d5fa88afd502edc9052f89c956618b2cb567d984",
-    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/policy/ensure.go:62"
+    "release": "splits-lite",
+    "version": "v0.1.1",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/policy/ensure.go:68"
 }
 {
-    "time": "2025-09-17 14:24:40",
+    "time": "2025-09-17 15:32:05",
+    "level": "info",
+    "message": "continuing reconciliation loop",
+    "domain": "1D0FD508.lite.testing.splits.org",
+    "reason": "detected state drift",
+    "release": "splits-lite",
+    "version": "e307253e62c2da119579e2505db0b6185642ab9b",
+    "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/policy/ensure.go:68"
+}
+{
+    "time": "2025-09-17 15:32:05",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "policy",
-    "latency": "277.75µs",
+    "latency": "523.166µs",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-09-17 14:24:40",
+    "time": "2025-09-17 15:32:05",
     "level": "debug",
     "message": "resolved ref for github repository",
     "environment": "testing",
@@ -384,7 +403,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/ensure.go:24"
 }
 {
-    "time": "2025-09-17 14:24:40",
+    "time": "2025-09-17 15:32:05",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -392,7 +411,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:41",
+    "time": "2025-09-17 15:32:06",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -400,7 +419,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:41",
+    "time": "2025-09-17 15:32:06",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -408,7 +427,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:41",
+    "time": "2025-09-17 15:32:06",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -416,7 +435,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:42",
+    "time": "2025-09-17 15:32:06",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -424,7 +443,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:42",
+    "time": "2025-09-17 15:32:07",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -432,7 +451,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:42",
+    "time": "2025-09-17 15:32:07",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -440,7 +459,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:42",
+    "time": "2025-09-17 15:32:07",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -448,7 +467,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:42",
+    "time": "2025-09-17 15:32:07",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -456,7 +475,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:43",
+    "time": "2025-09-17 15:32:08",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -464,7 +483,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:43",
+    "time": "2025-09-17 15:32:08",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -472,7 +491,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:43",
+    "time": "2025-09-17 15:32:08",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -480,7 +499,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:44",
+    "time": "2025-09-17 15:32:08",
     "level": "debug",
     "message": "uploading cloudformation template",
     "bucket": "splits-cf-templates",
@@ -488,16 +507,16 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/infrastructure/aws.go:26"
 }
 {
-    "time": "2025-09-17 14:24:44",
+    "time": "2025-09-17 15:32:08",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "infrastructure",
-    "latency": "3.811803709s",
+    "latency": "3.615857209s",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
 {
-    "time": "2025-09-17 14:24:44",
+    "time": "2025-09-17 15:32:08",
     "level": "info",
     "message": "updating cloudformation stack",
     "name": "server-test",
@@ -505,17 +524,17 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "caller": "/Users/xh3b4sd/project/0xSplits/kayron/pkg/operator/cloudformation/ensure.go:30"
 }
 {
-    "time": "2025-09-17 14:24:44",
+    "time": "2025-09-17 15:32:08",
     "level": "debug",
     "message": "instrumented worker handler",
     "handler": "cloudformation",
-    "latency": "419.375µs",
+    "latency": "190.125µs",
     "success": "true",
     "caller": "/Users/xh3b4sd/go/pkg/mod/github.com/0x!splits/workit@v0.6.0/handler/metrics/ensure.go:55"
 }
---- PASS: Test_Operator_Integration (10.67s)
+--- PASS: Test_Operator_Integration (9.93s)
 PASS
-ok  	github.com/0xSplits/kayron/pkg/operator	11.969s
+ok  	github.com/0xSplits/kayron/pkg/operator	11.224s
 ```
 
 ### Releases

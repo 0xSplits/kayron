@@ -58,7 +58,7 @@ func (s *Stack) Search() (types.Stack, error) {
 
 func hasEnv(tags []types.Tag, env string) bool {
 	for _, x := range tags {
-		if x.Key != nil && x.Value != nil && *x.Key == "environment" && *x.Value == env {
+		if aws.ToString(x.Key) == "environment" && aws.ToString(x.Value) == env {
 			return true
 		}
 	}

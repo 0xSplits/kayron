@@ -65,7 +65,7 @@ func New(c Config) *Operator {
 		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met}),
 		container:      container.New(container.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log}),
-		policy:         policy.New(policy.Config{Cac: c.Cac, Log: c.Log}),
+		policy:         policy.New(policy.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Sta: c.Sta}),
 		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
