@@ -1,0 +1,5 @@
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+        - Key: "service"
+          Value: "splits-lite" # must match repo name

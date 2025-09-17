@@ -31,7 +31,6 @@ type Cache struct {
 	inf []Object
 	log logger.Interface
 	mut sync.Mutex
-	pre []Object
 	ser []Object
 }
 
@@ -45,7 +44,6 @@ func New(c Config) *Cache {
 		inf: nil,
 		log: c.Log,
 		mut: sync.Mutex{},
-		pre: nil,
 		ser: nil,
 	}
 }

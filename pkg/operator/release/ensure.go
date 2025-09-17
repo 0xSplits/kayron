@@ -148,5 +148,11 @@ func (r *Release) Ensure() error {
 		}
 	}
 
+	// TODO there is a potential efficiency benefit to be had if we expanded cache
+	// objects instead of release definitions, because we are already fetching the
+	// latest Git SHAs for every preview deployment in Preview.Expand above. With
+	// that we should probably also move all of this cache object expansion for
+	// preview deployments into its own operator handler/function.
+
 	return nil
 }

@@ -1,5 +1,7 @@
 package cache
 
+// Previews returns all cached service release artifacts that are defined as
+// preview deployments.
 func (c *Cache) Previews(doc string) []Object {
 	{
 		c.mut.Lock()
@@ -8,8 +10,8 @@ func (c *Cache) Previews(doc string) []Object {
 
 	var lis []Object
 
-	for _, x := range c.pre {
-		if x.Release.Docker.String() == doc {
+	for _, x := range c.ser {
+		if bool(x.Release.Deploy.Preview) && x.Release.Docker.String() == doc {
 			lis = append(lis, x)
 		}
 	}

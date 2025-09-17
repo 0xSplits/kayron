@@ -308,7 +308,7 @@ Resources:
             TTL: 60
 
   #
-  # AUTO GENERATED PREVIEW DEPLOYMENT
+  # AUTO GENERATED PREVIEW DEPLOYMENT 1D0FD508
   #
 
   Service1D0FD508:
@@ -336,6 +336,8 @@ Resources:
           Value: !Ref Environment
         - Key: "service"
           Value: "splits-lite"
+        - Key: "preview"
+          Value: "1D0FD508"
     DependsOn:
       - Cluster
 
@@ -417,7 +419,7 @@ Resources:
       Priority: 12001 # Host header = 1D0FD508.lite.${Environment}.splits.org
 
   #
-  # AUTO GENERATED PREVIEW DEPLOYMENT
+  # AUTO GENERATED PREVIEW DEPLOYMENT F4436797
   #
 
   ServiceF4436797:
@@ -445,6 +447,8 @@ Resources:
           Value: !Ref Environment
         - Key: "service"
           Value: "splits-lite"
+        - Key: "preview"
+          Value: "F4436797"
     DependsOn:
       - Cluster
 

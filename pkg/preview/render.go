@@ -9,24 +9,8 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-var (
-	header = bytes.Join(
-		[][]byte{
-			[]byte("  #"),
-			[]byte("  # AUTO GENERATED PREVIEW DEPLOYMENT"),
-			[]byte("  #"),
-		},
-		[]byte("\n"),
-	)
-)
-
 func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 	var err error
-
-	// TODO write test
-	if len(pre) == 0 {
-		return p.inp, nil
-	}
 
 	var res Resource
 	{
@@ -58,17 +42,25 @@ func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 	for _, x := range pre {
 		var hsh hash.Hash
 		{
-			hsh = hash.New(x.Release.Deploy.Branch.String())
+			hsh = x.Release.Labels.Hash
 		}
 
 		var dom string
 		{
-			dom = fmt.Sprintf("%s.%s.${Environment}.splits.org", hsh.Hsh, x.Release.Docker.String())
+			dom = preDom(hsh.String(), x.Release.Docker.String())
 		}
 
 		var ima []byte
 		{
 			ima, err = repIma(res.Tas.Search([]byte("          Image:")).Bytes(), []byte(x.Artifact.Reference.Desired))
+			if err != nil {
+				return nil, tracer.Mask(err)
+			}
+		}
+
+		var tag []byte
+		{
+			tag, err = appTag(res.Ser.Search([]byte("      Tags:")).Bytes(), hsh.String())
 			if err != nil {
 				return nil, tracer.Mask(err)
 			}
@@ -84,20 +76,21 @@ func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 		}
 
 		{
-			out = append(out, p.render(res, dom, pri, hsh, ima)...)
+			out = append(out, p.render(res, dom, pri, hsh, ima, tag)...)
 		}
 	}
 
 	return out, nil
 }
 
-func (p *Preview) render(res Resource, dom string, pri int, hsh hash.Hash, ima []byte) []byte {
+func (p *Preview) render(res Resource, dom string, pri int, hsh hash.Hash, ima []byte, tag []byte) []byte {
 	{
 		res.Ser = res.Ser.Append([]byte("  Service:"), hsh.Hsh)
 		res.Ser = res.Ser.Append([]byte("      ServiceName:"), hsh.Dsh)
 		res.Ser = res.Ser.Append([]byte("      TaskDefinition:"), hsh.Hsh)
 		res.Ser = res.Ser.Append([]byte("        - TargetGroupArn:"), hsh.Hsh)
 		res.Ser = res.Ser.Delete([]byte("      ServiceRegistries:"))
+		res.Ser = res.Ser.Delete([]byte("      Tags:"), tag...)
 	}
 
 	{
@@ -124,7 +117,7 @@ func (p *Preview) render(res Resource, dom string, pri int, hsh hash.Hash, ima [
 
 	var out []byte
 	{
-		out = append(out, header...)
+		out = append(out, header(hsh)...)
 		out = append(out, '\n', '\n')
 		out = append(out, res.Ser.Bytes()...)
 		out = append(out, '\n', '\n')
@@ -139,4 +132,15 @@ func (p *Preview) render(res Resource, dom string, pri int, hsh hash.Hash, ima [
 	}
 
 	return out
+}
+
+func header(hsh hash.Hash) []byte {
+	return bytes.Join(
+		[][]byte{
+			[]byte("  #"),
+			[]byte("  # AUTO GENERATED PREVIEW DEPLOYMENT " + hsh.String()),
+			[]byte("  #"),
+		},
+		[]byte("\n"),
+	)
 }

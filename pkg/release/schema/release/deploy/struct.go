@@ -1,6 +1,8 @@
 package deploy
 
 import (
+	"fmt"
+
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/release"
@@ -28,7 +30,7 @@ func (s Struct) Empty() bool {
 
 func (s Struct) String() string {
 	if !s.Branch.Empty() {
-		return s.Branch.String()
+		return fmt.Sprintf("branch=%s", s.Branch.String())
 	}
 
 	// Note that Struct.Preview is not a deployment strategy in all environments,
@@ -36,15 +38,15 @@ func (s Struct) String() string {
 	// this deployment strategy.
 
 	if !s.Release.Empty() {
-		return s.Release.String()
+		return fmt.Sprintf("release=%s", s.Release.String())
 	}
 
 	if !s.Suspend.Empty() {
-		return s.Suspend.String()
+		return fmt.Sprintf("suspend=%s", s.Suspend.String())
 	}
 
 	if !s.Webhook.Empty() {
-		return s.Webhook.String()
+		return fmt.Sprintf("webhook=%s", s.Webhook.String())
 	}
 
 	return ""

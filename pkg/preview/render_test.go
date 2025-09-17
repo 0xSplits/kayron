@@ -8,16 +8,18 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
+	"github.com/0xSplits/kayron/pkg/hash"
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/artifact/reference"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
 	"github.com/google/go-cmp/cmp"
 )
 
-func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
+func Test_Preview_Render(t *testing.T) {
 	testCases := []struct {
 		obj []cache.Object
 	}{
@@ -35,6 +37,9 @@ func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 							Branch: branch.String("fancy-feature-branch"),
 						},
 						Docker: docker.String("lite"),
+						Labels: labels.Struct{
+							Hash: hash.New("fancy-feature-branch"),
+						},
 					},
 				},
 				{
@@ -48,6 +53,9 @@ func Test_Operator_Infrastructure_Preview_Render(t *testing.T) {
 							Branch: branch.String("dependabot/another-one"),
 						},
 						Docker: docker.String("lite"),
+						Labels: labels.Struct{
+							Hash: hash.New("dependabot/another-one"),
+						},
 					},
 				},
 			},

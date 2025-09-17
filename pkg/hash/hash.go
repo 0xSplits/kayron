@@ -9,8 +9,8 @@ import (
 )
 
 type Hash struct {
-	Hsh []byte
 	Dsh []byte
+	Hsh []byte
 }
 
 func New(str string) Hash {
@@ -19,7 +19,15 @@ func New(str string) Hash {
 	cas := cases.Upper(language.English).String(enc[:8])
 
 	return Hash{
-		Hsh: []byte(cas),
 		Dsh: []byte("-" + cas),
+		Hsh: []byte(cas),
 	}
+}
+
+func (h Hash) Empty() bool {
+	return h.Dsh == nil && h.Hsh == nil
+}
+
+func (h Hash) String() string {
+	return string(h.Hsh)
 }

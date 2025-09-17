@@ -11,6 +11,9 @@ import (
 )
 
 type image struct {
+	// pre is the "preview" resource tag attached to any given ECS service, if
+	// any, e.g. 1D0FD508.
+	pre string
 	// ser is the "service" resource tag attached to any given ECS service, e.g.
 	// alloy or specta.
 	ser string
@@ -57,6 +60,7 @@ func (c *Container) image(tas []task) ([]image, error) {
 			// only responsible for their own execution index within the image slice.
 
 			ima[i] = image{
+				pre: t.pre,
 				ser: t.ser,
 				tag: tag,
 			}

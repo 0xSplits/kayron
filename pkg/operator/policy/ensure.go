@@ -64,6 +64,7 @@ func (p *Policy) ensure(rel []cache.Object) error {
 				"message", "continuing reconciliation loop",
 				"reason", "detected state drift",
 				"release", x.Name(),
+				"preview", x.Release.Deploy.Preview.String(),
 				"version", x.Artifact.Reference.Desired,
 			)
 

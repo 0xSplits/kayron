@@ -29,7 +29,7 @@ func (s *Scanner) Search(key []byte) *Scanner {
 			end = spaces(lin)
 		}
 
-		if fou && sta == end && len(lin) != 0 {
+		if fou && end <= sta && len(lin) != 0 {
 			break
 		}
 

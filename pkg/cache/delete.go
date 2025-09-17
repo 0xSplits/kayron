@@ -13,7 +13,6 @@ func (c *Cache) Delete() {
 
 	{
 		c.inf = nil
-		c.pre = nil
 		c.ser = nil
 	}
 }

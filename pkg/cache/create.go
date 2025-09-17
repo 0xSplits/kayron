@@ -45,15 +45,6 @@ func (c *Cache) Create(rel release.Slice) error {
 			{
 				c.inf = append(c.inf, obj)
 			}
-		} else if bool(x.Deploy.Preview) {
-			{
-				obj.ind = len(c.pre)
-				obj.kin = Preview
-			}
-
-			{
-				c.pre = append(c.pre, obj)
-			}
 		} else {
 			{
 				obj.ind = len(c.ser)

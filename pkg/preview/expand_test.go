@@ -5,11 +5,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/0xSplits/kayron/pkg/hash"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-github/v73/github"
 )
@@ -31,6 +33,7 @@ func Test_Preview_Expand(t *testing.T) {
 			},
 			pul: []*github.PullRequest{
 				{CreatedAt: tesTim(3), Head: tesBra("b/3")},
+				{CreatedAt: tesTim(4), Head: tesBra("dependabot/foo-bar")},
 				{CreatedAt: tesTim(5), Head: tesBra("b/5")},
 			},
 			exp: release.Slice{
@@ -47,6 +50,9 @@ func Test_Preview_Expand(t *testing.T) {
 						Preview: preview.Bool(true),
 					},
 					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/3"),
+					},
 				},
 				{
 					Deploy: deploy.Struct{
@@ -54,6 +60,9 @@ func Test_Preview_Expand(t *testing.T) {
 						Preview: preview.Bool(true),
 					},
 					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/5"),
+					},
 				},
 			},
 		},
@@ -68,8 +77,11 @@ func Test_Preview_Expand(t *testing.T) {
 			},
 			pul: []*github.PullRequest{
 				{CreatedAt: tesTim(3), Head: tesBra("b/3")},
+				{CreatedAt: tesTim(4), Head: tesBra("dependabot/foo-bar")},
 				{CreatedAt: tesTim(5), Head: tesBra("b/5")},
 				{CreatedAt: tesTim(7), Head: tesBra("b/7")},
+				{CreatedAt: tesTim(4), Head: tesBra("dependabot/another-one")},
+				{CreatedAt: tesTim(4), Head: tesBra("dependabot/b/5")},
 				{CreatedAt: tesTim(9), Head: tesBra("b/9")},
 			},
 			exp: release.Slice{
@@ -86,6 +98,9 @@ func Test_Preview_Expand(t *testing.T) {
 						Preview: preview.Bool(true),
 					},
 					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/3"),
+					},
 				},
 				{
 					Deploy: deploy.Struct{
@@ -93,6 +108,9 @@ func Test_Preview_Expand(t *testing.T) {
 						Preview: preview.Bool(true),
 					},
 					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/5"),
+					},
 				},
 				{
 					Deploy: deploy.Struct{
@@ -100,6 +118,9 @@ func Test_Preview_Expand(t *testing.T) {
 						Preview: preview.Bool(true),
 					},
 					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/7"),
+					},
 				},
 				{
 					Deploy: deploy.Struct{
@@ -107,6 +128,9 @@ func Test_Preview_Expand(t *testing.T) {
 						Preview: preview.Bool(true),
 					},
 					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/9"),
+					},
 				},
 			},
 		},

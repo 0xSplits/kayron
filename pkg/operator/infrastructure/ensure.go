@@ -64,6 +64,11 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
+		var nam string
+		{
+			nam = strings.TrimSuffix(fil.Name(), ext)
+		}
+
 		var byt []byte
 		{
 			byt, err = afero.ReadFile(gfs, pat)
@@ -76,24 +81,11 @@ func (i *Infrastructure) Ensure() error {
 		// deployments configured for the service release that matches this
 		// particular template by file name.
 		//
-		//     "lite.yaml" == Release.Docker.String()
+		//     "splits-lite" == Release.Docker.String()
 		//
 
-		var pre *preview.Preview
 		{
-			pre = preview.New(preview.Config{
-				Env: i.env,
-				Inp: byt,
-			})
-		}
-
-		var rep string
-		{
-			rep = strings.TrimSuffix(fil.Name(), ext)
-		}
-
-		{
-			byt, err = pre.Render(i.cac.Previews(rep))
+			byt, err = i.renPre(nam, byt)
 			if err != nil {
 				return tracer.Mask(err)
 			}
@@ -117,4 +109,42 @@ func (i *Infrastructure) Ensure() error {
 	}
 
 	return nil
+}
+
+func (i *Infrastructure) renPre(nam string, byt []byte) ([]byte, error) {
+	var err error
+
+	// If there are no preview deployments defined inside our release artifacts,
+	// then we do not have to inject anything, but instead return the same
+	// template bytes early that we just received as input.
+
+	var rel []cache.Object
+	{
+		rel = i.cac.Previews(nam)
+	}
+
+	if len(rel) == 0 {
+		return byt, nil
+	}
+
+	// At this point we have preview deployments defined by at least one release
+	// artifact. So we create a preview renderer and extend the raw template bytes
+	// that we received as input data above.
+
+	var pre *preview.Preview
+	{
+		pre = preview.New(preview.Config{
+			Env: i.env,
+			Inp: byt,
+		})
+	}
+
+	{
+		byt, err = pre.Render(rel)
+		if err != nil {
+			return nil, tracer.Mask(err)
+		}
+	}
+
+	return byt, nil
 }

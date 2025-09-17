@@ -4,13 +4,14 @@ func (c *Container) cache(ima []image) {
 	for _, x := range c.cac.Services() {
 		var tag string
 		{
-			tag = curTag(ima, x.Release.Docker.String())
+			tag = curTag(ima, x.Release.Labels.Hash.String(), x.Release.Docker.String())
 		}
 
 		c.log.Log(
 			"level", "debug",
 			"message", "caching current state",
 			"docker", x.Release.Docker.String(),
+			"preview", x.Release.Deploy.Preview.String(),
 			"current", musStr(tag),
 		)
 
@@ -32,9 +33,9 @@ func (c *Container) cache(ima []image) {
 	}
 }
 
-func curTag(ima []image, ser string) string {
+func curTag(ima []image, hsh string, doc string) string {
 	for _, x := range ima {
-		if x.ser == ser {
+		if x.pre == hsh && x.ser == doc {
 			return x.tag
 		}
 	}
