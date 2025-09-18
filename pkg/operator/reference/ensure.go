@@ -18,17 +18,10 @@ func (r *Reference) Ensure() error {
 
 	// Find the reference for every branch deployment strategy. The concurrently
 	// executed function below prevents network calls for every release that does
-	// not define a branch deployment strategy. Note that we also do not lookup
-	// branch references for preview deployments, if those references do already
-	// exist. E.g. we may have looked up the latest commit sha for a preview
-	// deployment in an earlier stage of this reconciliation loop.
+	// not define a branch deployment strategy.
 
 	fnc := func(i int, x cache.Object) error {
 		var err error
-
-		if bool(x.Release.Deploy.Preview) && x.Artifact.Reference.Desired != "" {
-			return nil
-		}
 
 		var ref string
 		{

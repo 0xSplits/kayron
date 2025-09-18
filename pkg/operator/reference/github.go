@@ -10,10 +10,18 @@ import (
 func (r *Reference) desRef(rel release.Struct) (string, error) {
 	// Return the commit sha if the branch deployment strategy is selected. Note
 	// that branches may be referenced in releases while they are not yet tracked,
-	// or not tracked anymore inside of Github. This may happen predominantly
-	// during testing when preparing or finishing releases and their dependencies.
+	// or not tracked anymore inside of Github. This may happen predominantly during
+	// testing when preparing or finishing releases and their dependencies. Note
+	// that we do not lookup branch references for preview deployments, if those
+	// references got already filled in the release labels. E.g. we may have looked
+	// up the latest commit sha for a preview deployment in an earlier stage of this
+	// reconciliation loop already.
 
 	if !rel.Deploy.Branch.Empty() {
+		if bool(rel.Deploy.Preview) && rel.Labels.Head != "" {
+			return rel.Labels.Head, nil
+		}
+
 		sha, err := r.comSha(rel.Github.String(), rel.Deploy.Branch.String())
 		if err != nil {
 			return "", tracer.Mask(err)

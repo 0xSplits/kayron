@@ -1,5 +1,10 @@
 package provider
 
+import (
+	"github.com/0xSplits/kayron/pkg/constant"
+	"github.com/xh3b4sd/tracer"
+)
+
 type String string
 
 func (s String) Empty() bool {
@@ -11,6 +16,9 @@ func (s String) String() string {
 }
 
 func (s String) Verify() error {
-	// TODO
+	if s != constant.Cloudformation {
+		return tracer.Mask(providerNameError)
+	}
+
 	return nil
 }

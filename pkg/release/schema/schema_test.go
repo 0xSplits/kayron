@@ -6,6 +6,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/github"
@@ -190,6 +191,24 @@ func Test_Schema_Verify_failure(t *testing.T) {
 				},
 			},
 			mat: release.IsServiceLabelsEmpty,
+		},
+		// Case 009, one provider, preview deployments
+		{
+			sch: Schema{
+				Release: release.Slice{
+					{
+						Github:   github.String("infrastructure"),
+						Provider: provider.String("cloudformation"),
+						Deploy: deploy.Struct{
+							Preview: preview.Bool(true),
+						},
+						Labels: labels.Struct{
+							Source: "foo",
+						},
+					},
+				},
+			},
+			mat: release.IsServiceDeployPreview,
 		},
 	}
 

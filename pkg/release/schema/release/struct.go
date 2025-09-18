@@ -72,6 +72,10 @@ func (s Struct) verify() error {
 		}
 
 		if !s.Provider.Empty() {
+			if bool(s.Deploy.Preview) {
+				return tracer.Mask(releaseDeployPreviewError)
+			}
+
 			err := s.Provider.Verify()
 			if err != nil {
 				return tracer.Mask(err)

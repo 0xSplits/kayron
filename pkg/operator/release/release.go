@@ -11,7 +11,6 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator/release/canceler"
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
-	"github.com/0xSplits/kayron/pkg/preview"
 	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/0xSplits/roghfs"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -35,7 +34,6 @@ type Release struct {
 	git *github.Client
 	log logger.Interface
 	own string
-	pre *preview.Preview
 	rep string
 	res resolver.Interface
 	sta stack.Interface
@@ -83,14 +81,6 @@ func New(c Config) *Release {
 		})
 	}
 
-	var pre *preview.Preview
-	{
-		pre = preview.New(preview.Config{
-			Env: c.Env,
-			Inp: []byte{},
-		})
-	}
-
 	var res resolver.Interface
 	{
 		res = resolver.New(resolver.Config{
@@ -107,7 +97,6 @@ func New(c Config) *Release {
 		git: git,
 		log: c.Log,
 		own: own,
-		pre: pre,
 		rep: rep,
 		res: res,
 		sta: c.Sta,

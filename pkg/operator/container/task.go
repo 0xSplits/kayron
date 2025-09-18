@@ -35,11 +35,6 @@ func (c *Container) task(det []detail) ([]task, error) {
 	fnc := func(i int, d detail) error {
 		var err error
 
-		// TODO we can make this call more efficient and rate limit friendly by
-		// fetching all services at once for all injected details. It should then
-		// not even be necessary anymore to execute this particular code using
-		// parallel.Slice.
-
 		var inp *ecs.DescribeServicesInput
 		{
 			inp = &ecs.DescribeServicesInput{

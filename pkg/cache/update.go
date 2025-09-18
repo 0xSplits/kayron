@@ -12,5 +12,6 @@ func (c *Cache) Update(obj Object) {
 
 	if obj.kin == Service {
 		c.ser[obj.ind].Artifact = c.ser[obj.ind].Artifact.Merge(obj.Artifact)
+		c.ser[obj.ind].Release.Deploy.Preview = obj.Release.Deploy.Preview
 	}
 }

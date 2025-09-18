@@ -71,22 +71,7 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 		return fil[i].GetCreatedAt().Before(fil[j].GetCreatedAt().Time)
 	})
 
-	// Mark the expanded service release as non-preview. The Deploy.Preview
-	// flag acts as a signal to expand our release definitions internally.
-	// Once expanded, we redefine the purpose of this preview flag to maintain
-	// our understanding of how to deploy "real" service releases. In other
-	// words, we turn one release into many, while muting the one that
-	// instructed the many for the preview mechanism.
-
-	{
-		rel.Deploy.Preview = preview.Bool(false)
-	}
-
 	var lis release.Slice
-	{
-		lis = append(lis, rel)
-	}
-
 	for _, x := range fil {
 		var pre release.Struct
 		{
@@ -94,8 +79,10 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 		}
 
 		var bra string
+		var ref string
 		{
 			bra = x.GetHead().GetRef()
+			ref = x.GetHead().GetSHA()
 		}
 
 		{
@@ -108,9 +95,13 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 		// Make sure to inject the preview deployment hash into the release labels.
 		// This is used to identify the correct current state of deployed container
 		// image tags, as well as rendering the correct CloudFormation templates.
+		// Here we also optimize the branch reference lookup by assigning the head
+		// label, because we have this latest commit sha for the preview branch here
+		// already.
 
 		{
 			pre.Labels.Hash = hash.New(bra)
+			pre.Labels.Head = ref
 		}
 
 		{

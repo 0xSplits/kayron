@@ -6,7 +6,6 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
 	"github.com/0xSplits/kayron/pkg/release/loader"
 	"github.com/0xSplits/kayron/pkg/release/schema"
-	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
@@ -111,48 +110,15 @@ func (r *Release) Ensure() error {
 		}
 	}
 
-	var rel release.Slice
-
-	// TODO run in parallel
-	for _, x := range sch.Release {
-		// If this release has preview deployments enabled, then compute the preview
-		// releases and inject them into the new list of release definitions.
-
-		if x.Deploy.Preview {
-			exp, err := r.pre.Expand(x)
-			if err != nil {
-				return tracer.Mask(err)
-			}
-
-			{
-				rel = append(rel, exp...)
-			}
-		}
-
-		// If this release has preview deployments disabled, then only track this
-		// main release in the new list of release definitions.
-		if !x.Deploy.Preview {
-			{
-				rel = append(rel, x)
-			}
-		}
-	}
-
 	// Initialize the cache for all configured releases regardless of their type.
 	// Here we require exactly one infrastructure release to be provided.
 
 	{
-		err = r.cac.Create(rel)
+		err = r.cac.Create(sch.Release)
 		if err != nil {
 			return tracer.Mask(err)
 		}
 	}
-
-	// TODO there is a potential efficiency benefit to be had if we expanded cache
-	// objects instead of release definitions, because we are already fetching the
-	// latest Git SHAs for every preview deployment in Preview.Expand above. With
-	// that we should probably also move all of this cache object expansion for
-	// preview deployments into its own operator handler/function.
 
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator/container"
 	"github.com/0xSplits/kayron/pkg/operator/infrastructure"
 	"github.com/0xSplits/kayron/pkg/operator/policy"
+	"github.com/0xSplits/kayron/pkg/operator/preview"
 	"github.com/0xSplits/kayron/pkg/operator/reference"
 	"github.com/0xSplits/kayron/pkg/operator/registry"
 	"github.com/0xSplits/kayron/pkg/operator/release"
@@ -35,6 +36,7 @@ type Operator struct {
 	container      *container.Container
 	infrastructure *infrastructure.Infrastructure
 	policy         *policy.Policy
+	preview        *preview.Preview
 	reference      *reference.Reference
 	release        *release.Release
 	registry       *registry.Registry
@@ -66,6 +68,7 @@ func New(c Config) *Operator {
 		container:      container.New(container.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log}),
 		policy:         policy.New(policy.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		preview:        preview.New(preview.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Sta: c.Sta}),
 		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),

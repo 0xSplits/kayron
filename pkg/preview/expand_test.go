@@ -39,13 +39,6 @@ func Test_Preview_Expand(t *testing.T) {
 			exp: release.Slice{
 				{
 					Deploy: deploy.Struct{
-						Branch:  branch.String("main"),
-						Preview: preview.Bool(false),
-					},
-					Docker: docker.String("lite"),
-				},
-				{
-					Deploy: deploy.Struct{
 						Branch:  branch.String("b/3"),
 						Preview: preview.Bool(true),
 					},
@@ -85,13 +78,6 @@ func Test_Preview_Expand(t *testing.T) {
 				{CreatedAt: tesTim(9), Head: tesBra("b/9")},
 			},
 			exp: release.Slice{
-				{
-					Deploy: deploy.Struct{
-						Branch:  branch.String("main"),
-						Preview: preview.Bool(false),
-					},
-					Docker: docker.String("lite"),
-				},
 				{
 					Deploy: deploy.Struct{
 						Branch:  branch.String("b/3"),
