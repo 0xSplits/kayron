@@ -44,7 +44,7 @@ func (o Object) Domain(env string) string {
 	}
 
 	return fmt.Sprintf("%s.%s.%s.splits.org",
-		o.Release.Labels.Hash.String(),
+		o.Release.Labels.Hash.Lower(),
 
 		// Note that this is a dirty hack to make preview deployments work today for
 		// existing services that already work using certain incosnistencies between

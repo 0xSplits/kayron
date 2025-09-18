@@ -379,7 +379,7 @@ Resources:
     Properties:
       HostedZoneId:
         Fn::ImportValue: !Sub "${NetworkStack}-EnvironmentHostedZoneId"
-      Name: !Sub "1D0FD508.lite.${Environment}.splits.org"
+      Name: !Sub "1d0fd508.lite.${Environment}.splits.org"
       Type: A
       AliasTarget:
         DNSName:
@@ -413,10 +413,10 @@ Resources:
         - Field: host-header
           HostHeaderConfig:
             Values:
-              - !Sub "1D0FD508.lite.${Environment}.splits.org"
+              - !Sub "1d0fd508.lite.${Environment}.splits.org"
       ListenerArn:
         Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
-      Priority: 12001 # Host header = 1D0FD508.lite.${Environment}.splits.org
+      Priority: 12001 # Host header = 1d0fd508.lite.${Environment}.splits.org
 
   #
   # AUTO GENERATED PREVIEW DEPLOYMENT F4436797
@@ -490,7 +490,7 @@ Resources:
     Properties:
       HostedZoneId:
         Fn::ImportValue: !Sub "${NetworkStack}-EnvironmentHostedZoneId"
-      Name: !Sub "F4436797.lite.${Environment}.splits.org"
+      Name: !Sub "f4436797.lite.${Environment}.splits.org"
       Type: A
       AliasTarget:
         DNSName:
@@ -524,7 +524,7 @@ Resources:
         - Field: host-header
           HostHeaderConfig:
             Values:
-              - !Sub "F4436797.lite.${Environment}.splits.org"
+              - !Sub "f4436797.lite.${Environment}.splits.org"
       ListenerArn:
         Fn::ImportValue: !Sub "${FargateStack}-ApplicationLoadBalancerListenerArn"
-      Priority: 12002 # Host header = F4436797.lite.${Environment}.splits.org
+      Priority: 12002 # Host header = f4436797.lite.${Environment}.splits.org

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/0xSplits/kayron/pkg/hash"
 	"github.com/0xSplits/kayron/pkg/release/schema"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
@@ -15,6 +16,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/provider"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
 )
@@ -244,7 +246,14 @@ func Test_Loader(t *testing.T) {
 				}
 			}
 
-			if dif := cmp.Diff(tc.sch, sch); dif != "" {
+			var opt []cmp.Option
+			{
+				opt = []cmp.Option{
+					cmpopts.IgnoreUnexported(hash.Hash{}),
+				}
+			}
+
+			if dif := cmp.Diff(tc.sch, sch, opt...); dif != "" {
 				t.Fatalf("-expected +actual:\n%s", dif)
 			}
 		})

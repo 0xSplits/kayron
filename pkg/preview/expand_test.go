@@ -140,7 +140,14 @@ func Test_Preview_Expand(t *testing.T) {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			exp := expand(tc.rel, tc.pul)
 
-			if dif := cmp.Diff(tc.exp, exp); dif != "" {
+			var opt []cmp.Option
+			{
+				opt = []cmp.Option{
+					cmp.AllowUnexported(hash.Hash{}),
+				}
+			}
+
+			if dif := cmp.Diff(tc.exp, exp, opt...); dif != "" {
 				t.Fatalf("-expected +actual:\n%s", dif)
 			}
 		})

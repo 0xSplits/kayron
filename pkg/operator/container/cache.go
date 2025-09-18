@@ -4,7 +4,7 @@ func (c *Container) cache(ima []image) {
 	for _, x := range c.cac.Services() {
 		var tag string
 		{
-			tag = curTag(ima, x.Release.Labels.Hash.String(), x.Release.Docker.String())
+			tag = curTag(ima, x.Release.Labels.Hash.Upper(), x.Release.Docker.String())
 		}
 
 		c.log.Log(

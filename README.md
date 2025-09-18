@@ -378,7 +378,7 @@ go test -tags=integration ./pkg/operator -v -race -run Test_Operator_Integration
     "time": "2025-09-17 15:32:05",
     "level": "info",
     "message": "continuing reconciliation loop",
-    "domain": "1D0FD508.lite.testing.splits.org",
+    "domain": "1d0fd508.lite.testing.splits.org",
     "reason": "detected state drift",
     "release": "splits-lite",
     "version": "e307253e62c2da119579e2505db0b6185642ab9b",

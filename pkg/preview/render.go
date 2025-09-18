@@ -60,7 +60,7 @@ func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 
 		var tag []byte
 		{
-			tag, err = appTag(res.Ser.Search([]byte("      Tags:")).Bytes(), hsh.String())
+			tag, err = appTag(res.Ser.Search([]byte("      Tags:")).Bytes(), hsh.Upper())
 			if err != nil {
 				return nil, tracer.Mask(err)
 			}
@@ -85,32 +85,32 @@ func (p *Preview) Render(pre []cache.Object) ([]byte, error) {
 
 func (p *Preview) render(res Resource, dom string, pri int, hsh hash.Hash, ima []byte, tag []byte) []byte {
 	{
-		res.Ser = res.Ser.Append([]byte("  Service:"), hsh.Hsh)
-		res.Ser = res.Ser.Append([]byte("      ServiceName:"), hsh.Dsh)
-		res.Ser = res.Ser.Append([]byte("      TaskDefinition:"), hsh.Hsh)
-		res.Ser = res.Ser.Append([]byte("        - TargetGroupArn:"), hsh.Hsh)
+		res.Ser = res.Ser.Append([]byte("  Service:"), []byte(hsh.Upper()))
+		res.Ser = res.Ser.Append([]byte("      ServiceName:"), []byte(hsh.Dashed()))
+		res.Ser = res.Ser.Append([]byte("      TaskDefinition:"), []byte(hsh.Upper()))
+		res.Ser = res.Ser.Append([]byte("        - TargetGroupArn:"), []byte(hsh.Upper()))
 		res.Ser = res.Ser.Delete([]byte("      ServiceRegistries:"))
 		res.Ser = res.Ser.Delete([]byte("      Tags:"), tag...)
 	}
 
 	{
-		res.Tas = res.Tas.Append([]byte("  TaskDefinition:"), hsh.Hsh)
-		res.Tas = res.Tas.Append([]byte("      Family:"), hsh.Dsh)
+		res.Tas = res.Tas.Append([]byte("  TaskDefinition:"), []byte(hsh.Upper()))
+		res.Tas = res.Tas.Append([]byte("      Family:"), []byte(hsh.Dashed()))
 		res.Tas = res.Tas.Delete([]byte("          Image:"), ima...)
 	}
 
 	{
-		res.Dom = res.Dom.Append([]byte("  DomainRecord:"), hsh.Hsh)
+		res.Dom = res.Dom.Append([]byte("  DomainRecord:"), []byte(hsh.Upper()))
 		res.Dom = res.Dom.Delete([]byte("      Name:"), fmt.Appendf(nil, `      Name: !Sub "%s"`, dom)...)
 	}
 
 	{
-		res.Tar = res.Tar.Append([]byte("  TargetGroup:"), hsh.Hsh)
+		res.Tar = res.Tar.Append([]byte("  TargetGroup:"), []byte(hsh.Upper()))
 	}
 
 	{
-		res.Lis = res.Lis.Append([]byte("  ListenerRule:"), hsh.Hsh)
-		res.Lis = res.Lis.Append([]byte("          TargetGroupArn:"), hsh.Hsh)
+		res.Lis = res.Lis.Append([]byte("  ListenerRule:"), []byte(hsh.Upper()))
+		res.Lis = res.Lis.Append([]byte("          TargetGroupArn:"), []byte(hsh.Upper()))
 		res.Lis = res.Lis.Delete([]byte("            Values:"), fmt.Appendf(nil, "            Values:\n              - !Sub \"%s\"", dom)...)
 		res.Lis = res.Lis.Delete([]byte("      Priority:"), fmt.Appendf(nil, "      Priority: %d # Host header = %s", pri, dom)...)
 	}
@@ -138,7 +138,7 @@ func header(hsh hash.Hash) []byte {
 	return bytes.Join(
 		[][]byte{
 			[]byte("  #"),
-			[]byte("  # AUTO GENERATED PREVIEW DEPLOYMENT " + hsh.String()),
+			[]byte("  # AUTO GENERATED PREVIEW DEPLOYMENT " + hsh.Upper()),
 			[]byte("  #"),
 		},
 		[]byte("\n"),
