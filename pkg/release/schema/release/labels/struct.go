@@ -24,7 +24,7 @@ type Struct struct {
 }
 
 func (s Struct) Empty() bool {
-	return s.Block == 0 && s.Hash.Empty() && s.Source == ""
+	return s.Block == 0 && s.Hash.Empty() && s.Head == "" && s.Source == ""
 }
 
 func (s Struct) Verify() error {
