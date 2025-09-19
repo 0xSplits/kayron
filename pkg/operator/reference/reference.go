@@ -22,6 +22,7 @@ type Config struct {
 
 type Reference struct {
 	cac *cache.Cache
+	env envvar.Env
 	git *github.Client
 	log logger.Interface
 	own string
@@ -50,6 +51,7 @@ func New(c Config) *Reference {
 
 	return &Reference{
 		cac: c.Cac,
+		env: c.Env,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
 		own: own,

@@ -14,9 +14,6 @@ type Struct struct {
 	// Hash contains the hashed branch name for any service release of a preview
 	// deployment.
 	Hash hash.Hash
-	// Head is the latest Git Reference for any service release of a preview
-	// deployment.
-	Head string
 	// Source is the absolute source file path of the .yaml definition as loaded
 	// from the underlying file system. This label may help to make error messages
 	// more useful.
@@ -24,7 +21,7 @@ type Struct struct {
 }
 
 func (s Struct) Empty() bool {
-	return s.Block == 0 && s.Hash.Empty() && s.Head == "" && s.Source == ""
+	return s.Block == 0 && s.Hash.Empty() && s.Source == ""
 }
 
 func (s Struct) Verify() error {

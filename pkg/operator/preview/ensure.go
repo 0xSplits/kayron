@@ -3,7 +3,6 @@ package preview
 import (
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
-	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/xh3b4sd/choreo/parallel"
 	"github.com/xh3b4sd/tracer"
 )
@@ -20,8 +19,8 @@ func (p *Preview) Ensure() error {
 	fnc := func(_ int, o cache.Object) error {
 		var err error
 
-		// If this release has preview deployments disabled, then ignore this cache
-		// object and move on to the next one.
+		// If this release definition has preview deployments disabled, then ignore
+		// this cache object and move on to the next one.
 
 		if !bool(o.Release.Deploy.Preview) {
 			return nil
@@ -45,21 +44,6 @@ func (p *Preview) Ensure() error {
 			if err != nil {
 				return tracer.Mask(err)
 			}
-		}
-
-		// Mark the expanded release artifact as non-preview. The Deploy.Preview
-		// flag of the release.Struct acts as a signal to expand our release
-		// definitions internally. Once expanded, we redefine the purpose of this
-		// preview flag to maintain our understanding of how to deploy "real"
-		// service releases. In other words, we turn one release into many, while
-		// muting the one that instructed the many for the preview mechanism.
-
-		{
-			o.Release.Deploy.Preview = preview.Bool(false)
-		}
-
-		{
-			p.cac.Update(o)
 		}
 
 		return nil

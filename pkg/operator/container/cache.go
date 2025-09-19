@@ -11,7 +11,7 @@ func (c *Container) cache(ima []image) {
 			"level", "debug",
 			"message", "caching current state",
 			"docker", x.Release.Docker.String(),
-			"preview", x.Release.Deploy.Preview.String(),
+			"preview", x.Release.Labels.Hash.Upper(),
 			"current", musStr(tag),
 		)
 

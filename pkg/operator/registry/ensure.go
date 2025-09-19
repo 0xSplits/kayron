@@ -46,7 +46,7 @@ func (r *Registry) Ensure() error {
 			"level", "debug",
 			"message", "executed image check",
 			"image", x.Release.Docker.String(),
-			"preview", x.Release.Deploy.Preview.String(),
+			"preview", x.Release.Labels.Hash.Upper(),
 			"tag", des,
 			"exists", strconv.FormatBool(exi),
 		)
