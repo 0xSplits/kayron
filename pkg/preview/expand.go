@@ -26,11 +26,14 @@ var (
 func (p *Preview) Expand(rel release.Struct) (release.Slice, error) {
 	var err error
 
-	opt := &github.PullRequestListOptions{
-		State: "open",
-		ListOptions: github.ListOptions{
-			PerPage: 100,
-		},
+	var opt *github.PullRequestListOptions
+	{
+		opt = &github.PullRequestListOptions{
+			State: "open",
+			ListOptions: github.ListOptions{
+				PerPage: 100,
+			},
+		}
 	}
 
 	var pul []*github.PullRequest
