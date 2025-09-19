@@ -20,6 +20,7 @@ func (c *Cache) Create(rel release.Slice) error {
 			"docker", x.Docker.String(),
 			"github", x.Github.String(),
 			"deploy", x.Deploy.String(),
+			"preview", x.Deploy.Preview.String(),
 			"provider", x.Provider.String(),
 		)
 

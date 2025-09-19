@@ -1,0 +1,32 @@
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub "${AWS::StackName}-lite"
+      DesiredCount: 1
+      LaunchType: "FARGATE"
+      TaskDefinition: !Ref TaskDefinition-e3eae11
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: "DISABLED"
+          SecurityGroups:
+            - !Ref SecurityGroup
+          Subnets:
+            - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet1ID"
+            - Fn::ImportValue: !Sub "${NetworkStack}-PrivateSubnet2ID"
+      LoadBalancers:
+        - TargetGroupArn: !Ref TargetGroup
+          ContainerName: !Sub "${AWS::StackName}-lite"
+          ContainerPort: !Ref LitePort
+      ServiceRegistries:
+        - ContainerName: !Sub "${AWS::StackName}-lite"
+          RegistryArn: !GetAtt ServiceDiscovery.Arn
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment
+        - Key: "service"
+          Value: "splits-lite" # must match repo name
+    DependsOn:
+      - Cluster
+      - TaskDefinition
+      - ListenerRule

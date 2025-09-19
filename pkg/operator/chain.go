@@ -15,6 +15,12 @@ func (o *Operator) Chain() [][]handler.Ensure {
 		// reconciliation loops.
 		{o.release},
 
+		// Inject any potential preview deployments into our internal list of
+		// release definitions so that we can render and expose any additional
+		// development services during testing. Note that this worker handler is
+		// only active within the testing environment.
+		{o.preview},
+
 		// Run the next steps in parallel in order to find the current and
 		// desired state of the release artifacts that we are tasked to
 		// managed.

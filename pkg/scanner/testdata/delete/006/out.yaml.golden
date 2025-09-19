@@ -1,0 +1,17 @@
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-lite"
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 512
+      Memory: 1024
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/splits-ecs-role"
+      ContainerDefinitions:
+        Foo: 1
+        Bar: 2
+      Tags:
+        - Key: "environment"
+          Value: !Ref Environment

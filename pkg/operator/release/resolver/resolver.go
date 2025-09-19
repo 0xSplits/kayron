@@ -1,3 +1,7 @@
+// Package resolver tries to provide the environment specific Git reference for
+// the release source repository. This Git reference tells us which version of
+// our service releases to consider, based on the environment Kayron is running
+// in.
 package resolver
 
 import (

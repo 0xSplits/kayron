@@ -6,6 +6,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/cancel"
+	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/release/artifact"
 	"github.com/0xSplits/kayron/pkg/release/artifact/condition"
 	"github.com/0xSplits/kayron/pkg/release/artifact/reference"
@@ -177,6 +178,9 @@ func Test_Operator_Policy_Ensure(t *testing.T) {
 			{
 				pol = New(Config{
 					Cac: cac,
+					Env: envvar.Env{
+						Environment: "testing",
+					},
 					Log: log,
 				})
 			}

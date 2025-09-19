@@ -57,18 +57,27 @@ func (p *Policy) ensure(rel []cache.Object) error {
 	//     4. the container image for the desired state must be pushed
 	//
 
+	var drf bool
+
 	for _, x := range rel {
 		if !bool(x.Release.Deploy.Suspend) && x.Artifact.Drift() && x.Artifact.Valid() {
+			{
+				drf = true
+			}
+
 			p.log.Log(
 				"level", "info",
 				"message", "continuing reconciliation loop",
 				"reason", "detected state drift",
 				"release", x.Name(),
+				"domain", x.Domain(p.env.Environment),
 				"version", x.Artifact.Reference.Desired,
 			)
-
-			return nil
 		}
+	}
+
+	if drf {
+		return nil
 	}
 
 	// At this point all service releases were found to be up to date this time

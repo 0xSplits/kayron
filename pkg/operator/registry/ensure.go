@@ -42,6 +42,15 @@ func (r *Registry) Ensure() error {
 			}
 		}
 
+		r.log.Log(
+			"level", "debug",
+			"message", "executed image check",
+			"image", x.Release.Docker.String(),
+			"preview", x.Release.Deploy.Preview.String(),
+			"tag", des,
+			"exists", strconv.FormatBool(exi),
+		)
+
 		{
 			x.Artifact.Condition.Success = exi
 		}
@@ -49,14 +58,6 @@ func (r *Registry) Ensure() error {
 		{
 			r.cac.Update(x)
 		}
-
-		r.log.Log(
-			"level", "debug",
-			"message", "executed image check",
-			"image", x.Release.Docker.String(),
-			"tag", des,
-			"exists", strconv.FormatBool(exi),
-		)
 
 		return nil
 	}

@@ -33,6 +33,18 @@ func IsServiceDeployEmpty(err error) bool {
 //
 //
 
+var releaseDeployPreviewError = &tracer.Error{
+	Description: "The release configuration does not allow preview deployments for infrastructure providers.",
+}
+
+func IsServiceDeployPreview(err error) bool {
+	return errors.Is(err, releaseDeployPreviewError)
+}
+
+//
+//
+//
+
 var releaseGithubEmptyError = &tracer.Error{
 	Description: "The release configuration requires a github repository to be provided.",
 }

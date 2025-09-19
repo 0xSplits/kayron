@@ -2,7 +2,7 @@ package suspend
 
 import "strconv"
 
-// Bool disables any further reconciliation of this service indefinitely.
+// Bool disables any further reconciliation of this release indefinitely.
 type Bool bool
 
 func (b Bool) Empty() bool {

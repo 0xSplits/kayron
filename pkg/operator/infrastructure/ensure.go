@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
+	"strings"
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/constant"
+	"github.com/0xSplits/kayron/pkg/preview"
 	"github.com/0xSplits/roghfs"
 	"github.com/spf13/afero"
 	"github.com/xh3b4sd/tracer"
@@ -52,6 +54,8 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
+		// Skip everything that is not a YAML file.
+
 		var ext string
 		{
 			ext = filepath.Ext(fil.Name())
@@ -60,9 +64,28 @@ func (i *Infrastructure) Ensure() error {
 			}
 		}
 
+		var nam string
+		{
+			nam = strings.TrimSuffix(fil.Name(), ext)
+		}
+
 		var byt []byte
 		{
 			byt, err = afero.ReadFile(gfs, pat)
+			if err != nil {
+				return tracer.Mask(err)
+			}
+		}
+
+		// Before uploading our templates to S3, we have to inject any preview
+		// deployments configured for the service release that matches this
+		// particular template by file name.
+		//
+		//     "splits-lite" == Release.Docker.String()
+		//
+
+		{
+			byt, err = i.renPre(nam, byt)
 			if err != nil {
 				return tracer.Mask(err)
 			}
@@ -86,4 +109,42 @@ func (i *Infrastructure) Ensure() error {
 	}
 
 	return nil
+}
+
+func (i *Infrastructure) renPre(nam string, byt []byte) ([]byte, error) {
+	var err error
+
+	// If there are no preview deployments defined inside our release artifacts,
+	// then we do not have to inject anything, but instead return the same
+	// template bytes early that we just received as input.
+
+	var rel []cache.Object
+	{
+		rel = i.cac.Previews(nam)
+	}
+
+	if len(rel) == 0 {
+		return byt, nil
+	}
+
+	// At this point we have preview deployments defined by at least one release
+	// artifact. So we create a preview renderer and extend the raw template bytes
+	// that we received as input data above.
+
+	var pre *preview.Preview
+	{
+		pre = preview.New(preview.Config{
+			Env: i.env,
+			Inp: byt,
+		})
+	}
+
+	{
+		byt, err = pre.Render(rel)
+		if err != nil {
+			return nil, tracer.Mask(err)
+		}
+	}
+
+	return byt, nil
 }

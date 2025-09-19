@@ -7,8 +7,6 @@ import (
 )
 
 func (r *Reference) Ensure() error {
-	var err error
-
 	// Get the list of cached releases so that we can lookup their respective
 	// artifact references concurrently, if necessary. This includes
 	// infrastructure and service releases.
@@ -23,9 +21,14 @@ func (r *Reference) Ensure() error {
 	// not define a branch deployment strategy.
 
 	fnc := func(i int, x cache.Object) error {
-		ref, err := r.desRef(x.Release)
-		if err != nil {
-			return tracer.Mask(err)
+		var err error
+
+		var ref string
+		{
+			ref, err = r.desRef(x.Release)
+			if err != nil {
+				return tracer.Mask(err)
+			}
 		}
 
 		if ref == "" {
@@ -36,6 +39,7 @@ func (r *Reference) Ensure() error {
 			"level", "debug",
 			"message", "caching desired state",
 			"github", x.Release.Github.String(),
+			"preview", x.Release.Deploy.Preview.String(),
 			"desired", musStr(ref),
 		)
 
@@ -51,7 +55,7 @@ func (r *Reference) Ensure() error {
 	}
 
 	{
-		err = parallel.Slice(rel, fnc)
+		err := parallel.Slice(rel, fnc)
 		if err != nil {
 			return tracer.Mask(err)
 		}

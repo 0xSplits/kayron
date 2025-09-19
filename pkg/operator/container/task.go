@@ -15,6 +15,9 @@ type task struct {
 	// arn is the filtered task definition ARN that any given ECS service is
 	// running right now.
 	arn string
+	// pre is the "preview" resource tag attached to any given ECS service, if
+	// any, e.g. 1D0FD508.
+	pre string
 	// ser is the "service" resource tag attached to any given ECS service, e.g.
 	// alloy or specta.
 	ser string
@@ -57,12 +60,26 @@ func (c *Container) task(det []detail) ([]task, error) {
 		}
 
 		for _, x := range out.Services {
-			var tag string
-			{
-				tag = serTag(x.Tags)
+			if aws.ToString(x.Status) != "ACTIVE" {
+				// There might be inactive or draining services with our desired service
+				// labels in case we updated CloudFormation stacks multiple times during
+				// with preview deployments during testing. We only want to consider the
+				// current state of those stacks that are still active, because the
+				// inactive versions have most likely been deleted already.
+
+				{
+					continue
+				}
 			}
 
-			if tag == "" {
+			var pre string
+			var ser string
+			{
+				pre = serTag(x.Tags, "preview")
+				ser = serTag(x.Tags, "service")
+			}
+
+			if ser == "" {
 				c.log.Log(
 					"level", "warning",
 					"message", "skipping reconciliation for ECS service",
@@ -81,7 +98,8 @@ func (c *Container) task(det []detail) ([]task, error) {
 
 			tas[i] = task{
 				arn: *x.TaskDefinition,
-				ser: tag,
+				pre: pre,
+				ser: ser,
 			}
 		}
 
@@ -121,10 +139,10 @@ func (c *Container) task(det []detail) ([]task, error) {
 	return fil, nil
 }
 
-func serTag(tag []types.Tag) string {
+func serTag(tag []types.Tag, key string) string {
 	for _, x := range tag {
-		if *x.Key == "service" {
-			return *x.Value
+		if aws.ToString(x.Key) == key {
+			return aws.ToString(x.Value)
 		}
 	}
 
