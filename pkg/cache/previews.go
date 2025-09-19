@@ -11,7 +11,7 @@ func (c *Cache) Previews(doc string) []Object {
 	var lis []Object
 
 	for _, x := range c.ser {
-		if bool(x.Release.Deploy.Preview) && x.Release.Docker.String() == doc {
+		if x.Release.Docker.String() == doc && !x.Release.Labels.Hash.Empty() {
 			lis = append(lis, x)
 		}
 	}

@@ -39,7 +39,7 @@ func (r *Reference) Ensure() error {
 			"level", "debug",
 			"message", "caching desired state",
 			"github", x.Release.Github.String(),
-			"preview", x.Release.Deploy.Preview.String(),
+			"preview", x.Release.Labels.Hash.Upper(),
 			"desired", musStr(ref),
 		)
 
