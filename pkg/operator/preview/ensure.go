@@ -19,8 +19,8 @@ func (p *Preview) Ensure() error {
 	fnc := func(_ int, o cache.Object) error {
 		var err error
 
-		// If this release has preview deployments disabled, then ignore this cache
-		// object and move on to the next one.
+		// If this release definition has preview deployments disabled, then ignore
+		// this cache object and move on to the next one.
 
 		if !bool(o.Release.Deploy.Preview) {
 			return nil

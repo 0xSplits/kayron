@@ -39,7 +39,7 @@ func (o Object) Domain(env string) string {
 	// we only know that for certain in case of preview deployments, because their
 	// sole purpose is to be exposed to the internet.
 
-	if !bool(o.Release.Deploy.Preview) {
+	if !o.Preview() {
 		return ""
 	}
 
@@ -76,6 +76,13 @@ func (o Object) Name() string {
 // SpectaVersion.
 func (o Object) Parameter() string {
 	return fmt.Sprintf("%sVersion", strings.Map(mapFnc, cases.Title(language.English).String(o.Name())))
+}
+
+// Preview returns whether this release artifact is for an automatically
+// injected preview deployment. The determining factor here is whether a preview
+// hash exists.
+func (o Object) Preview() bool {
+	return !o.Release.Labels.Hash.Empty()
 }
 
 // Version returns the desired state of this artifact's release version if the
