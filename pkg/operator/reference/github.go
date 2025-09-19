@@ -2,9 +2,9 @@ package reference
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
-	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -38,43 +38,27 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 	return "", nil
 }
 
-func (r *Reference) comSha(rep string, ref string) (string, error) {
-	var err error
+func (r *Reference) comSha(rep string, bra string) (string, error) {
+	ref, res, err := r.git.Git.GetRef(context.Background(), r.own, rep, fmt.Sprintf("heads/%s", bra))
+	if isNotFound(res) {
+		r.log.Log(
+			"level", "warning",
+			"message", "git ref unresolvable",
+			"reason", "branch not found",
+			"suggestion", "this issue might be caused by a user error or eventual consistency of the underlying backend",
+			"owner", r.own,
+			"repository", rep,
+			"branch", bra,
+		)
 
-	var opt *github.CommitsListOptions
-	{
-		opt = &github.CommitsListOptions{
-			SHA: ref,
-			ListOptions: github.ListOptions{
-				PerPage: 1,
-			},
-		}
+		return "", nil
+	} else if err != nil {
+		return "", tracer.Mask(err,
+			tracer.Context{Key: "owner", Value: r.own},
+			tracer.Context{Key: "repository", Value: rep},
+			tracer.Context{Key: "branch", Value: ref},
+		)
 	}
 
-	var com []*github.RepositoryCommit
-	var res *github.Response
-	{
-		com, res, err = r.git.Repositories.ListCommits(context.Background(), r.own, rep, opt)
-		if isNotFound(res) || len(com) == 0 {
-			r.log.Log(
-				"level", "warning",
-				"message", "git ref unresolvable",
-				"reason", "branch not found",
-				"suggestion", "this issue might be caused by a user error or eventual consistency of the underlying backend",
-				"owner", r.own,
-				"repository", rep,
-				"branch", ref,
-			)
-
-			return "", nil
-		} else if err != nil {
-			return "", tracer.Mask(err,
-				tracer.Context{Key: "owner", Value: r.own},
-				tracer.Context{Key: "repository", Value: rep},
-				tracer.Context{Key: "branch", Value: ref},
-			)
-		}
-	}
-
-	return com[len(com)-1].GetSHA(), nil
+	return ref.GetObject().GetSHA(), nil
 }
