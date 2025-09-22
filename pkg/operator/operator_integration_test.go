@@ -6,11 +6,9 @@ import (
 	"testing"
 
 	"github.com/0xSplits/kayron/pkg/cache"
-	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
-	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/0xSplits/otelgo/recorder"
 	"github.com/0xSplits/workit/registry"
 	"github.com/0xSplits/workit/worker/sequence"
@@ -72,16 +70,8 @@ func Test_Operator_Integration(t *testing.T) {
 	var pol *policy.Policy
 	{
 		pol = policy.New(policy.Config{
-			Cac: cac,
-			Env: env,
-			Log: log,
-		})
-	}
-
-	var sta stack.Interface
-	{
-		sta = stack.New(stack.Config{
 			Aws: cfg,
+			Cac: cac,
 			Env: env,
 			Log: log,
 		})
@@ -97,7 +87,6 @@ func Test_Operator_Integration(t *testing.T) {
 			Log: log,
 			Met: met,
 			Pol: pol,
-			Sta: sta,
 		})
 	}
 
@@ -105,7 +94,6 @@ func Test_Operator_Integration(t *testing.T) {
 	{
 		reg = registry.New(registry.Config{
 			Env: env.Environment,
-			Fil: cancel.Is,
 			Log: log,
 			Met: met,
 		})
@@ -122,9 +110,7 @@ func Test_Operator_Integration(t *testing.T) {
 
 	{
 		err := wor.Ensure()
-		if cancel.Is(err) {
-			// fall through
-		} else if err != nil {
+		if err != nil {
 			t.Fatal("expected", nil, "got", err)
 		}
 	}

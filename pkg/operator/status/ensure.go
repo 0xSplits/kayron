@@ -5,9 +5,23 @@ import (
 )
 
 func (s *Status) Ensure() error {
+	var can bool
+	{
+		can = s.pol.Cancel()
+	}
+
+	if can {
+		s.log.Log(
+			"level", "info",
+			"message", "deployment in progress",
+		)
+
+		return nil
+	}
+
 	var dft []cache.Object
 	{
-		dft = s.pol.Search()
+		dft = s.pol.Drift()
 	}
 
 	// If we do not have any drifted release artifacts, then this means that all

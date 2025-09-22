@@ -1,8 +1,18 @@
 package policy
 
-import "slices"
+import (
+	"slices"
+)
 
+// Update determines whether the managed CloudFormation stack should be updated
+// or not. We do not signal an update if the managed CloudFormation stack is
+// already being updated, and if there is no detectable state drift.
 func (p *Policy) Update() bool {
+	var can bool
+	{
+		can = p.Cancel()
+	}
+
 	// The slices.ContainsFunc version below is the equivalent of the shown for
 	// loop.
 	//
@@ -12,5 +22,10 @@ func (p *Policy) Update() bool {
 	//        }
 	//     }
 	//
-	return slices.ContainsFunc(p.cac.Releases(), drift)
+	var dft bool
+	{
+		dft = slices.ContainsFunc(p.cac.Releases(), drift)
+	}
+
+	return !can && dft
 }

@@ -17,7 +17,7 @@ func (t *Template) Ensure() error {
 
 	var roo types.Stack
 	{
-		roo, err = t.sta.Search()
+		roo, err = t.pol.Stack()
 		if err != nil {
 			return tracer.Mask(err)
 		}

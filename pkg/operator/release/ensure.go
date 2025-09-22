@@ -1,7 +1,6 @@
 package release
 
 import (
-	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/0xSplits/kayron/pkg/constant"
 	"github.com/0xSplits/kayron/pkg/operator/release/resolver"
 	"github.com/0xSplits/kayron/pkg/release/loader"
@@ -16,37 +15,11 @@ func (r *Release) Ensure() error {
 
 	// We have to make sure that every reconciliation loop starts with a blank
 	// slate. So before doing anything else, we have to purge all cache state by
-	// calling Delete on the release cache and the stack cache below.
+	// calling Delete on the release cache and the underlying stack cache below.
 
 	{
 		r.cac.Delete()
-		r.sta.Delete()
-	}
-
-	// The release handler is the very first building block in our operator chain,
-	// and since we execute this operator chain iteratively, we have to guard
-	// against stack updates while a deployment may be in progress already. So we
-	// ask the canceler interface to tell us whether it is safe to proceed this
-	// time around. Note that the canceler interface below uses the stack cache
-	// that we just purged above, so calling Cancel below fetches the latest state
-	// of the stack object via network.
-
-	var can bool
-	{
-		can, err = r.can.Cancel()
-		if err != nil {
-			return tracer.Mask(err)
-		}
-	}
-
-	if can {
-		r.log.Log(
-			"level", "info",
-			"message", "cancelling reconciliation loop",
-			"reason", "deployment in progress",
-		)
-
-		return tracer.Mask(cancel.Error)
+		r.pol.Delete()
 	}
 
 	// Figure out which Git ref to look at when fetching release information. See

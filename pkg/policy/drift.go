@@ -2,6 +2,18 @@ package policy
 
 import "github.com/0xSplits/kayron/pkg/cache"
 
+func (p *Policy) Drift() []cache.Object {
+	var lis []cache.Object
+
+	for _, x := range p.cac.Releases() {
+		if drift(x) {
+			lis = append(lis, x)
+		}
+	}
+
+	return lis
+}
+
 // drift tries to detect a single valid state drift, in order to allow
 // allow the operator chain to execute. Our
 // current policy requires the following conditions to be true for a valid

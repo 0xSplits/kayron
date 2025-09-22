@@ -1,4 +1,4 @@
-package canceler
+package policy
 
 import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
@@ -43,14 +43,26 @@ var (
 	}
 )
 
-func (c *Canceler) Cancel() (bool, error) {
+// Cancel tells us whether it is safe to proceed with the next CloudFormation
+// update this time around. Note that Cancel uses the stack cache that is being
+// purged at the start of every reconciliation loop. Further note that any
+// internal error causes Cancel to return true, which is meant to stop
+// processing in case our understanding of the current state of the system is
+// incomplete.
+func (p *Policy) Cancel() bool {
 	var err error
 
 	var sta types.Stack
 	{
-		sta, err = c.sta.Search()
+		sta, err = p.Stack()
 		if err != nil {
-			return false, tracer.Mask(err)
+			p.log.Log(
+				"level", "error",
+				"message", "stack search error",
+				"stack", tracer.Json(err),
+			)
+
+			return true
 		}
 	}
 
@@ -61,11 +73,14 @@ func (c *Canceler) Cancel() (bool, error) {
 	}
 
 	if !exi {
-		return false, tracer.Mask(invalidStackStatusError,
-			tracer.Context{Key: "stack", Value: c.env.CloudformationStack},
-			tracer.Context{Key: "status", Value: sta},
+		p.log.Log(
+			"level", "error",
+			"message", "stack search error",
+			"stack", tracer.Json(invalidStackStatusError),
 		)
+
+		return true
 	}
 
-	return can, nil
+	return can
 }
