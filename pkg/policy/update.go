@@ -8,6 +8,8 @@ import (
 // or not. We do not signal an update if the managed CloudFormation stack is
 // already being updated, and if there is no detectable state drift.
 func (p *Policy) Update() bool {
+	// Fetch the deployment status of the underlying root stack so that we can
+	// decide whether to proceed with the execution of writing operator functions.
 	var can bool
 	{
 		can = p.Cancel()
