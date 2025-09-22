@@ -28,9 +28,10 @@ func (r *Registry) Ensure() error {
 		}
 
 		// We do not have to do any work here if the currently deployed service
-		// already matches the desired service release.
+		// already matches the desired service release, or if we could not resolve
+		// it at all in a previous step.
 
-		if cur == des {
+		if cur == des || des == "" {
 			return nil
 		}
 
