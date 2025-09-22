@@ -1,4 +1,4 @@
-package stack
+package policy
 
 import (
 	"context"
@@ -9,35 +9,39 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stack) Search() (types.Stack, error) {
+// Stack returns the state of the configured stack object and caches the first
+// valid search result so that consecutive executions of Stack prevent network
+// calls. This behaviour guarantees consistent stack object state within
+// reconciliation loops.
+func (p *Policy) Stack() (types.Stack, error) {
 	var err error
 
 	{
-		s.mut.Lock()
-		defer s.mut.Unlock()
+		p.mut.Lock()
+		defer p.mut.Unlock()
 	}
 
-	if s.sta != nil {
-		return *s.sta, nil
+	if p.sta != nil {
+		return *p.sta, nil
 	}
 
 	var inp *cloudformation.DescribeStacksInput
 	{
 		inp = &cloudformation.DescribeStacksInput{
-			StackName: aws.String(s.env.CloudformationStack),
+			StackName: aws.String(p.env.CloudformationStack),
 		}
 	}
 
 	var out *cloudformation.DescribeStacksOutput
 	{
-		out, err = s.cfc.DescribeStacks(context.Background(), inp)
+		out, err = p.cfc.DescribeStacks(context.Background(), inp)
 		if err != nil {
 			return types.Stack{}, tracer.Mask(err)
 		}
 	}
 
 	for _, x := range out.Stacks {
-		if !hasEnv(x.Tags, s.env.Environment) {
+		if !hasEnv(x.Tags, p.env.Environment) {
 			continue
 		}
 
@@ -46,14 +50,14 @@ func (s *Stack) Search() (types.Stack, error) {
 
 		if !hasPar(x) {
 			{
-				s.sta = &x
+				p.sta = &x
 			}
 
 			return x, nil
 		}
 	}
 
-	return types.Stack{}, tracer.Mask(invalidRootStackError, tracer.Context{Key: "environment", Value: s.env.Environment})
+	return types.Stack{}, tracer.Mask(invalidRootStackError, tracer.Context{Key: "environment", Value: p.env.Environment})
 }
 
 func hasEnv(tags []types.Tag, env string) bool {

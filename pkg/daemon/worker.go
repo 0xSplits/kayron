@@ -4,10 +4,9 @@ import (
 	"time"
 
 	"github.com/0xSplits/kayron/pkg/cache"
-	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator"
-	"github.com/0xSplits/kayron/pkg/stack"
+	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/kayron/pkg/worker/handler/image"
 	"github.com/0xSplits/workit/handler"
 	"github.com/0xSplits/workit/registry"
@@ -30,10 +29,11 @@ func (d *Daemon) Worker() *combined.Worker {
 		})
 	}
 
-	var sta stack.Interface
+	var pol *policy.Policy
 	{
-		sta = stack.New(stack.Config{
+		pol = policy.New(policy.Config{
 			Aws: cfg,
+			Cac: cac,
 			Env: d.env,
 			Log: d.log,
 		})
@@ -47,7 +47,7 @@ func (d *Daemon) Worker() *combined.Worker {
 			Env: d.env,
 			Log: d.log,
 			Met: d.met,
-			Sta: sta,
+			Pol: pol,
 		})
 	}
 
@@ -55,7 +55,6 @@ func (d *Daemon) Worker() *combined.Worker {
 	{
 		reg = registry.New(registry.Config{
 			Env: d.env.Environment,
-			Fil: cancel.Is,
 			Log: d.log,
 			Met: d.met,
 		})

@@ -1,6 +1,7 @@
 package infrastructure
 
-// Active defines this worker handler to always be executed.
+// Active determines whether this worker handler ought to be executed based on
+// the underlying policy implementation.
 func (i *Infrastructure) Active() bool {
-	return true
+	return i.pol.Update()
 }

@@ -17,7 +17,7 @@ func (o *Operator) Chain() [][]handler.Ensure {
 
 		// Inject any potential preview deployments into our internal list of
 		// release definitions so that we can render and expose any additional
-		// development services during testing. Note that this worker handler is
+		// development services during testing. Note that this operator function is
 		// only active within the testing environment.
 		{o.preview},
 
@@ -46,19 +46,21 @@ func (o *Operator) Chain() [][]handler.Ensure {
 		// our service releases.
 		{o.registry},
 
-		// Check whether we have any valid state drift amongst our cached
-		// service releases. If we cannot detect any drift, then we do not
-		// have to do any more work during this particular reconciliation
-		// loop. This policy implementation is a control flow primitive with
-		// the ability to cancel the reconciliation loop.
-		{o.policy},
-
-		// Once the current and desired states of the runnable service releases are
-		// known to have drifted apart, we can fetch the current version of our
-		// CloudFormation templates from the configured infrastructure repository,
-		// and upload all templates to S3. We only need to do this if there is at
-		// least one service release that has to get updated.
-		{o.infrastructure},
+		// Run the next steps in parallel in order to find the current and
+		// desired state of the release artifacts that we are tasked to
+		// managed.
+		//
+		//     1. Once the current and desired states of the runnable service
+		//        releases are known to have drifted apart, we can fetch the current
+		//        version of our CloudFormation templates from the configured
+		//        infrastructure repository, and upload all templates to S3. Note
+		//        that this operator function is only active in case of valid state
+		//        drift.
+		//
+		//     2. Manage any relevant deployment status for visibility purposes. E.g.
+		//        emit log messages and create or update pull request comments etc.
+		//
+		{o.infrastructure, o.status},
 
 		// With the CloudFormation templates uploaded to S3, we can construct the
 		// payload to update the CloudFormation stack that we are responsible for.
@@ -66,6 +68,8 @@ func (o *Operator) Chain() [][]handler.Ensure {
 		// command. Once a new update cycle got initiated, the reconciliation loop
 		// ends, and the operator should not reconcile the watched CloudFormation
 		// stack again until the ongoing stack update ended up in some retryable
-		// stack status.
-		{o.cloudFormation}}
+		// stack status. Note that this operator function is only active in case of
+		// valid state drift.
+		{o.cloudFormation},
+	}
 }
