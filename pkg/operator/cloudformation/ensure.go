@@ -83,13 +83,13 @@ func (c *CloudFormation) temPar(rel []cache.Object) []types.Parameter {
 	}
 
 	// Inject all desired artifact versions into the parameters that we are just
-	// about to deploy, but only for main release definitions, not for preview
-	// deployments. Injecting the template parameters after all user inputs have
-	// been applied above guarantees that only the release versions as defined in
-	// the release source repository will ever be applied.
+	// about to deploy, but only for main release definitions, not for auto
+	// generated preview deployments. Injecting the template parameters after all
+	// user inputs have been applied above guarantees that only the release
+	// versions as defined in the release source repository will ever be applied.
 
 	for _, x := range rel {
-		if bool(x.Release.Deploy.Preview) {
+		if x.Preview() {
 			continue
 		}
 

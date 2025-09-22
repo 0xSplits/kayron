@@ -26,11 +26,14 @@ var (
 func (p *Preview) Expand(rel release.Struct) (release.Slice, error) {
 	var err error
 
-	opt := &github.PullRequestListOptions{
-		State: "open",
-		ListOptions: github.ListOptions{
-			PerPage: 100,
-		},
+	var opt *github.PullRequestListOptions
+	{
+		opt = &github.PullRequestListOptions{
+			State: "open",
+			ListOptions: github.ListOptions{
+				PerPage: 100,
+			},
+		}
 	}
 
 	var pul []*github.PullRequest
@@ -79,10 +82,8 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 		}
 
 		var bra string
-		var ref string
 		{
 			bra = x.GetHead().GetRef()
-			ref = x.GetHead().GetSHA()
 		}
 
 		{
@@ -95,13 +96,9 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 		// Make sure to inject the preview deployment hash into the release labels.
 		// This is used to identify the correct current state of deployed container
 		// image tags, as well as rendering the correct CloudFormation templates.
-		// Here we also optimize the branch reference lookup by assigning the head
-		// label, because we have this latest commit sha for the preview branch here
-		// already.
 
 		{
 			pre.Labels.Hash = hash.New(bra)
-			pre.Labels.Head = ref
 		}
 
 		{
