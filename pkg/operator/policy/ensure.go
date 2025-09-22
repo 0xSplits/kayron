@@ -39,7 +39,7 @@ func (p *Policy) ensure(rel []cache.Object) error {
 				"desired", musStr(x.Artifact.Reference.Desired),
 			)
 
-			return tracer.Mask(cacheStateEmptyError)
+			return tracer.Mask(cancel.Error)
 		}
 	}
 
