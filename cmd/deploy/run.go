@@ -5,6 +5,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/cancel"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator"
+	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
 	"github.com/0xSplits/kayron/pkg/stack"
 	"github.com/0xSplits/otelgo/recorder"
@@ -57,6 +58,15 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 		})
 	}
 
+	var pol *policy.Policy
+	{
+		pol = policy.New(policy.Config{
+			Cac: cac,
+			Env: env,
+			Log: log,
+		})
+	}
+
 	var sta stack.Interface
 	{
 		sta = stack.New(stack.Config{
@@ -74,6 +84,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 			Env: env,
 			Log: log,
 			Met: met,
+			Pol: pol,
 			Sta: sta,
 		})
 	}

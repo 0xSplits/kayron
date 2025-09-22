@@ -1,6 +1,6 @@
-package policy
+package status
 
 // Active defines this worker handler to always be executed.
-func (p *Policy) Active() bool {
+func (s *Status) Active() bool {
 	return true
 }
