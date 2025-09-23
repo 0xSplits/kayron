@@ -32,6 +32,8 @@ type Object struct {
 
 // Domain returns the hash based testing domain for preview deployments, or an
 // empty string for any other main release and non-testing environment.
+//
+//	1d0fd508.lite.testing.splits.org
 func (o Object) Domain(env string) string {
 	// Note that we filter the domain name creation by preview deployments,
 	// because at the time of writing we do not have any convenient way to tell
