@@ -128,28 +128,19 @@ func (s *Status) comBod(sta string, obj cache.Object) string {
 }
 
 func (s *Status) comSta(obj cache.Object, com *github.IssueComment) (string, bool) {
-	// If the preview deployment has no status update, and if the preview
-	// deployment has state drift, then the preview status is "Creating". This
-	// status is the exception in the sense that the state machine/tree starts
-	// with this first state along the happy/normal path.
-
-	if com == nil && obj.Drift() {
-		return "Creating", true
-	}
-
 	// If the preview deployment has state drift, and if the status update is not
 	// marked as updating, then the preview status is "Updating". This status may
-	// be applied to existing or new issue comments.
+	// be applied to existing and new issue comments.
 
 	if obj.Drift() && !strings.Contains(com.GetBody(), "Updating") {
 		return "Updating", true
 	}
 
-	// If the underlying CloudFormation stack is not transitioning, and if the
-	// status update is not marked as ready, then the preview status is "Ready".
-	// This status may be applied to existing or new issue comments.
+	// If the preview deployment has no state drift, and if the status update is
+	// not marked as ready, then the preview status is "Ready". This status may be
+	// applied to existing and new issue comments.
 
-	if !s.pol.Cancel() && !strings.Contains(com.GetBody(), "Ready") {
+	if !obj.Drift() && !strings.Contains(com.GetBody(), "Ready") {
 		return "Ready", true
 	}
 
