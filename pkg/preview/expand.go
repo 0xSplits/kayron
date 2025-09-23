@@ -82,8 +82,10 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 		}
 
 		var bra string
+		var pul int
 		{
 			bra = x.GetHead().GetRef()
+			pul = x.GetNumber()
 		}
 
 		{
@@ -99,6 +101,7 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 
 		{
 			pre.Labels.Hash = hash.New(bra)
+			pre.Labels.Pull = pul
 		}
 
 		{

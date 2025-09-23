@@ -46,9 +46,8 @@ func (o *Operator) Chain() [][]handler.Ensure {
 		// our service releases.
 		{o.registry},
 
-		// Run the next steps in parallel in order to find the current and
-		// desired state of the release artifacts that we are tasked to
-		// managed.
+		// Run the next steps in parallel and split the execution graph based on the
+		// different underlying responsibilities.
 		//
 		//     1. Once the current and desired states of the runnable service
 		//        releases are known to have drifted apart, we can fetch the current
@@ -57,10 +56,14 @@ func (o *Operator) Chain() [][]handler.Ensure {
 		//        that this operator function is only active in case of valid state
 		//        drift.
 		//
-		//     2. Manage any relevant deployment status for visibility purposes. E.g.
-		//        emit log messages and create or update pull request comments etc.
+		//     2. Emit log messages about the internal state of the system. This
+		//        operator function runs on each and every reconciliation loop.
 		//
-		{o.infrastructure, o.status},
+		//     3. Manage any relevant deployment status for visibility purposes.
+		//        E.g. create and update pull request comments about any preview
+		//        deployment status.
+		//
+		{o.infrastructure, o.logging, o.status},
 
 		// With the CloudFormation templates uploaded to S3, we can construct the
 		// payload to update the CloudFormation stack that we are responsible for.

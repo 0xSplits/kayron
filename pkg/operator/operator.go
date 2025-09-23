@@ -8,6 +8,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator/cloudformation"
 	"github.com/0xSplits/kayron/pkg/operator/container"
 	"github.com/0xSplits/kayron/pkg/operator/infrastructure"
+	"github.com/0xSplits/kayron/pkg/operator/logging"
 	"github.com/0xSplits/kayron/pkg/operator/preview"
 	"github.com/0xSplits/kayron/pkg/operator/reference"
 	"github.com/0xSplits/kayron/pkg/operator/registry"
@@ -35,6 +36,7 @@ type Operator struct {
 	cloudFormation *cloudformation.CloudFormation
 	container      *container.Container
 	infrastructure *infrastructure.Infrastructure
+	logging        *logging.Logging
 	preview        *preview.Preview
 	reference      *reference.Reference
 	release        *release.Release
@@ -67,6 +69,7 @@ func New(c Config) *Operator {
 		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met, Pol: c.Pol}),
 		container:      container.New(container.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Pol: c.Pol}),
+		logging:        logging.New(logging.Config{Env: c.Env, Log: c.Log, Pol: c.Pol}),
 		preview:        preview.New(preview.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),

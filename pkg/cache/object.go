@@ -58,6 +58,24 @@ func (o Object) Domain(env string) string {
 	)
 }
 
+// Drift tries to detect a single valid state drift, in order to allow allow the
+// operator chain to execute. Our current policy requires the following
+// conditions to be true for a valid state drift.
+//
+//  1. the desired deployment must not be suspended
+//
+//  2. the current and desired state must not be equal
+//
+//  3. the desired state must not be empty
+//
+//  4. the container image for the desired state must be pushed
+func (o Object) Drift() bool {
+	return !bool(o.Release.Deploy.Suspend) &&
+		o.Artifact.Drift() &&
+		!o.Artifact.Empty() &&
+		o.Artifact.Valid()
+}
+
 func (o Object) Name() string {
 	if o.kin == Infrastructure {
 		return o.Release.Github.String()
