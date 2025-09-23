@@ -7,6 +7,7 @@ package status
 import (
 	"fmt"
 
+	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/roghfs"
@@ -16,12 +17,14 @@ import (
 )
 
 type Config struct {
+	Cac *cache.Cache
 	Env envvar.Env
 	Log logger.Interface
 	Pol *policy.Policy
 }
 
 type Status struct {
+	cac *cache.Cache
 	env envvar.Env
 	git *github.Client
 	log logger.Interface
@@ -30,6 +33,9 @@ type Status struct {
 }
 
 func New(c Config) *Status {
+	if c.Cac == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Cac must not be empty", c)))
+	}
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
@@ -51,6 +57,7 @@ func New(c Config) *Status {
 	}
 
 	return &Status{
+		cac: c.Cac,
 		env: c.Env,
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,

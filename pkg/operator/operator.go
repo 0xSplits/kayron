@@ -74,7 +74,7 @@ func New(c Config) *Operator {
 		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),
 		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		status:         status.New(status.Config{Env: c.Env, Log: c.Log, Pol: c.Pol}),
+		status:         status.New(status.Config{Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),
 		template:       template.New(template.Config{Cac: c.Cac, Log: c.Log, Pol: c.Pol}),
 	}
 }

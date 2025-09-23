@@ -16,10 +16,12 @@ const (
 )
 
 func (s *Status) preview() error {
-	// Collect all injected preview releases that have state drift.
+	// Collect all injected preview releases, whether they have state drift or
+	// not. Either of those cases requires us to manage the preview deployment
+	// status.
 
 	var dft []cache.Object
-	for _, x := range s.pol.Drift() {
+	for _, x := range s.cac.Releases() {
 		if x.Preview() {
 			dft = append(dft, x)
 		}
@@ -36,21 +38,25 @@ func (s *Status) preview() error {
 			}
 		}
 
-		// TODO comment
+		// If the preview deployment has no status update while at the same time the
+		// preview deployment has state drift, then create the status update in the
+		// form of an issue comment.
 
 		var cre bool
 		{
 			cre = com == nil
 		}
 
-		if cre {
+		if cre && o.Drift() {
 			err = s.creCom("Creating", o)
 			if err != nil {
 				return tracer.Mask(err)
 			}
 		}
 
-		// TODO comment
+		// If the preview deployment has a status update, and if the underlying
+		// CloudFormation stack is not transitioning, and if the status update is
+		// not marked as ready, then update the issue comment.
 
 		var upd bool
 		{
