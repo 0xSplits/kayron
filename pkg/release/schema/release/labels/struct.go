@@ -14,6 +14,9 @@ type Struct struct {
 	// Hash contains the hashed branch name for any service release of a preview
 	// deployment.
 	Hash hash.Hash
+	// Pull is the sequence of numbers identifying a pull request in Github's web
+	// interface.
+	Pull int
 	// Source is the absolute source file path of the .yaml definition as loaded
 	// from the underlying file system. This label may help to make error messages
 	// more useful.
