@@ -83,17 +83,60 @@ func (h *Handler) digGrp(tag string) ([]string, error) {
 		"ref", ref.Name(),
 	)
 
-	var ima *remote.Descriptor
+	var des *remote.Descriptor
 	{
-		ima, err = remote.Get(ref, remote.WithAuthFromKeychain(h.key))
+		des, err = remote.Get(ref, remote.WithAuthFromKeychain(h.key))
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}
 	}
 
+	// Try to resolve the digest group of the given image tag based on the
+	// underlying media type. Our expectation is to work with tagged image
+	// indices, because we push multi architecture images. The exception should be
+	// singular images that have been built and pushed in a non standard way,
+	// maybe even by accident. If the underlying media type is neither an index
+	// nor an image, then we return an error in order for a human to investigate
+	// further.
+
+	var dig []string
+
+	if des.MediaType.IsImage() {
+		dig = []string{
+			des.Digest.String(),
+		}
+	}
+
+	if des.MediaType.IsIndex() {
+		dig, err = h.digInd(des)
+		if err != nil {
+			return nil, tracer.Mask(err)
+		}
+	}
+
+	if len(dig) == 0 {
+		return nil, tracer.Mask(invalidImageTagError,
+			tracer.Context{Key: "media-type", Value: string(des.MediaType)},
+			tracer.Context{Key: "tag", Value: tag},
+		)
+	} else {
+		h.log.Log(
+			"level", "info",
+			"message", "resolved digest group",
+			"tag", tag,
+			"digest", strings.Join(dig, ","),
+		)
+	}
+
+	return dig, nil
+}
+
+func (h *Handler) digInd(des *remote.Descriptor) ([]string, error) {
+	var err error
+
 	var ind v1.ImageIndex
 	{
-		ind, err = ima.ImageIndex()
+		ind, err = des.ImageIndex()
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}
@@ -120,15 +163,8 @@ func (h *Handler) digGrp(tag string) ([]string, error) {
 	}
 
 	{
-		dig = append(dig, ima.Digest.String())
+		dig = append(dig, des.Digest.String())
 	}
-
-	h.log.Log(
-		"level", "info",
-		"message", "resolved digest group",
-		"tag", tag,
-		"digest", strings.Join(dig, ","),
-	)
 
 	return dig, nil
 }

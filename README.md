@@ -31,12 +31,16 @@ implementing the handler interface and registering the new handler in the
 operator chain. Kayron's operator chain is executed by a sequential worker
 engine.
 
-```
+```golang
 type Interface interface {
+	// Ensure is the minimal worker handler interface that all users have to
+	// implement for their own business logic, regardless of the underlying worker
+	// engine.
+	//
 	// Ensure executes the handler specific business logic in order to complete
 	// the given task, if possible. Any error returned will be emitted using the
-	// underlying logger interface. Calling this method will not interfere with
-	// the execution of other handlers.
+	// underlying logger interface, unless the injected metrics registry is
+	// configured to filter the received error.
 	Ensure() error
 }
 ```
@@ -69,6 +73,16 @@ This process will then eventually result in a stack update in CloudFormation, so
 that Kayron may also keep the respective deployment status up to date in Github.
 
 ![Operator Design](.github/assets/Operator-Design.svg)
+
+### Triggers
+
+1. The operator executes its graph of business logic sequentially on a time
+   based schedule. E.g. the entire chain runs every 10 seconds and pulls all the
+   data it needs from external APIs.
+2. The operator can also executes its graph on demand in case a trigger event
+   like a webhook notification may occurred. In this case the time based
+   schedule described above resets so that the received webhook event creates a
+   new 10 second interval.
 
 ### Usage
 
