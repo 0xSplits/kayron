@@ -4,22 +4,34 @@ import (
 	"context"
 
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
+	"github.com/0xSplits/kayron/pkg/webhook"
+	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (r *Reference) desRef(rel release.Struct) (string, error) {
-	// Return the commit sha if the branch deployment strategy is selected. Note
-	// that branches may be referenced in releases while they are not yet tracked,
-	// or not tracked anymore inside of Github. This may happen predominantly during
-	// testing when preparing or finishing releases and their dependencies.
+	// Resolve the commit sha if the branch deployment strategy is selected. We
+	// try to fetch data on demand from Github's branch API first, and then try to
+	// compare the fetched result against our internal webhook cache. If a newer
+	// commit hash is present in our internal webhook cache, then we prefer that
+	// one over the outdated/lagging version that Github's heavily cached API
+	// endpoints provide. Note that branches may be referenced in releases while
+	// they are not yet tracked, or not tracked anymore inside of Github. This may
+	// happen predominantly during testing when preparing or finishing releases
+	// and their dependencies.
 
 	if !rel.Deploy.Branch.Empty() {
-		sha, err := r.comSha(rel.Github.String(), rel.Deploy.Branch.String())
+		pll, err := r.pllCom(rel.Github.String(), rel.Deploy.Branch.String())
 		if err != nil {
 			return "", tracer.Mask(err)
 		}
 
-		return sha, nil
+		psh, err := r.pshCom(rel.Github.String(), rel.Deploy.Branch.String(), pll)
+		if err != nil {
+			return "", tracer.Mask(err)
+		}
+
+		return psh.Hash, nil
 	}
 
 	// Return the configured release tag if the pinned release deployment strategy
@@ -37,9 +49,15 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 	return "", nil
 }
 
-func (r *Reference) comSha(rep string, ref string) (string, error) {
-	bra, res, err := r.git.Repositories.GetBranch(context.Background(), r.own, rep, ref, 3)
-	if isNotFound(res) {
+// pshCom tries to find the latest commit of a repository branch by using the
+// pushed data from a Github app webhook.
+func (r *Reference) pshCom(rep string, ref string, pll webhook.Commit) (webhook.Commit, error) {
+	var com webhook.Commit
+	{
+		com = r.whk.Search(r.own, rep, ref, pll)
+	}
+
+	if com.Empty() {
 		r.log.Log(
 			"level", "warning",
 			"message", "git ref unresolvable",
@@ -49,15 +67,38 @@ func (r *Reference) comSha(rep string, ref string) (string, error) {
 			"repository", rep,
 			"branch", ref,
 		)
-
-		return "", nil
-	} else if err != nil {
-		return "", tracer.Mask(err,
-			tracer.Context{Key: "owner", Value: r.own},
-			tracer.Context{Key: "repository", Value: rep},
-			tracer.Context{Key: "branch", Value: ref},
-		)
 	}
 
-	return bra.GetCommit().GetSHA(), nil
+	return com, nil
+}
+
+// pllCom tries to find the latest commit of a repository branch by pulling data
+// from the Github API.
+func (r *Reference) pllCom(rep string, ref string) (webhook.Commit, error) {
+	var err error
+
+	var bra *github.Branch
+	var res *github.Response
+	{
+		bra, res, err = r.git.Repositories.GetBranch(context.Background(), r.own, rep, ref, 3)
+		if isNotFound(res) {
+			return webhook.Commit{}, nil
+		} else if err != nil {
+			return webhook.Commit{}, tracer.Mask(err,
+				tracer.Context{Key: "owner", Value: r.own},
+				tracer.Context{Key: "repository", Value: rep},
+				tracer.Context{Key: "branch", Value: ref},
+			)
+		}
+	}
+
+	var com webhook.Commit
+	{
+		com = webhook.Commit{
+			Hash: bra.GetCommit().GetSHA(),
+			Time: bra.GetCommit().GetCommit().GetCommitter().GetDate().Time,
+		}
+	}
+
+	return com, nil
 }

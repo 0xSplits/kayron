@@ -1,11 +1,14 @@
 package server
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 
 	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/cbrgm/githubevents/v2/githubevents"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/xh3b4sd/logger"
@@ -17,6 +20,10 @@ type Config struct {
 	Lis net.Listener
 	// Log is the structured logger passed down the stack.
 	Log logger.Interface
+	// Psh is the webhook event handler for push events. This event handler allows
+	// us to cache real time data about commit hashes pushed across the entire
+	// Github organization.
+	Psh *githubevents.EventHandler
 	// Mid are the protocol specific transport layer middlewares executed before
 	// any RPC handler.
 	Mid []mux.MiddlewareFunc
@@ -34,6 +41,9 @@ func New(c Config) *Server {
 	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+	}
+	if c.Psh == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Psh must not be empty", c)))
 	}
 
 	var rtr *mux.Router
@@ -54,6 +64,11 @@ func New(c Config) *Server {
 		})
 	}
 
+	// Add the metrics endpoint in Prometehus format.
+	{
+		rtr.NewRoute().Methods("GET").Path("/metrics").Handler(promhttp.Handler())
+	}
+
 	// Add a simple version response for the runtime.
 	{
 		rtr.NewRoute().Methods("GET").Path("/version").HandlerFunc(func(wri http.ResponseWriter, req *http.Request) {
@@ -63,9 +78,27 @@ func New(c Config) *Server {
 		})
 	}
 
-	// Add the metrics endpoint in Prometehus format.
+	// Add a webhook handler to receive near real time push events from Github.
+	// Note that we should only accept the POST method here as per the Github
+	// documentation.
 	{
-		rtr.NewRoute().Methods("GET").Path("/metrics").Handler(promhttp.Handler())
+		rtr.NewRoute().Methods("POST").Path("/webhook/push").HandlerFunc(func(wri http.ResponseWriter, req *http.Request) {
+			{
+				// TODO print request body content
+				body, err := io.ReadAll(req.Body)
+				if err != nil {
+					http.Error(wri, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				fmt.Printf("raw webhook body: %s\n", string(body))
+				req.Body = io.NopCloser(bytes.NewBuffer(body))
+			}
+			if err := c.Psh.HandleEventRequest(req); err != nil {
+				http.Error(wri, err.Error(), http.StatusBadRequest)
+			} else {
+				wri.WriteHeader(http.StatusOK)
+			}
+		})
 	}
 
 	return &Server{

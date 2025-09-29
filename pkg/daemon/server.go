@@ -5,6 +5,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/server"
 	"github.com/0xSplits/kayron/pkg/server/middleware/cors"
+	"github.com/cbrgm/githubevents/v2/githubevents"
 	"github.com/gorilla/mux"
 	"github.com/xh3b4sd/tracer"
 )
@@ -20,6 +21,15 @@ func (d *Daemon) Server() *server.Server {
 		}
 	}
 
+	var psh *githubevents.EventHandler
+	{
+		psh = githubevents.New(d.env.WebhookSecret)
+	}
+
+	{
+		psh.OnPushEventAny(d.whk.Update)
+	}
+
 	var ser *server.Server
 	{
 		ser = server.New(server.Config{
@@ -28,6 +38,7 @@ func (d *Daemon) Server() *server.Server {
 			Mid: []mux.MiddlewareFunc{
 				cors.New(cors.Config{Log: d.log}).Handler,
 			},
+			Psh: psh,
 		})
 	}
 
