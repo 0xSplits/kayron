@@ -10,14 +10,6 @@ import (
 )
 
 func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *github.PushEvent) error {
-	// TODO
-	//
-	//     filter for branch pushes only
-	//     compute org/repo key
-	//     store newest/HEAD commit hash, commit timestamp
-	//     lock/unlock mutex
-	//
-
 	if eve == nil || eve.GetDeleted() {
 		return nil
 	}
@@ -45,7 +37,7 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 	// "owner/repo/branch"
 	var key string
 	{
-		key = path.Join(eve.GetRepo().GetOwner().GetName(), eve.GetRepo().GetName(), bra)
+		key = path.Join(eve.GetRepo().GetFullName(), bra)
 	}
 
 	var com Commit
