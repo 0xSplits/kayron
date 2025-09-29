@@ -32,9 +32,9 @@ var (
 		types.StackStatusRollbackComplete:     true,
 		types.StackStatusRollbackFailed:       true,
 		types.StackStatusUpdateFailed:         true,
+		types.StackStatusUpdateRollbackFailed: true,
 
 		// healthy final states
-		types.StackStatusUpdateRollbackFailed:   false, // TODO move up again
 		types.StackStatusCreateComplete:         false,
 		types.StackStatusImportComplete:         false,
 		types.StackStatusImportRollbackComplete: false,
