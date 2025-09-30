@@ -12,8 +12,8 @@ func (p *Policy) Update() bool {
 		can = p.Cancel()
 	}
 
-	// Figure out whether we have any state drift at all that has to be
-	// reconciled.
+	// Figure out whether we have any valid state drift at all that has to be
+	// reconciled, considering that all deployment conditions must be successful.
 
 	var dft bool
 	{
@@ -25,7 +25,7 @@ func (p *Policy) Update() bool {
 
 func (p *Policy) drift() bool {
 	for _, x := range p.cac.Releases() {
-		if x.Drift() {
+		if x.Drift(true) {
 			return true
 		}
 	}

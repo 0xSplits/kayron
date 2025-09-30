@@ -138,19 +138,19 @@ func (s *Status) comBod(sta string, obj cache.Object) string {
 }
 
 func (s *Status) comSta(obj cache.Object, com *github.IssueComment) (string, bool) {
-	// If the preview deployment has state drift, and if the status update is not
-	// marked as updating, then the preview status is "Updating". This status may
-	// be applied to existing and new issue comments.
+	// If the preview deployment has any form of state drift, and if the status
+	// update is not marked as updating, then the preview status is "Updating".
+	// This status may be applied to existing and new issue comments.
 
-	if obj.Drift() && !strings.Contains(com.GetBody(), "Updating") {
+	if obj.Drift(false) && !strings.Contains(com.GetBody(), "Updating") {
 		return "Updating", true
 	}
 
-	// If the preview deployment has no state drift, and if the status update is
-	// not marked as ready, then the preview status is "Ready". This status may be
-	// applied to existing and new issue comments.
+	// If the preview deployment has no state drift at all, and if the status
+	// update is not marked as ready, then the preview status is "Ready". This
+	// status may be applied to existing and new issue comments.
 
-	if !obj.Drift() && !strings.Contains(com.GetBody(), "Ready") {
+	if !obj.Drift(false) && !strings.Contains(com.GetBody(), "Ready") {
 		return "Ready", true
 	}
 

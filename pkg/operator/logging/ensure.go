@@ -19,9 +19,12 @@ func (l *Logging) Ensure() error {
 		return nil
 	}
 
+	// Find all release artifacts with state drift, whether their underlying
+	// conditions are successful or not.
+
 	var dft []cache.Object
 	{
-		dft = l.pol.Drift()
+		dft = l.pol.Drift(false)
 	}
 
 	// If we do not have any drifted release artifacts, then this means that all
@@ -34,13 +37,27 @@ func (l *Logging) Ensure() error {
 		)
 	}
 
-	// If we do have drifted release artifacts, then we want to create an info log
-	// message for each affected service release.
+	// We may find release artifacts to show state drift, while some of their
+	// underlying conditions may not yet be fulfilled. Note that the only
+	// condition we have to wait for at the moment is the container image to be
+	// pushed to the underlying container registry.
 
 	for _, x := range dft {
+		var msg string
+		var rsn string
+
+		if x.Drift(true) {
+			msg = "verifying state drift"
+			rsn = "all conditions successfull"
+		} else if x.Drift(false) {
+			msg = "detected state drift"
+			rsn = "waiting for container image"
+		}
+
 		l.log.Log(
 			"level", "info",
-			"message", "detected state drift",
+			"message", msg,
+			"reason", rsn,
 			"release", x.Name(),
 			"preview", x.Release.Labels.Hash.Upper(),
 			"domain", x.Domain(l.env.Environment),

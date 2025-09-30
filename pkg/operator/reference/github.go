@@ -2,7 +2,6 @@ package reference
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/webhook"
@@ -27,14 +26,10 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 			return "", tracer.Mask(err)
 		}
 
-		fmt.Printf("pll %#v\n", pll)
-
 		psh, err := r.pshCom(rel.Github.String(), rel.Deploy.Branch.String(), pll)
 		if err != nil {
 			return "", tracer.Mask(err)
 		}
-
-		fmt.Printf("psh %#v\n", psh)
 
 		return psh.Hash, nil
 	}
