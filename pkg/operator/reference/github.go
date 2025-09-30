@@ -52,9 +52,18 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 // pshCom tries to find the latest commit of a repository branch by using the
 // pushed data from a Github app webhook.
 func (r *Reference) pshCom(rep string, ref string, pll webhook.Commit) (webhook.Commit, error) {
+	var key webhook.Key
+	{
+		key = webhook.Key{
+			Org: r.own,
+			Rep: rep,
+			Bra: ref,
+		}
+	}
+
 	var com webhook.Commit
 	{
-		com = r.whk.Search(r.own, rep, ref, pll)
+		com = r.whk.Latest(key, pll)
 	}
 
 	if com.Empty() {

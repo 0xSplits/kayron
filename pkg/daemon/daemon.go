@@ -41,7 +41,6 @@ func New(c Config) *Daemon {
 	{
 		whk = webhook.New(webhook.Config{
 			Log: log,
-			Env: c.Env,
 		})
 	}
 

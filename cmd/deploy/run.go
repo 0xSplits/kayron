@@ -70,7 +70,6 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 	var whk *webhook.Webhook
 	{
 		whk = webhook.New(webhook.Config{
-			Env: env,
 			Log: log,
 		})
 	}

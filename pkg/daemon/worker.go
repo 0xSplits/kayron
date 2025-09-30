@@ -7,7 +7,6 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/operator"
 	"github.com/0xSplits/kayron/pkg/policy"
-	"github.com/0xSplits/kayron/pkg/webhook"
 	"github.com/0xSplits/kayron/pkg/worker/handler/image"
 	"github.com/0xSplits/workit/handler"
 	"github.com/0xSplits/workit/registry"
@@ -40,14 +39,6 @@ func (d *Daemon) Worker() *combined.Worker {
 		})
 	}
 
-	var whk *webhook.Webhook
-	{
-		whk = webhook.New(webhook.Config{
-			Env: d.env,
-			Log: d.log,
-		})
-	}
-
 	var ope *operator.Operator
 	{
 		ope = operator.New(operator.Config{
@@ -57,7 +48,7 @@ func (d *Daemon) Worker() *combined.Worker {
 			Log: d.log,
 			Met: d.met,
 			Pol: pol,
-			Whk: whk,
+			Whk: d.whk,
 		})
 	}
 

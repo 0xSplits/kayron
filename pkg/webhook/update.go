@@ -2,66 +2,115 @@ package webhook
 
 import (
 	"context"
-	"fmt"
-	"path"
+	"encoding/json"
 	"strings"
 
 	"github.com/google/go-github/v73/github"
+	"github.com/xh3b4sd/tracer"
 )
 
+// Update implements PushEventHandleFunc. We bind this method to the webhook
+// endpoint that Github is POSTing push events to.
+//
+//	https://docs.github.com/en/webhooks/webhook-events-and-payloads#push
+//	https://pkg.go.dev/github.com/cbrgm/githubevents/v2@v2.5.0/githubevents#PushEventHandleFunc
 func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *github.PushEvent) error {
+	// First, some safe guards. We are also not interested in branch and tag
+	// deletions.
+
 	if eve == nil || eve.GetDeleted() {
 		return nil
 	}
+
+	// Ignore tags and other ref structures. We are only interested in commit
+	// pushes into branches.
 
 	var ref string
 	{
 		ref = eve.GetRef()
 	}
 
-	// ignore tags etc
 	if !strings.HasPrefix(ref, branch) {
 		return nil
 	}
+
+	// Parse the branch name of the push event, so we can create a cache key.
 
 	var bra string
 	{
 		bra = strings.TrimPrefix(ref, branch)
 	}
 
-	var hea *github.HeadCommit
+	// Create the cache key. We use the login of the owner, because not every
+	// commit has an organization. We just call it org internally.
+
+	var key Key
 	{
-		hea = eve.GetHeadCommit()
+		key = Key{
+			Org: eve.GetRepo().GetOwner().GetLogin(),
+			Rep: eve.GetRepo().GetName(),
+			Bra: bra,
+		}
 	}
 
-	// "owner/repo/branch"
-	var key string
-	{
-		key = path.Join(eve.GetRepo().GetFullName(), bra)
-	}
+	// Create the commit object we would like to cache. We have to use the "after"
+	// field of the push event payload, because this is the most reliable commit
+	// hash of the head commit. The webhook API does not populate the "sha" field
+	// in the head commit object. ¯\_(ツ)_/¯
 
 	var com Commit
 	{
 		com = Commit{
-			Hash: hea.GetSHA(),
-			Time: hea.GetTimestamp().Time,
+			Hash: eve.GetAfter(),
+			Time: eve.GetHeadCommit().GetTimestamp().Time,
 		}
 	}
 
-	fmt.Printf("\n")
-	fmt.Printf("Caching Webhook Event\n")
-	fmt.Printf("    %#v\n", key)
-	fmt.Printf("    %#v\n", com.Hash)
-	fmt.Printf("    %#v\n", com.Time.String())
-	fmt.Printf("\n")
-
-	// TODO guard against empty hash/time
-	// TODO only cache if head commit is newer
+	// Verify that our commit object has a non empty hash and timestamp.
 
 	{
+		err := w.verify(com, eve)
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	// Finally cache the received commit hash, but only if the version we just
+	// created is in fact the latest commit based on our internal cache state.
+
+	var lat Commit
+	{
+		lat = w.Latest(key, com)
+	}
+
+	// If our new commit is the latest, then we want to store it. Also make sure
+	// to synchronize cache access using a mutex.
+
+	if com.Equals(lat) {
 		w.mut.Lock()
 		w.cac[key] = com
 		w.mut.Unlock()
+	}
+
+	return nil
+}
+
+func (w *Webhook) verify(com Commit, eve *github.PushEvent) error {
+	err := com.Verify()
+	if err != nil {
+		byt, err := json.Marshal(eve)
+		if err != nil {
+			tracer.Panic(tracer.Mask(err))
+		}
+
+		w.log.Log(
+			"level", "warning",
+			"message", "skipping push event cache",
+			"reason", err.Error(),
+			"event", string(byt),
+		)
+
+		return tracer.Mask(err)
 	}
 
 	return nil

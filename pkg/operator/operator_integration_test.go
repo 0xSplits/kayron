@@ -81,7 +81,6 @@ func Test_Operator_Integration(t *testing.T) {
 	var whk *webhook.Webhook
 	{
 		whk = webhook.New(webhook.Config{
-			Env: env,
 			Log: log,
 		})
 	}
