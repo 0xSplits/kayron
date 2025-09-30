@@ -1,10 +1,14 @@
 package webhook
 
+import "fmt"
+
 // Latest returns the most recent commit within a branch by comparing the
 // already cached version, if any, with the compared version cmp. If the cache
 // is empty for the underlying branch key, then cmp is returned.
 func (w *Webhook) Latest(key Key, cmp Commit) Commit {
 	// be explicit about empty caches
+
+	fmt.Printf("Latest key %#v\n", key)
 
 	var cac Commit
 	var exi bool

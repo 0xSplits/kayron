@@ -3,6 +3,7 @@ package webhook
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/google/go-github/v73/github"
@@ -53,6 +54,8 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 		}
 	}
 
+	fmt.Printf("Update key %#v\n", key)
+
 	// Create the commit object we would like to cache. We have to use the "after"
 	// field of the push event payload, because this is the most reliable commit
 	// hash of the head commit. The webhook API does not populate the "sha" field
@@ -87,9 +90,21 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 	// to synchronize cache access using a mutex.
 
 	if com.Equals(lat) {
-		w.mut.Lock()
-		w.cac[key] = com
-		w.mut.Unlock()
+		w.log.Log(
+			"level", "info",
+			"message", "caching push event",
+			"hash", com.Hash,
+			"time", com.Time.String(),
+		)
+
+		{
+			w.mut.Lock()
+			w.cac[key] = com
+			w.mut.Unlock()
+		}
+	} else {
+		fmt.Printf("else %#v\n", lat)
+		fmt.Printf("else %#v\n", com)
 	}
 
 	return nil
@@ -98,9 +113,9 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 func (w *Webhook) verify(com Commit, eve *github.PushEvent) error {
 	err := com.Verify()
 	if err != nil {
-		byt, err := json.Marshal(eve)
-		if err != nil {
-			tracer.Panic(tracer.Mask(err))
+		byt, jrr := json.Marshal(eve)
+		if jrr != nil {
+			tracer.Panic(tracer.Mask(jrr))
 		}
 
 		w.log.Log(

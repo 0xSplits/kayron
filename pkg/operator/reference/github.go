@@ -2,6 +2,7 @@ package reference
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/webhook"
@@ -26,10 +27,14 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 			return "", tracer.Mask(err)
 		}
 
+		fmt.Printf("pll %#v\n", pll)
+
 		psh, err := r.pshCom(rel.Github.String(), rel.Deploy.Branch.String(), pll)
 		if err != nil {
 			return "", tracer.Mask(err)
 		}
+
+		fmt.Printf("psh %#v\n", psh)
 
 		return psh.Hash, nil
 	}
@@ -47,6 +52,37 @@ func (r *Reference) desRef(rel release.Struct) (string, error) {
 	//
 
 	return "", nil
+}
+
+// pllCom tries to find the latest commit of a repository branch by pulling data
+// from the Github API.
+func (r *Reference) pllCom(rep string, ref string) (webhook.Commit, error) {
+	var err error
+
+	var bra *github.Branch
+	var res *github.Response
+	{
+		bra, res, err = r.git.Repositories.GetBranch(context.Background(), r.own, rep, ref, 3)
+		if isNotFound(res) {
+			return webhook.Commit{}, nil
+		} else if err != nil {
+			return webhook.Commit{}, tracer.Mask(err,
+				tracer.Context{Key: "owner", Value: r.own},
+				tracer.Context{Key: "repository", Value: rep},
+				tracer.Context{Key: "branch", Value: ref},
+			)
+		}
+	}
+
+	var com webhook.Commit
+	{
+		com = webhook.Commit{
+			Hash: bra.GetCommit().GetSHA(),
+			Time: bra.GetCommit().GetCommit().GetCommitter().GetDate().Time,
+		}
+	}
+
+	return com, nil
 }
 
 // pshCom tries to find the latest commit of a repository branch by using the
@@ -76,37 +112,6 @@ func (r *Reference) pshCom(rep string, ref string, pll webhook.Commit) (webhook.
 			"repository", rep,
 			"branch", ref,
 		)
-	}
-
-	return com, nil
-}
-
-// pllCom tries to find the latest commit of a repository branch by pulling data
-// from the Github API.
-func (r *Reference) pllCom(rep string, ref string) (webhook.Commit, error) {
-	var err error
-
-	var bra *github.Branch
-	var res *github.Response
-	{
-		bra, res, err = r.git.Repositories.GetBranch(context.Background(), r.own, rep, ref, 3)
-		if isNotFound(res) {
-			return webhook.Commit{}, nil
-		} else if err != nil {
-			return webhook.Commit{}, tracer.Mask(err,
-				tracer.Context{Key: "owner", Value: r.own},
-				tracer.Context{Key: "repository", Value: rep},
-				tracer.Context{Key: "branch", Value: ref},
-			)
-		}
-	}
-
-	var com webhook.Commit
-	{
-		com = webhook.Commit{
-			Hash: bra.GetCommit().GetSHA(),
-			Time: bra.GetCommit().GetCommit().GetCommitter().GetDate().Time,
-		}
 	}
 
 	return com, nil
