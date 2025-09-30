@@ -62,7 +62,11 @@ func (o Object) Domain(env string) string {
 
 // Drift tries to detect a single valid state drift, in order to allow allow the
 // operator chain to execute. Our current policy requires the following
-// conditions to be true for a valid state drift.
+// conditions to be true for a valid state drift using the ready flag. If the
+// ready flag is false, then only the first three conditions are being
+// evaluated. That way we can differentiate between ready and waiting state
+// drift. Note that the set of waiting release artifacts may also contain ready
+// release artifacts.
 //
 //  1. the desired deployment must not be suspended
 //
@@ -71,11 +75,11 @@ func (o Object) Domain(env string) string {
 //  3. the desired state must not be empty
 //
 //  4. the container image for the desired state must be pushed
-func (o Object) Drift() bool {
+func (o Object) Drift(rea bool) bool {
 	return !bool(o.Release.Deploy.Suspend) &&
 		o.Artifact.Drift() &&
 		!o.Artifact.Empty() &&
-		o.Artifact.Valid()
+		(!rea || o.Artifact.Valid())
 }
 
 func (o Object) Name() string {

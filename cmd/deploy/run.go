@@ -6,6 +6,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator"
 	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/0xSplits/kayron/pkg/webhook"
 	"github.com/0xSplits/otelgo/recorder"
 	"github.com/0xSplits/workit/registry"
 	"github.com/0xSplits/workit/worker/sequence"
@@ -66,6 +67,13 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 		})
 	}
 
+	var whk *webhook.Webhook
+	{
+		whk = webhook.New(webhook.Config{
+			Log: log,
+		})
+	}
+
 	var ope *operator.Operator
 	{
 		ope = operator.New(operator.Config{
@@ -75,6 +83,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 			Log: log,
 			Met: met,
 			Pol: pol,
+			Whk: whk,
 		})
 	}
 

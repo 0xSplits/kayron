@@ -13,6 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.64.2
 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.30.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.88.3
+	github.com/cbrgm/githubevents/v2 v2.5.0 // pinned for github.com/google/go-github/v73
 	github.com/distribution/reference v0.6.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/go-cmp v0.7.0

@@ -48,6 +48,7 @@ func (d *Daemon) Worker() *combined.Worker {
 			Log: d.log,
 			Met: d.met,
 			Pol: pol,
+			Whk: d.whk,
 		})
 	}
 

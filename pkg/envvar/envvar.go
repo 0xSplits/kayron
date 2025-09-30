@@ -14,8 +14,9 @@ type Env struct {
 	CloudformationStack      string            `split_words:"true" required:"true"`
 	CloudformationTags       map[string]string `split_words:"true" required:"false"`
 
-	Environment string `split_words:"true" required:"true"`
-	GithubToken string `split_words:"true" required:"true"`
+	Environment   string `split_words:"true" required:"true"`
+	GithubToken   string `split_words:"true" required:"true"`
+	WebhookSecret string `split_words:"true" required:"true"`
 
 	HttpHost string `split_words:"true" required:"true"`
 	HttpPort string `split_words:"true" required:"true"`

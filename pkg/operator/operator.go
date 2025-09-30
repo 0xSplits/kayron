@@ -16,6 +16,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/operator/status"
 	"github.com/0xSplits/kayron/pkg/operator/template"
 	"github.com/0xSplits/kayron/pkg/policy"
+	"github.com/0xSplits/kayron/pkg/webhook"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -30,6 +31,7 @@ type Config struct {
 	Log logger.Interface
 	Met metric.Meter
 	Pol *policy.Policy
+	Whk *webhook.Webhook
 }
 
 type Operator struct {
@@ -71,7 +73,7 @@ func New(c Config) *Operator {
 		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Pol: c.Pol}),
 		logging:        logging.New(logging.Config{Env: c.Env, Log: c.Log, Pol: c.Pol}),
 		preview:        preview.New(preview.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
+		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log, Whk: c.Whk}),
 		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),
 		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
 		status:         status.New(status.Config{Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),

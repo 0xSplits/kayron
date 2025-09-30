@@ -9,6 +9,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/kayron/pkg/runtime"
+	"github.com/0xSplits/kayron/pkg/webhook"
 	"github.com/0xSplits/otelgo/recorder"
 	"github.com/0xSplits/workit/registry"
 	"github.com/0xSplits/workit/worker/sequence"
@@ -77,6 +78,13 @@ func Test_Operator_Integration(t *testing.T) {
 		})
 	}
 
+	var whk *webhook.Webhook
+	{
+		whk = webhook.New(webhook.Config{
+			Log: log,
+		})
+	}
+
 	var ope *Operator
 	{
 		ope = New(Config{
@@ -87,6 +95,7 @@ func Test_Operator_Integration(t *testing.T) {
 			Log: log,
 			Met: met,
 			Pol: pol,
+			Whk: whk,
 		})
 	}
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
+	"github.com/0xSplits/kayron/pkg/webhook"
 	"github.com/0xSplits/roghfs"
 	"github.com/google/go-github/v73/github"
 	"github.com/xh3b4sd/logger"
@@ -18,6 +19,7 @@ type Config struct {
 	Cac *cache.Cache
 	Env envvar.Env
 	Log logger.Interface
+	Whk *webhook.Webhook
 }
 
 type Reference struct {
@@ -26,6 +28,7 @@ type Reference struct {
 	git *github.Client
 	log logger.Interface
 	own string
+	whk *webhook.Webhook
 }
 
 func New(c Config) *Reference {
@@ -37,6 +40,9 @@ func New(c Config) *Reference {
 	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+	}
+	if c.Whk == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Whk must not be empty", c)))
 	}
 
 	var err error
@@ -55,5 +61,6 @@ func New(c Config) *Reference {
 		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
 		log: c.Log,
 		own: own,
+		whk: c.Whk,
 	}
 }
