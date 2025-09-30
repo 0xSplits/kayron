@@ -109,7 +109,7 @@ func (w *Webhook) verify(com Commit, eve *github.PushEvent) error {
 	if err != nil {
 		byt, jrr := json.Marshal(eve)
 		if jrr != nil {
-			tracer.Panic(tracer.Mask(jrr))
+			return tracer.Mask(jrr)
 		}
 
 		w.log.Log(
