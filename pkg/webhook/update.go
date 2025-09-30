@@ -3,7 +3,6 @@ package webhook
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/google/go-github/v73/github"
@@ -54,8 +53,6 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 		}
 	}
 
-	fmt.Printf("Update key %#v\n", key)
-
 	// Create the commit object we would like to cache. We have to use the "after"
 	// field of the push event payload, because this is the most reliable commit
 	// hash of the head commit. The webhook API does not populate the "sha" field
@@ -102,9 +99,6 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 			w.cac[key] = com
 			w.mut.Unlock()
 		}
-	} else {
-		fmt.Printf("else %#v\n", lat)
-		fmt.Printf("else %#v\n", com)
 	}
 
 	return nil

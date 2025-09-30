@@ -1,9 +1,7 @@
 package server
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 
@@ -83,16 +81,6 @@ func New(c Config) *Server {
 	// documentation.
 	{
 		rtr.NewRoute().Methods("POST").Path("/webhook/push").HandlerFunc(func(wri http.ResponseWriter, req *http.Request) {
-			{
-				// TODO print request body content
-				body, err := io.ReadAll(req.Body)
-				if err != nil {
-					http.Error(wri, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				fmt.Printf("raw webhook body: %s\n", string(body))
-				req.Body = io.NopCloser(bytes.NewBuffer(body))
-			}
 			if err := c.Psh.HandleEventRequest(req); err != nil {
 				http.Error(wri, err.Error(), http.StatusBadRequest)
 			} else {
