@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/suspend"
-	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
 )
 
 func Test_Schema_Specification_Service_Deploy_name(t *testing.T) {
@@ -26,8 +26,8 @@ func Test_Schema_Specification_Service_Deploy_name(t *testing.T) {
 		},
 		// Case 002
 		{
-			str: webhook.Slice{},
-			nam: "webhook",
+			str: preview.Bool(true),
+			nam: "preview",
 		},
 	}
 
