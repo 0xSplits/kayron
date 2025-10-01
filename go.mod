@@ -7,10 +7,10 @@ require (
 	github.com/0xSplits/roghfs v0.1.0
 	github.com/0xSplits/workit v0.7.1
 	github.com/aws/aws-sdk-go-v2 v1.39.2
-	github.com/aws/aws-sdk-go-v2/config v1.31.11
+	github.com/aws/aws-sdk-go-v2/config v1.31.12
 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.66.4
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.50.5
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.64.2
+	github.com/aws/aws-sdk-go-v2/service/ecs v1.65.0
 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.30.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.88.3
 	github.com/cbrgm/githubevents/v2 v2.5.0 // pinned for github.com/google/go-github/v73
@@ -30,13 +30,14 @@ require (
 	github.com/xh3b4sd/logger v0.11.1
 	github.com/xh3b4sd/tracer v1.0.0
 	go.opentelemetry.io/otel/metric v1.38.0
+	golang.org/x/mod v0.28.0
 	golang.org/x/text v0.29.0
 )
 
 require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.1 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.18.15 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.18.16 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.9 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.9 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.9 // indirect
@@ -46,7 +47,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.8.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.29.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.29.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.6 // indirect
 	github.com/aws/smithy-go v1.23.0 // indirect
@@ -82,7 +83,6 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
-	golang.org/x/mod v0.28.0
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
