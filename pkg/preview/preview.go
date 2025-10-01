@@ -12,6 +12,7 @@ import (
 
 type Config struct {
 	Env envvar.Env
+	Git *github.Client
 	Inp []byte
 }
 
@@ -26,16 +27,14 @@ func New(c Config) *Preview {
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
+	if c.Git == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Git must not be empty", c)))
+	}
 	if c.Inp == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Inp must not be empty", c)))
 	}
 
 	var err error
-
-	var git *github.Client
-	{
-		git = github.NewClient(nil).WithAuthToken(c.Env.GithubToken)
-	}
 
 	var own string
 	{
@@ -53,7 +52,7 @@ func New(c Config) *Preview {
 	}
 
 	return &Preview{
-		git: git,
+		git: c.Git,
 		inp: c.Inp,
 		own: own,
 		sca: sca,

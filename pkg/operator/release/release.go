@@ -22,6 +22,7 @@ type Config struct {
 	Aws aws.Config
 	Cac *cache.Cache
 	Env envvar.Env
+	Git *github.Client
 	Log logger.Interface
 	Pol *policy.Policy
 }
@@ -47,6 +48,9 @@ func New(c Config) *Release {
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
+	if c.Git == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Git must not be empty", c)))
+	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}
@@ -55,11 +59,6 @@ func New(c Config) *Release {
 	}
 
 	var err error
-
-	var git *github.Client
-	{
-		git = github.NewClient(nil).WithAuthToken(c.Env.GithubToken)
-	}
 
 	var own string
 	var rep string
@@ -73,7 +72,7 @@ func New(c Config) *Release {
 	var res resolver.Interface
 	{
 		res = resolver.New(resolver.Config{
-			Git: git,
+			Git: c.Git,
 			Own: own,
 			Rep: rep,
 		})
@@ -82,7 +81,7 @@ func New(c Config) *Release {
 	return &Release{
 		cac: c.Cac,
 		env: c.Env,
-		git: git,
+		git: c.Git,
 		log: c.Log,
 		own: own,
 		rep: rep,

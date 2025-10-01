@@ -9,6 +9,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/preview"
+	"github.com/google/go-github/v75/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -16,6 +17,7 @@ import (
 type Config struct {
 	Cac *cache.Cache
 	Env envvar.Env
+	Git *github.Client
 	Log logger.Interface
 }
 
@@ -33,6 +35,9 @@ func New(c Config) *Preview {
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
+	if c.Git == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Git must not be empty", c)))
+	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}
@@ -41,6 +46,7 @@ func New(c Config) *Preview {
 	{
 		pre = preview.New(preview.Config{
 			Env: c.Env,
+			Git: c.Git,
 			Inp: []byte{},
 		})
 	}
