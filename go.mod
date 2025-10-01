@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/0xSplits/otelgo v0.1.2
-	github.com/0xSplits/roghfs v0.1.0
+	github.com/0xSplits/roghfs v0.2.0
 	github.com/0xSplits/workit v0.7.1
 	github.com/aws/aws-sdk-go-v2 v1.39.2
 	github.com/aws/aws-sdk-go-v2/config v1.31.12
@@ -13,12 +13,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.65.0
 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.30.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.88.3
-	github.com/cbrgm/githubevents/v2 v2.5.0 // pinned for github.com/google/go-github/v73
+	github.com/cbrgm/githubevents/v2 v2.7.0
 	github.com/distribution/reference v0.6.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.20.6
-	github.com/google/go-github/v73 v73.0.0
+	github.com/google/go-github/v75 v75.0.0
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0

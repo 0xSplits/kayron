@@ -11,7 +11,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/roghfs"
-	"github.com/google/go-github/v73/github"
+	"github.com/google/go-github/v75/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
