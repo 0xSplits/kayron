@@ -7,25 +7,23 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/suspend"
-	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
 	"github.com/xh3b4sd/tracer"
 )
 
 // Struct defines exactly one mutually exclusive declaration of either Branch,
-// Release, Suspend or Webhook as required deployment instruction. Struct may
-// also define Preview as a testing environment only deployment mechanism for
-// pull requests, which does not influence the main deployment strategy
-// configuration mentioned above.
+// Release or Suspend as required deployment instruction. Struct may also define
+// Preview as a testing environment only deployment mechanism for pull requests,
+// which does not influence the main deployment strategy configuration mentioned
+// above.
 type Struct struct {
 	Branch  branch.String  `yaml:"branch,omitempty"`
 	Preview preview.Bool   `yaml:"preview,omitempty"`
 	Release release.String `yaml:"release,omitempty"`
 	Suspend suspend.Bool   `yaml:"suspend,omitempty"`
-	Webhook webhook.Slice  `yaml:"webhook,omitempty"`
 }
 
 func (s Struct) Empty() bool {
-	return s.Branch.Empty() && s.Preview.Empty() && s.Release.Empty() && s.Suspend.Empty() && s.Webhook.Empty()
+	return s.Branch.Empty() && s.Preview.Empty() && s.Release.Empty() && s.Suspend.Empty()
 }
 
 func (s Struct) String() string {
@@ -45,10 +43,6 @@ func (s Struct) String() string {
 		return fmt.Sprintf("suspend=%s", s.Suspend.String())
 	}
 
-	if !s.Webhook.Empty() {
-		return fmt.Sprintf("webhook=%s", s.Webhook.String())
-	}
-
 	return ""
 }
 
@@ -57,7 +51,7 @@ func (s Struct) Verify() error {
 	// that s.Preview is not a deployment strategy and is therefore not considered
 	// for this check.
 	{
-		lis := enabled(s.Branch, s.Release, s.Suspend, s.Webhook)
+		lis := enabled(s.Branch, s.Release, s.Suspend)
 		if len(lis) > 1 {
 			return tracer.Mask(deploymentStrategyError, tracer.Context{Key: "enabled", Value: lis})
 		}
@@ -86,13 +80,6 @@ func (s Struct) Verify() error {
 
 	if !s.Suspend.Empty() {
 		err := s.Suspend.Verify()
-		if err != nil {
-			return tracer.Mask(err)
-		}
-	}
-
-	if !s.Webhook.Empty() {
-		err := s.Webhook.Verify()
 		if err != nil {
 			return tracer.Mask(err)
 		}

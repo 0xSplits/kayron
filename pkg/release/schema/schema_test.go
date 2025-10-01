@@ -7,7 +7,6 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
-	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/webhook"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/github"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
@@ -125,6 +124,7 @@ func Test_Schema_Verify_failure(t *testing.T) {
 						Github: github.String("kayron"),
 						Deploy: deploy.Struct{
 							Release: "v1.8.2",
+							Suspend: true,
 						},
 						Labels: labels.Struct{
 							Source: "foo",
@@ -135,9 +135,6 @@ func Test_Schema_Verify_failure(t *testing.T) {
 						Github: github.String("specta"),
 						Deploy: deploy.Struct{
 							Suspend: true,
-							Webhook: webhook.Slice{
-								"POST:https://foo.bar",
-							},
 						},
 						Labels: labels.Struct{
 							Source: "foo",
@@ -249,45 +246,6 @@ func Test_Schema_Verify_success(t *testing.T) {
 		{
 			sch: Schema{
 				Release: release.Slice{
-					{
-						Docker: docker.String("specta"),
-						Github: github.String("specta"),
-						Deploy: deploy.Struct{
-							Release: "v1.8.2",
-						},
-						Labels: labels.Struct{
-							Source: "foo",
-						},
-					},
-				},
-			},
-		},
-		// Case 002, many services, webhook strategy
-		{
-			sch: Schema{
-				Release: release.Slice{
-					{
-						Docker: "kayron",
-						Github: "kayron",
-						Deploy: deploy.Struct{
-							Release: "v1.8.2",
-						},
-						Labels: labels.Struct{
-							Source: "foo",
-						},
-					},
-					{
-						Docker: docker.String("splits"),
-						Github: github.String("server"),
-						Deploy: deploy.Struct{
-							Webhook: webhook.Slice{
-								"POST:https://foo.bar",
-							},
-						},
-						Labels: labels.Struct{
-							Source: "foo",
-						},
-					},
 					{
 						Docker: docker.String("specta"),
 						Github: github.String("specta"),
