@@ -1,5 +1,13 @@
 package release
 
+import (
+	"fmt"
+
+	"github.com/distribution/reference"
+	"github.com/xh3b4sd/tracer"
+	"golang.org/x/mod/semver"
+)
+
 // Release must be a semver version string representing the respective Github
 // release tag. The tag format is required to contain a leading "v" prefix and
 // optional "-" separator for providing additional metadata.
@@ -18,15 +26,40 @@ func (s String) String() string {
 }
 
 func (s String) Verify() error {
-	// TODO
-	// func (d *Deploy) Verify() error {
-	// 	// A *very* small, fast check; rely on a library like
-	// 	// github.com/Masterminds/semver/v3 for full parsing if needed.
-	// 	if len(d.Release) < 2 || d.Release[0] != 'v' {
-	// 		return fmt.Errorf("custom error")
-	// 	}
-	// 	_, err := semver.NewVersion(d.Release[1:])
-	// 	return err
-	// }
+	var err error
+
+	// Ensure the shape of our release tags complies with our desired format.
+	//
+	//     [v.MAJOR.MINOR.PATCH(-SUFFIX)]
+	//
+
+	if !semver.IsValid(string(s)) {
+		return tracer.Mask(invalidReleaseFormatError, tracer.Context{Key: "tag", Value: s})
+	}
+
+	// Explicitely validate against meta data suffixes. The + character is not
+	// allowed to be part of a container image tag.
+	//
+	//     https://pkg.go.dev/github.com/containers/image/v5/docker/reference
+	//
+
+	if semver.Build(string(s)) != "" {
+		return tracer.Mask(invalidReleaseFormatError, tracer.Context{Key: "tag", Value: s})
+	}
+
+	// Douple check that the given release tag can be used as container image tag.
+
+	var ref reference.Reference
+	{
+		ref, err = reference.ParseAnyReference(fmt.Sprintf("registry/repository:%s", s))
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	if _, typ := ref.(reference.Tagged); !typ {
+		return tracer.Mask(invalidReleaseFormatError, tracer.Context{Key: "tag", Value: s})
+	}
+
 	return nil
 }
