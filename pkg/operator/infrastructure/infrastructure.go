@@ -24,6 +24,7 @@ type Config struct {
 	Cac *cache.Cache
 	Dry bool
 	Env envvar.Env
+	Git *github.Client
 	Log logger.Interface
 	Pol *policy.Policy
 }
@@ -49,6 +50,9 @@ func New(c Config) *Infrastructure {
 	if c.Env.Environment == "" {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Env must not be empty", c)))
 	}
+	if c.Git == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Git must not be empty", c)))
+	}
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}
@@ -71,7 +75,7 @@ func New(c Config) *Infrastructure {
 		cac: c.Cac,
 		dry: c.Dry,
 		env: c.Env,
-		git: github.NewClient(nil).WithAuthToken(c.Env.GithubToken),
+		git: c.Git,
 		log: c.Log,
 		own: own,
 		pol: c.Pol,

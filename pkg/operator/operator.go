@@ -18,6 +18,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/policy"
 	"github.com/0xSplits/kayron/pkg/webhook"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/google/go-github/v75/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 	"go.opentelemetry.io/otel/metric"
@@ -67,16 +68,21 @@ func New(c Config) *Operator {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Pol must not be empty", c)))
 	}
 
+	var git *github.Client
+	{
+		git = newGit(c.Env)
+	}
+
 	return &Operator{
 		cloudFormation: cloudformation.New(cloudformation.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Met: c.Met, Pol: c.Pol}),
 		container:      container.New(container.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Log: c.Log, Pol: c.Pol}),
+		infrastructure: infrastructure.New(infrastructure.Config{Aws: c.Aws, Cac: c.Cac, Dry: c.Dry, Env: c.Env, Git: git, Log: c.Log, Pol: c.Pol}),
 		logging:        logging.New(logging.Config{Env: c.Env, Log: c.Log, Pol: c.Pol}),
-		preview:        preview.New(preview.Config{Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Log: c.Log, Whk: c.Whk}),
-		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),
+		preview:        preview.New(preview.Config{Cac: c.Cac, Env: c.Env, Git: git, Log: c.Log}),
+		reference:      reference.New(reference.Config{Cac: c.Cac, Env: c.Env, Git: git, Log: c.Log, Whk: c.Whk}),
+		release:        release.New(release.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Git: git, Log: c.Log, Pol: c.Pol}),
 		registry:       registry.New(registry.Config{Aws: c.Aws, Cac: c.Cac, Env: c.Env, Log: c.Log}),
-		status:         status.New(status.Config{Cac: c.Cac, Env: c.Env, Log: c.Log, Pol: c.Pol}),
+		status:         status.New(status.Config{Cac: c.Cac, Env: c.Env, Git: git, Log: c.Log, Pol: c.Pol}),
 		template:       template.New(template.Config{Cac: c.Cac, Log: c.Log, Pol: c.Pol}),
 	}
 }

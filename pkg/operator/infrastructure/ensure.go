@@ -135,6 +135,7 @@ func (i *Infrastructure) renPre(nam string, byt []byte) ([]byte, error) {
 	{
 		pre = preview.New(preview.Config{
 			Env: i.env,
+			Git: i.git,
 			Inp: byt,
 		})
 	}
