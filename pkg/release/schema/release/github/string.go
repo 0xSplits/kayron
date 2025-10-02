@@ -45,7 +45,7 @@ func (s String) Verify() error {
 	}
 
 	for _, c := range s {
-		if !((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.') {
+		if (c < 'A' || c > 'Z') && (c < 'a' || c > 'z') && (c < '0' || c > '9') && c != '-' && c != '_' && c != '.' {
 			return tracer.Mask(invalidGithubRepositoryError,
 				tracer.Context{Key: "reason", Value: "repository must only contain A-Z a-z 0-9 - _ ."},
 				tracer.Context{Key: "input", Value: s},

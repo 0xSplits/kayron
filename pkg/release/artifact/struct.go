@@ -41,11 +41,11 @@ func (s Struct) Empty() bool {
 // values would overwrite artifact leafs that are patched by another goroutine
 // in parallel.
 func (s Struct) Merge(p Struct) Struct {
-	if s.Condition.Success == false && p.Condition.Success != false { // nolint:gosimple
+	if !s.Condition.Success && p.Condition.Success {
 		s.Condition.Success = p.Condition.Success
 	}
 
-	if s.Condition.Trigger == false && p.Condition.Trigger != false { // nolint:gosimple
+	if !s.Condition.Trigger && p.Condition.Trigger {
 		s.Condition.Trigger = p.Condition.Trigger
 	}
 
