@@ -5,7 +5,7 @@
 #     workflow create releasego
 #
 
-name: "go-release"
+name: "Go Release"
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         uses: "actions/setup-go@v6"
         with:
           cache: true
-          go-version: "1.24.0"
+          go-version: "1.25.1"
 
       - name: "Cross Compile Binaries"
         run: |
