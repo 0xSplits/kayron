@@ -5,7 +5,7 @@ import (
 )
 
 var invalidGithubRepositoryError = &tracer.Error{
-	Description: "This critical error indicates that the provided release tag does not comply with the required format [v.MAJOR.MINOR.PATCH(-SUFFIX)], which means that the operator does not know how to proceed safely.",
+	Description: "This critical error indicates that the provided repository name does not comply with the required format enforced by Github, which means that the operator does not know how to proceed safely.",
 }
 
 //
