@@ -1,5 +1,12 @@
 package docker
 
+import (
+	"fmt"
+
+	"github.com/distribution/reference"
+	"github.com/xh3b4sd/tracer"
+)
+
 type String string
 
 func (s String) Empty() bool {
@@ -11,6 +18,10 @@ func (s String) String() string {
 }
 
 func (s String) Verify() error {
-	// TODO
+	_, err := reference.ParseAnyReference(fmt.Sprintf("registry/%s:v0.1.0", s))
+	if err != nil {
+		return tracer.Mask(err)
+	}
+
 	return nil
 }
