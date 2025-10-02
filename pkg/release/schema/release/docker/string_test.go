@@ -1,101 +1,100 @@
-package release
+package docker
 
 import (
 	"fmt"
 	"testing"
 )
 
-func Test_Release_Schema_Release_Deploy_Release_String_Verify(t *testing.T) {
+func Test_Release_Schema_Release_Docker_String_Verify(t *testing.T) {
 	testCases := []struct {
-		tag String
+		rep String
 		mat func(error) bool
 	}{
 		// Case 000
 		{
-			tag: "",
+			rep: "",
 			mat: isErr,
 		},
 		// Case 001
 		{
-			tag: "1.2.3",
+			rep: "UPPER/CASE",
 			mat: isErr,
 		},
 		// Case 002
 		{
-			tag: "v1.2.x",
+			rep: "/leading/slash",
 			mat: isErr,
 		},
 		// Case 003
 		{
-			tag: "v1.2.3-",
+			rep: "trailing/slash/",
 			mat: isErr,
 		},
 		// Case 004
 		{
-			tag: "v1.2.3+build",
+			rep: "double//slash",
 			mat: isErr,
 		},
 		// Case 005
 		{
-			tag: "v1.2.3-abc+def",
+			rep: "has:colon",
 			mat: isErr,
 		},
 		// Case 006
 		{
-			tag: "v1.2.3-alpha beta",
+			rep: "has@at",
 			mat: isErr,
 		},
 		// Case 007
 		{
-			tag: "v1.2.3-a/b",
+			rep: "space inname",
 			mat: isErr,
 		},
 		// Case 008
 		{
-			tag: "v1.2.3-@abc",
+			rep: "dot..dot",
 			mat: isErr,
 		},
 		// Case 009
 		{
-			tag: "v10.20.30-ABC_ok.123-xyz",
+			rep: "seg-.-bad",
 			mat: isErr,
 		},
-
 		// Case 010
 		{
-			tag: "v1.2",
+			rep: "repo",
 			mat: isNil,
 		},
 		// Case 011
 		{
-			tag: "v0.1.0",
+			rep: "library/ubuntu",
 			mat: isNil,
 		},
 		// Case 012
 		{
-			tag: "v1.8.2",
+			rep: "my-org/my_app",
 			mat: isNil,
 		},
 		// Case 013
 		{
-			tag: "v1.8.3-ffce1e2",
+			rep: "a/b-c_d.e",
 			mat: isNil,
 		},
 		// Case 014
 		{
-			tag: "v1.2.3-abc.123",
+			rep: "valid.segment-1/another_segment.2",
 			mat: isNil,
 		},
 		// Case 015
 		{
-			tag: "v0.0.0",
+			rep: "verylongverylongverylongverylongverylongverylongverylongverylongverylongverylongverylongverylongverylongverylong",
 			mat: isNil,
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			err := tc.tag.Verify()
+			err := tc.rep.Verify()
 			if !tc.mat(err) {
 				t.Fatal("expected", true, "got", err)
 			}
