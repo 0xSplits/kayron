@@ -31,7 +31,7 @@ require (
 	github.com/xh3b4sd/tracer v1.0.0
 	go.opentelemetry.io/otel/metric v1.38.0
 	golang.org/x/mod v0.28.0
-	golang.org/x/text v0.29.0
+	golang.org/x/text v0.30.0
 )
 
 require (
