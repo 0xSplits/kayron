@@ -26,7 +26,7 @@ func Test_Worker_Handler_Image_imaTag(t *testing.T) {
 			reg: "us-west-2",
 			tag: "995626699990.dkr.ecr.us-west-2.amazonaws.com/kayron:v0.2.2",
 		},
-		// Case 000
+		// Case 001
 		{
 			det: types.ImageDetail{
 				RegistryId:     aws.String("1234"),
