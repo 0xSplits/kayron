@@ -3,6 +3,7 @@ package image
 import (
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 )
 
@@ -18,7 +19,10 @@ const (
 	Tag prefix = "v"
 )
 
-// TODO write tests
+// witPre returns the list of image details matching the given list of image tag
+// prefixes. E.g. the list of prefixes [a, b, c] would not return an image
+// detail with the image tag v0.1.0, because the prefix of that image tag is
+// neither a, b, nor c, but v.
 func (h *Handler) witPre(lis []types.ImageDetail, pre []string) []types.ImageDetail {
 	var wit []types.ImageDetail
 
@@ -40,9 +44,9 @@ func (h *Handler) witPre(lis []types.ImageDetail, pre []string) []types.ImageDet
 				"level", "warning",
 				"message", "skipping cleanup for image tag",
 				"reason", "invalid image push timestamp or image tag",
-				"digest", *x.ImageDigest,
-				"registry", *x.RegistryId,
-				"repository", *x.RepositoryName,
+				"digest", aws.ToString(x.ImageDigest),
+				"registry", aws.ToString(x.RegistryId),
+				"repository", aws.ToString(x.RepositoryName),
 				"tags", strings.Join(x.ImageTags, ","),
 			)
 
