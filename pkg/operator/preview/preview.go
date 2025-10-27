@@ -9,7 +9,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/cache"
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/preview"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )

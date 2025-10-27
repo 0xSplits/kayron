@@ -2,7 +2,7 @@ package operator
 
 import (
 	"github.com/0xSplits/kayron/pkg/envvar"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 )
 
 func newGit(env envvar.Env) *github.Client {
@@ -10,7 +10,7 @@ func newGit(env envvar.Env) *github.Client {
 	// like this.
 	//
 	//     import "github.com/bradleyfalzon/ghinstallation/v2"
-	//     import "github.com/google/go-github/v75/github"
+	//     import "github.com/google/go-github/v76/github"
 	//
 	//     key, err := base64.StdEncoding.DecodeString(env.GithubPrivateKey)
 	//     if err != nil {

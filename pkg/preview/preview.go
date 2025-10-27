@@ -6,7 +6,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/envvar"
 	"github.com/0xSplits/kayron/pkg/scanner"
 	"github.com/0xSplits/roghfs"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 	"github.com/xh3b4sd/tracer"
 )
 

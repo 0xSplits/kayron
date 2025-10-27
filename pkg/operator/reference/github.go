@@ -5,7 +5,7 @@ import (
 
 	"github.com/0xSplits/kayron/pkg/release/schema/release"
 	"github.com/0xSplits/kayron/pkg/webhook"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 	"github.com/xh3b4sd/tracer"
 )
 

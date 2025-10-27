@@ -10,7 +10,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/branch"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/deploy/preview"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 	"github.com/xh3b4sd/tracer"
 )
 
