@@ -3,21 +3,29 @@ package image
 import (
 	"sort"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecr/types"
 )
 
-// TODO write tests
-func selRem(pre []types.ImageDetail) []types.ImageDetail {
-	// sort by oldest first
-	// h.witPre must guarantee a non nil push timestamp
+// selRem returns those image details that are supposed to be cleaned up, based
+// on the given drop and keep parameters. The returned list of image details is
+// either nil, or sorted by push timestamp.
+func selRem(pre []types.ImageDetail, dro int, kee int) []types.ImageDetail {
+	// sort by oldest first, h.witPre must guarantee a non nil push timestamp
 
 	sort.Slice(pre, func(i, j int) bool {
-		return pre[i].ImagePushedAt.Before(*pre[j].ImagePushedAt)
+		return aws.ToTime(pre[i].ImagePushedAt).Before(aws.ToTime(pre[j].ImagePushedAt))
 	})
 
 	var num int
 	{
-		num = min(Drop, max(0, len(pre)-Keep))
+		num = min(dro, max(0, len(pre)-kee))
+	}
+
+	// If there is nothing to do, return nil early.
+
+	if num == 0 {
+		return nil
 	}
 
 	var rem []types.ImageDetail
