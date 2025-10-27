@@ -60,7 +60,7 @@ func (h *Handler) Ensure() error {
 
 	var rem []types.ImageDetail
 	{
-		rem = selRem(pre)
+		rem = selRem(pre, Drop, Keep)
 	}
 
 	// Use the resulting list of tagged images that we want to remove and find all
