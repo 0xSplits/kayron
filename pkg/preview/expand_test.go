@@ -13,7 +13,7 @@ import (
 	"github.com/0xSplits/kayron/pkg/release/schema/release/docker"
 	"github.com/0xSplits/kayron/pkg/release/schema/release/labels"
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 )
 
 func Test_Preview_Expand(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/0xSplits/kayron/pkg/cache"
-	"github.com/google/go-github/v75/github"
+	"github.com/google/go-github/v76/github"
 	"github.com/xh3b4sd/choreo/parallel"
 	"github.com/xh3b4sd/tracer"
 )
