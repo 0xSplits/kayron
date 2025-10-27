@@ -3,6 +3,7 @@ package webhook
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/google/go-github/v76/github"
@@ -91,7 +92,9 @@ func (w *Webhook) Update(ctx context.Context, did string, nam string, eve *githu
 			"level", "info",
 			"message", "caching push event",
 			"hash", com.Hash,
-			"time", com.Time.String(),
+			"repository", fmt.Sprintf("https://github.com/%s/%s", key.Org, key.Rep),
+			"ref", key.Bra,
+			"timestamp", com.Time.String(),
 		)
 
 		{
