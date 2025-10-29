@@ -65,6 +65,9 @@ func (d *Daemon) Worker() *combined.Worker {
 	{
 		par = parallel.New(parallel.Config{
 			Han: []handler.Cooler{
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Alloy}),
+				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Alloy}),
+
 				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Sha, Rep: image.Kayron}),
 				image.New(image.Config{Aws: cfg, Env: d.env, Log: d.log, Pre: image.Tag, Rep: image.Kayron}),
 
