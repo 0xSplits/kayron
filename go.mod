@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/0xSplits/otelgo v0.1.2
-	github.com/0xSplits/roghfs v0.3.0
+	github.com/0xSplits/roghfs v0.3.1
 	github.com/0xSplits/workit v0.7.1
 	github.com/aws/aws-sdk-go-v2 v1.39.6
 	github.com/aws/aws-sdk-go-v2/config v1.31.17
@@ -26,12 +26,12 @@ require (
 	github.com/rs/cors v1.11.1
 	github.com/spf13/afero v1.15.0
 	github.com/spf13/cobra v1.10.1
-	github.com/xh3b4sd/choreo v0.6.0
+	github.com/xh3b4sd/choreo v0.7.1
 	github.com/xh3b4sd/logger v0.11.1
 	github.com/xh3b4sd/tracer v1.0.0
 	go.opentelemetry.io/otel/metric v1.38.0
-	golang.org/x/mod v0.29.0
-	golang.org/x/text v0.30.0
+	golang.org/x/mod v0.30.0
+	golang.org/x/text v0.32.0
 )
 
 require (
@@ -72,7 +72,7 @@ require (
 	github.com/prometheus/common v0.67.1 // indirect
 	github.com/prometheus/otlptranslator v1.0.0 // indirect
 	github.com/prometheus/procfs v0.19.1 // indirect
-	github.com/puzpuzpuz/xsync/v4 v4.2.0 // indirect
+	github.com/puzpuzpuz/xsync/v4 v4.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/vbatts/tar-split v0.12.2 // indirect
@@ -83,7 +83,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
-	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
