@@ -55,12 +55,13 @@ func (p *Preview) Expand(rel release.Struct) (release.Slice, error) {
 func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 	// Before sorting, filter pull requests by branch names that we definitely
 	// want to consider for preview releases. E.g. drop all dependabot branches
-	// before sorting.
+	// before sorting. Pull requests from forks are dropped too, because their
+	// branches do not exist in our own repository and cannot be resolved.
 
 	var fil []*github.PullRequest
 
 	for _, x := range pul {
-		if !hasPre(x.GetHead().GetRef(), filter) {
+		if !hasPre(x.GetHead().GetRef(), filter) && !isFrk(x) {
 			fil = append(fil, x)
 		}
 	}
@@ -110,6 +111,12 @@ func expand(rel release.Struct, pul []*github.PullRequest) release.Slice {
 	}
 
 	return lis
+}
+
+// isFrk returns whether the given pull request was opened from a different
+// repository than the one it targets, e.g. from a fork.
+func isFrk(pul *github.PullRequest) bool {
+	return pul.GetHead().GetRepo().GetFullName() != pul.GetBase().GetRepo().GetFullName()
 }
 
 func hasPre(str string, pre []string) bool {

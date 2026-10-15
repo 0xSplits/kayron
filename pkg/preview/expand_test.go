@@ -120,6 +120,33 @@ func Test_Preview_Expand(t *testing.T) {
 				},
 			},
 		},
+		// Case 002
+		{
+			rel: release.Struct{
+				Deploy: deploy.Struct{
+					Branch:  branch.String("main"),
+					Preview: preview.Bool(true),
+				},
+				Docker: docker.String("lite"),
+			},
+			pul: []*github.PullRequest{
+				{CreatedAt: tesTim(3), Head: tesRep("b/3", "0xSplits/splits-lite"), Base: tesRep("main", "0xSplits/splits-lite")},
+				{CreatedAt: tesTim(4), Head: tesRep("b/4", "someone/splits-lite"), Base: tesRep("main", "0xSplits/splits-lite")},
+				{CreatedAt: tesTim(5), Head: &github.PullRequestBranch{Ref: github.Ptr("b/5")}, Base: tesRep("main", "0xSplits/splits-lite")},
+			},
+			exp: release.Slice{
+				{
+					Deploy: deploy.Struct{
+						Branch:  branch.String("b/3"),
+						Preview: preview.Bool(true),
+					},
+					Docker: docker.String("lite"),
+					Labels: labels.Struct{
+						Hash: hash.New("b/3"),
+					},
+				},
+			},
+		},
 	}
 
 	for i, tc := range testCases {
@@ -142,6 +169,10 @@ func Test_Preview_Expand(t *testing.T) {
 
 func tesBra(nam string) *github.PullRequestBranch {
 	return &github.PullRequestBranch{Ref: github.Ptr(nam)}
+}
+
+func tesRep(nam string, rep string) *github.PullRequestBranch {
+	return &github.PullRequestBranch{Ref: github.Ptr(nam), Repo: &github.Repository{FullName: github.Ptr(rep)}}
 }
 
 func tesTim(sec int64) *github.Timestamp {
