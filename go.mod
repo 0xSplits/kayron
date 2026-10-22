@@ -1,6 +1,6 @@
 module github.com/0xSplits/kayron
 
-go 1.25
+go 1.26.10
 
 require (
 	github.com/0xSplits/otelgo v0.1.2
