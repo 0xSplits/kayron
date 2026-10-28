@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.69.0
 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.31.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.92.0
-	github.com/cbrgm/githubevents/v2 v2.8.0
+	github.com/cbrgm/githubevents/v2 v2.23.0
 	github.com/distribution/reference v0.6.0
 	github.com/goccy/go-yaml v1.19.2
 	github.com/google/go-cmp v0.7.0
@@ -58,7 +58,8 @@ require (
 	github.com/docker/docker-credential-helpers v0.9.4 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/google/go-github/v93 v93.0.0 // indirect
+	github.com/google/go-querystring v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.19.2 // indirect
